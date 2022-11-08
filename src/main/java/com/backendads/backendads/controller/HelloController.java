@@ -1,22 +1,67 @@
 package com.backendads.backendads.controller;
 
-import Files.MetodosdeAvaliacao;
+import Files.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 public class HelloController {
 
-    @GetMapping("/fixe")
+    @GetMapping("/get")
     public String index() {
-        Class test = MetodosdeAvaliacao.class;
+        StringBuilder result = new StringBuilder();
+        Class<MetodosParaAulas> test = MetodosParaAulas.class;
+        Class<MetodosdeAvaliacao> ava = MetodosdeAvaliacao.class;
         Method[] methods = test.getDeclaredMethods();
-        String[] array= new String[methods.length];
-        for (int i=0; i<array.length;i++ ){
-            array[i]=methods[i].getName();
+        Method[] m = ava.getDeclaredMethods();
+        String name = "";
+        result.append("\nMétodos para aulas: \n");
+        for (Method m1 : methods) {
+            name = m1.getName().replace("_"," ");
+            name = name.substring(0,1).toUpperCase() + name.substring(1);
+            result.append(name).append("; ");
         }
-        return array[0];
+        result.append("\nMétodos para avaliações: \n");
+        for (Method m2 : m) {
+            name = m2.getName().replace("_"," ");
+            name = name.substring(0,1).toUpperCase() + name.substring(1);
+            result.append(name).append("; ");
+        }
+        return result.toString();
+    }
+
+    @PostMapping("/post")
+    public ResponseEntity<?> readPost(@RequestBody MetodosSelecionados json_metodos) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+        MetodosSelecionados metodos = new MetodosSelecionados(json_metodos.getMetodos_aulas(),json_metodos.getMetodos_avaliacoes());
+        for (String n : metodos.getList_metodos_aulas()) {
+            System.out.println(n);
+        }
+        for (String m : metodos.getList_metodos_avaliacoes())
+            System.out.println(m);
+        invoke_method("presevar_caracteristica_da_aula");
+        return new ResponseEntity<>("CHEGOU", HttpStatus.OK);
+    }
+
+    //Apenas para testar
+    public void invoke_method(String name) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+        Class<MetodosParaAulas> class_metodos_aulas = MetodosParaAulas.class;
+        Object t = class_metodos_aulas.newInstance();
+        Method[] metodos = class_metodos_aulas.getDeclaredMethods();
+        for (Method m: metodos) {
+            if (m.getName().equals(name)) {
+                System.out.println(m.invoke(t,1));
+            }
+        }
     }
 }
