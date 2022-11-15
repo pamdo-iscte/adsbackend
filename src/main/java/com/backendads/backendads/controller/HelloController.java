@@ -59,13 +59,11 @@ public class HelloController {
             CSVReader csvReader = new CSVReader(filereader);
             String[] nextRecord;
 
-            String[] columns = null;
             boolean first_line = true;
 
 
             while ((nextRecord = csvReader.readNext()) != null) {
                 if (first_line) {
-//                    columns = nextRecord[0].split(";");
                     first_line = false;
                 } else {
                     String[] line = nextRecord[0].split(";");
@@ -86,12 +84,7 @@ public class HelloController {
         catch (Exception e) {
             e.printStackTrace();
         }
-        String result = "{";
-        for (Convert_Aula_CSV_to_JSON c:all_aulas) {
-            result+=new Gson().toJson(c);
-        }
-        result+="}";
-        return result;
+        return new Gson().toJson(all_aulas);
     }
 
     @PostMapping("/post")
