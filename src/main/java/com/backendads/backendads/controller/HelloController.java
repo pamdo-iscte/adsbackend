@@ -23,7 +23,14 @@ import java.util.Objects;
 public class HelloController {
     private final String file_horarios_1_sem = "ADS - Horários 1º sem 2022-23.csv";
 
-
+    @GetMapping("/cena")
+    public String cena() {
+        Curso a= new Curso("ola","adu");
+        Curso b= new Curso("ola","adu");
+        List<Curso> x= new ArrayList<>();
+        x.add(a);x.add(b);
+        return new Gson().toJson(x);
+    }
     @GetMapping("/get_metodos")
     public String index() {
         List<String> result = new ArrayList<>();
