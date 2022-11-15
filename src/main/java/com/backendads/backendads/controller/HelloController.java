@@ -48,7 +48,7 @@ public class HelloController {
        Curso b= new Curso("ola","adu");
        List<Curso> x= new ArrayList<>();
        x.add(a);x.add(b);
-       return new Gson().toJson(a);
+       return new Gson().toJson(x);
     }
 
     @GetMapping("/get")
