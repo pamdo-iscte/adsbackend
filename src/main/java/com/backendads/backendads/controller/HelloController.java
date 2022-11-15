@@ -1,6 +1,8 @@
 package com.backendads.backendads.controller;
 
 import Files.*;
+import com.google.gson.Gson;
+import com.opencsv.CSVReader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,37 +10,88 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
 @RestController
 public class HelloController {
+    private final String file_horarios_1_sem = "ADS - Horários 1º sem 2022-23.csv";
 
-    @GetMapping("/get")
+
+    @GetMapping("/get_metodos")
     public String index() {
-        StringBuilder result = new StringBuilder();
+        List<String> result = new ArrayList<>();
         Class<MetodosParaAulas> test = MetodosParaAulas.class;
         Class<MetodosdeAvaliacao> ava = MetodosdeAvaliacao.class;
         Method[] methods = test.getDeclaredMethods();
         Method[] m = ava.getDeclaredMethods();
         String name = "";
-        result.append("\nMétodos para aulas: \n");
+        result.add("\nMétodos para aulas: \n");
         for (Method m1 : methods) {
             name = m1.getName().replace("_"," ");
             name = name.substring(0,1).toUpperCase() + name.substring(1);
-            result.append(name).append("; ");
+            result.add(name);
         }
-        result.append("\nMétodos para avaliações: \n");
+        result.add("\nMétodos para avaliações: \n");
         for (Method m2 : m) {
             name = m2.getName().replace("_"," ");
             name = name.substring(0,1).toUpperCase() + name.substring(1);
-            result.append(name).append("; ");
+            result.add(name);
         }
-        return result.toString();
+
+        String json = new Gson().toJson(result);
+        return json;
+    }
+
+    @GetMapping("/get_aluno_professor")
+    public String aulas() {
+        List<Convert_Aula_CSV_to_JSON> all_aulas = new ArrayList<>();
+        try {
+
+            FileReader filereader = new FileReader(file_horarios_1_sem);
+
+            CSVReader csvReader = new CSVReader(filereader);
+            String[] nextRecord;
+
+            String[] columns = null;
+            boolean first_line = true;
+
+
+            while ((nextRecord = csvReader.readNext()) != null) {
+                if (first_line) {
+//                    columns = nextRecord[0].split(";");
+                    first_line = false;
+                } else {
+                    String[] line = nextRecord[0].split(";");
+                    String curso = line[0].replace("'",",");
+
+                    String sala = "";
+                    String data ="";
+                    if (line.length >=13) sala = line[12];
+                    if (line.length >= 11) data = line[10];
+                    Convert_Aula_CSV_to_JSON convert = new Convert_Aula_CSV_to_JSON(curso,line[1],line[2],line[3],line[7],
+                            line[8],line[9],data,sala);
+
+                    all_aulas.add(convert);
+                }
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        String result = "{";
+        for (Convert_Aula_CSV_to_JSON c:all_aulas) {
+            result+=new Gson().toJson(c);
+        }
+        result+="}";
+        return result;
     }
 
     @PostMapping("/post")
