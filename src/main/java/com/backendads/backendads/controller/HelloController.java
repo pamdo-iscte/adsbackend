@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 @RestController
@@ -66,14 +64,15 @@ public class HelloController {
                 if (first_line) {
                     first_line = false;
                 } else {
-                    String[] line = nextRecord[0].split(";");
-                    String curso = line[0].replace("'",",");
-
+                    String temp = nextRecord[0].replace("'",",");
+                    String[] line = temp.split(";");
+//                    String curso = line[0].replace("'",",");
+//                    String turma = line[3].replace("'",",");
                     String sala = "";
                     String data ="";
                     if (line.length >=13) sala = line[12];
                     if (line.length >= 11) data = line[10];
-                    Convert_Aula_CSV_to_JSON convert = new Convert_Aula_CSV_to_JSON(curso,line[1],line[2],line[3],line[7],
+                    Convert_Aula_CSV_to_JSON convert = new Convert_Aula_CSV_to_JSON(line[0],line[1],line[2],line[3],line[7],
                             line[8],line[9],data,sala);
 
                     all_aulas.add(convert);
