@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 @RestController
 public class HelloController {
-    private final String file_horarios_1_sem = "ADS - Horários 1º sem 2022-23.csv";
+    private FuncoesAuxiliares aux = new FuncoesAuxiliares();
 
     @GetMapping("/cena")
     public String cena() {
@@ -56,42 +57,10 @@ public class HelloController {
 
     @GetMapping("/get_aluno_professor")
     public String aulas() {
-        List<Convert_Aula_CSV_to_JSON> all_aulas = new ArrayList<>();
-        try {
-
-            FileReader filereader = new FileReader(file_horarios_1_sem);
-
-            CSVReader csvReader = new CSVReader(filereader);
-            String[] nextRecord;
-
-            boolean first_line = true;
-
-
-            while ((nextRecord = csvReader.readNext()) != null) {
-                if (first_line) {
-                    first_line = false;
-                } else {
-                    String temp = nextRecord[0].replace("'",",");
-                    String[] line = temp.split(";");
-//                    String curso = line[0].replace("'",",");
-//                    String turma = line[3].replace("'",",");
-                    String sala = "";
-                    String data ="";
-                    if (line.length >=13) sala = line[12];
-                    if (line.length >= 11) data = line[10];
-                    Convert_Aula_CSV_to_JSON convert = new Convert_Aula_CSV_to_JSON(line[0],line[1],line[2],line[3],line[7],
-                            line[8],line[9],data,sala);
-
-                    all_aulas.add(convert);
-                }
-            }
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new Gson().toJson(all_aulas);
+        List<Convert_Aula_CSV_to_JSON> aulas = aux.get_Dias_da_semana(aux.getAulas());
+        return new Gson().toJson(aulas);
     }
+
 
     @PostMapping("/post")
     public ResponseEntity<?> readPost(@RequestBody MetodosSelecionados json_metodos) throws InvocationTargetException, IllegalAccessException, InstantiationException {
@@ -101,19 +70,8 @@ public class HelloController {
         }
         for (String m : metodos.getList_metodos_avaliacoes())
             System.out.println(m);
-        invoke_method("presevar_caracteristica_da_aula");
+        aux.invoke_method("presevar_caracteristica_da_aula");
         return new ResponseEntity<>("CHEGOU", HttpStatus.OK);
     }
 
-    //Apenas para testar
-    public void invoke_method(String name) throws InvocationTargetException, IllegalAccessException, InstantiationException {
-        Class<MetodosParaAulas> class_metodos_aulas = MetodosParaAulas.class;
-        Object t = class_metodos_aulas.newInstance();
-        Method[] metodos = class_metodos_aulas.getDeclaredMethods();
-        for (Method m: metodos) {
-            if (m.getName().equals(name)) {
-                System.out.println(m.invoke(t,1));
-            }
-        }
-    }
 }
