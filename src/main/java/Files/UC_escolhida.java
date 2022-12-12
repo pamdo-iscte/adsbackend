@@ -2,6 +2,8 @@ package Files;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 public class UC_escolhida {
 
     @JsonProperty("horas")
@@ -10,10 +12,10 @@ public class UC_escolhida {
     @JsonProperty("dias")
     private String dias;
     @JsonProperty("datas")
-    private String datas;
+    private List<String> datas;
 
     @JsonProperty("horas_repetidas")
-    private String horas_repetidas;
+    private List<String> horas_repetidas;
 
     @JsonProperty("turno")
     private String turno;
@@ -43,11 +45,11 @@ public class UC_escolhida {
         return unidade_de_execucao;
     }
 
-    public String getDatas() {
+    public List<String> getDatas() {
         return datas;
     }
 
-    public String getHoras_repetidas() {
+    public List<String> getHoras_repetidas() {
         return horas_repetidas;
     }
 

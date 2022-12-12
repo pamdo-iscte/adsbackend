@@ -26,12 +26,14 @@ public class HelloController {
 
     @GetMapping("/cena")
     public String cena() {
-        Curso a= new Curso("ola","adu");
-        Curso b= new Curso("ola","adu");
-        List<Curso> x= new ArrayList<>();
-        x.add(a);x.add(b);
+        Curso a = new Curso("ola", "adu");
+        Curso b = new Curso("ola", "adu");
+        List<Curso> x = new ArrayList<>();
+        x.add(a);
+        x.add(b);
         return new Gson().toJson(x);
     }
+
     @GetMapping("/get_metodos")
     public String index() {
         List<String> result = new ArrayList<>();
@@ -42,14 +44,14 @@ public class HelloController {
         String name = "";
         result.add("\nMétodos para aulas: \n");
         for (Method m1 : methods) {
-            name = m1.getName().replace("_"," ");
-            name = name.substring(0,1).toUpperCase() + name.substring(1);
+            name = m1.getName().replace("_", " ");
+            name = name.substring(0, 1).toUpperCase() + name.substring(1);
             result.add(name);
         }
         result.add("\nMétodos para avaliações: \n");
         for (Method m2 : m) {
-            name = m2.getName().replace("_"," ");
-            name = name.substring(0,1).toUpperCase() + name.substring(1);
+            name = m2.getName().replace("_", " ");
+            name = name.substring(0, 1).toUpperCase() + name.substring(1);
             result.add(name);
         }
 
@@ -71,7 +73,7 @@ public class HelloController {
 
     @PostMapping("/post")
     public ResponseEntity<?> readPost(@RequestBody MetodosSelecionados json_metodos) throws InvocationTargetException, IllegalAccessException, InstantiationException {
-        MetodosSelecionados metodos = new MetodosSelecionados(json_metodos.getMetodos_aulas(),json_metodos.getMetodos_avaliacoes());
+        MetodosSelecionados metodos = new MetodosSelecionados(json_metodos.getMetodos_aulas(), json_metodos.getMetodos_avaliacoes());
         for (String n : metodos.getList_metodos_aulas()) {
             System.out.println(n);
         }
@@ -82,38 +84,45 @@ public class HelloController {
     }
 
     @PostMapping("/obter_aulas_da_UC_escolhida")
-    public ResponseEntity<?> obter_aulas_da_UC_escolhida(@RequestBody UC_escolhida uc)  {
+    public ResponseEntity<?> obter_aulas_da_UC_escolhida(@RequestBody UC_escolhida uc) {
         List<Slot_horario_semestral> slots = new ArrayList<>();
 
         String[] horarios_das_aulas = aux.split_list_elements(uc.getHoras());
         String[] dias_de_semana = aux.split_list_elements(uc.getDias());
-        String[] datas = aux.split_list_elements(uc.getDatas());
-        String[] horas_repetidas = aux.split_list_elements(uc.getHoras_repetidas());
+//        String[] datas = aux.split_list_elements(uc.getDatas());
+        List<String> datas = uc.getDatas();
+        List<String> horas_repetidas = uc.getHoras_repetidas();
+//        String[] horas_repetidas = aux.split_list_elements(uc.getHoras_repetidas());
 
         Calendar calendar = Calendar.getInstance();
         if (primeiro_dia_de_aulas_cal == null) {
             String[] data_fields = primeiro_dia_de_aulas.split("/");
-            primeiro_dia_de_aulas_cal = aux.setCalendar(calendar,data_fields);
+            primeiro_dia_de_aulas_cal = aux.setCalendar(calendar, data_fields);
         }
 
-        for (int i=0; i<horarios_das_aulas.length; i++) {
+        for (int i = 0; i < horarios_das_aulas.length; i++) {
             String[] hora_inicio_fim = horarios_das_aulas[i].split(";");
             String dia_de_sem = dias_de_semana[i];
-            String id = uc.getTurno()+dia_de_sem+hora_inicio_fim[0];
-            String text = uc.getUnidade_de_execucao()+" Semanas: ";
+            String id = uc.getTurno() + dia_de_sem + hora_inicio_fim[0];
+            String text = uc.getUnidade_de_execucao() + " Semanas: ";
 
-            List<Integer> number_of_weeks = aux.get_number_of_weeks_of_slot(datas,horas_repetidas,calendar,primeiro_dia_de_aulas_cal,
-                    dia_de_sem,horarios_das_aulas[i]);
-            text = text.concat(number_of_weeks.toString().replace("[","").replace("]",""));
+            List<Integer> number_of_weeks = aux.get_number_of_weeks_of_slot(datas, horas_repetidas, calendar, primeiro_dia_de_aulas_cal,
+                    dia_de_sem, horarios_das_aulas[i]);
+            text = text.concat(number_of_weeks.toString().replace("[", "").replace("]", ""));
 
             //"2022-12-06T10:30:00"
-            String data_ajustada = aux.ajustar_data_horario_sem(uc.getDia_da_sem_de_hoje(),uc.getData_de_hoje(),dia_de_sem);
-            String start = data_ajustada+"T"+hora_inicio_fim[0];
-            String end = data_ajustada+"T"+hora_inicio_fim[1];
+            String data_ajustada = aux.ajustar_data_horario_sem(uc.getDia_da_sem_de_hoje(), uc.getData_de_hoje(), dia_de_sem);
+            String start = data_ajustada + "T" + hora_inicio_fim[0];
+            String end = data_ajustada + "T" + hora_inicio_fim[1];
 
-            slots.add(new Slot_horario_semestral(id,text,start,end));
+            slots.add(new Slot_horario_semestral(id, text, start, end));
         }
         enviar_slots_da_uc(slots);
         return new ResponseEntity<>("CHEGOU", HttpStatus.OK);
+    }
+
+    @PostMapping("/teste")
+    public String teste(@RequestBody UC_escolhida uc) {
+        return uc.getTurno()+"\n"+uc.getDias();
     }
 }

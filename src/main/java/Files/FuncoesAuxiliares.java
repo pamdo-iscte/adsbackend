@@ -196,14 +196,14 @@ public class FuncoesAuxiliares {
         return s.split(",");
     }
 
-    public List<Integer> get_number_of_weeks_of_slot(String[] datas, String[] horas_repetidas, Calendar calendar, Calendar primeiro_dia_de_aulas_cal,
+    public List<Integer> get_number_of_weeks_of_slot(List<String> datas, List<String> horas_repetidas, Calendar calendar, Calendar primeiro_dia_de_aulas_cal,
                                        String dia_da_sem, String horarios_das_aulas) {
         List<Integer> number_of_weeks = new ArrayList<>();
-        for(int j = 0; j < datas.length; j++) {
-            String[] data_fields = datas[j].split("/");
+        for(int j = 0; j < datas.size(); j++) {
+            String[] data_fields = datas.get(j).split("/");
             calendar = setCalendar(calendar,data_fields);
             if (get_int_dia_de_semana(dia_da_sem) == calendar.get(Calendar.DAY_OF_WEEK) &&
-                    horas_repetidas[j].equals(horarios_das_aulas))
+                    horas_repetidas.get(j).equals(horarios_das_aulas))
                 number_of_weeks.add(primeiro_dia_de_aulas_cal.get(Calendar.WEEK_OF_YEAR) - calendar.get(Calendar.WEEK_OF_YEAR) +1);
         }
         return number_of_weeks;
