@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 
 @RestController
 public class HelloController {
-    private final String primeiro_dia_de_aulas = "12/09/2022";
+    private final String primeiro_dia_de_aulas = "2022/09/12";
     private Calendar primeiro_dia_de_aulas_cal = null;
     private FuncoesAuxiliares aux = new FuncoesAuxiliares();
 
@@ -84,15 +84,13 @@ public class HelloController {
     }
 
     @PostMapping("/obter_aulas_da_UC_escolhida")
-    public ResponseEntity<?> obter_aulas_da_UC_escolhida(@RequestBody UC_escolhida uc) {
+    public String obter_aulas_da_UC_escolhida(@RequestBody UC_escolhida uc) {
         List<Slot_horario_semestral> slots = new ArrayList<>();
 
         String[] horarios_das_aulas = aux.split_list_elements(uc.getHoras());
         String[] dias_de_semana = aux.split_list_elements(uc.getDias());
-//        String[] datas = aux.split_list_elements(uc.getDatas());
         List<String> datas = uc.getDatas();
         List<String> horas_repetidas = uc.getHoras_repetidas();
-//        String[] horas_repetidas = aux.split_list_elements(uc.getHoras_repetidas());
 
         Calendar calendar = Calendar.getInstance();
         if (primeiro_dia_de_aulas_cal == null) {
@@ -102,12 +100,14 @@ public class HelloController {
 
         for (int i = 0; i < horarios_das_aulas.length; i++) {
             String[] hora_inicio_fim = horarios_das_aulas[i].split(";");
+            System.out.println(hora_inicio_fim[0] + " "+ hora_inicio_fim[1]);
             String dia_de_sem = dias_de_semana[i];
             String id = uc.getTurno() + dia_de_sem + hora_inicio_fim[0];
             String text = uc.getUnidade_de_execucao() + " Semanas: ";
 
             List<Integer> number_of_weeks = aux.get_number_of_weeks_of_slot(datas, horas_repetidas, calendar, primeiro_dia_de_aulas_cal,
                     dia_de_sem, horarios_das_aulas[i]);
+            System.out.println(number_of_weeks);
             text = text.concat(number_of_weeks.toString().replace("[", "").replace("]", ""));
 
             //"2022-12-06T10:30:00"
@@ -115,14 +115,13 @@ public class HelloController {
             String start = data_ajustada + "T" + hora_inicio_fim[0];
             String end = data_ajustada + "T" + hora_inicio_fim[1];
 
-            slots.add(new Slot_horario_semestral(id, text, start, end));
+            slots.add(new Slot_horario_semestral(id, text, "Hoje", "Fim"));
         }
-        enviar_slots_da_uc(slots);
-        return new ResponseEntity<>("CHEGOU", HttpStatus.OK);
+        return new Gson().toJson(slots);
     }
 
     @PostMapping("/teste")
     public String teste(@RequestBody UC_escolhida uc) {
-        return uc.getTurno()+"\n"+uc.getDias();
+        return uc.getHoras_repetidas().toString();
     }
 }
