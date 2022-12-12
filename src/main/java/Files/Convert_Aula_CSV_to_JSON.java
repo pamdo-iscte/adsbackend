@@ -1,8 +1,10 @@
 package Files;
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class Convert_Aula_CSV_to_JSON {
 
@@ -12,12 +14,18 @@ public class Convert_Aula_CSV_to_JSON {
     private final String turno;
     private final String turma;
     private final String dia_da_semana;
+
     private final String data;
     private String hora_inicio;
     private String hora_fim;
     private final String sala;
 
     private String dias;
+
+    private String horas;
+
+    private List<String> datas = new ArrayList<>();
+    private List<String> horas_repetidas = new ArrayList<>();
 
     public Convert_Aula_CSV_to_JSON(String curso, String unidade_de_execucao, String turno, String turma, String dia_da_semana,
                                     String hora_inicio, String hora_fim, String data, String sala,String dias) {
@@ -49,6 +57,9 @@ public class Convert_Aula_CSV_to_JSON {
                 ", hora_inicio='" + hora_inicio + '\'' +
                 ", hora_fim='" + hora_fim + '\'' +
                 ", sala='" + sala + '\'' +
+                ", dias='" + dias + '\'' +
+                ", horas='" + horas + '\'' +
+                ", datas=" + datas +
                 '}';
     }
 
@@ -94,6 +105,17 @@ public class Convert_Aula_CSV_to_JSON {
 
     public String getDia_da_semana() {
         return dia_da_semana;
+    }
+
+    public void setHoras(String horas) {
+        this.horas = horas;
+    }
+
+    public void addDatas(String data) {
+        this.datas.add(data);
+    }
+    public void addHoras(String hora) {
+        this.horas_repetidas.add(hora);
     }
 
     public Boolean compareHoras(String horas, Boolean inicio_ou_fim) {

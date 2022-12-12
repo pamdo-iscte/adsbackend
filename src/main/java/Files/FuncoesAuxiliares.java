@@ -5,10 +5,7 @@ import com.opencsv.CSVReader;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class FuncoesAuxiliares {
@@ -16,6 +13,7 @@ public class FuncoesAuxiliares {
 
 
     public List<Convert_Aula_CSV_to_JSON> get_Dias_da_semana(List<Convert_Aula_CSV_to_JSON> aulas) {
+        Calendar cal = Calendar.getInstance();
         List<Integer> aulas_para_remover = new ArrayList<>();
         List<Integer> aulas_para_percorrer = new ArrayList<>(IntStream.iterate(0, i -> i + 1).limit(aulas.size()).boxed().toList());
         for (int j = aulas_para_percorrer.get(aulas_para_percorrer.size()-1); j>=0;j--) {
@@ -24,18 +22,38 @@ public class FuncoesAuxiliares {
             Convert_Aula_CSV_to_JSON current = aulas.get(j);
             if (current.getDias().equals("")) {
                 int[] indexes = IntStream.range(0, aulas.size()).filter(i -> aulas.get(i).getTurno().equals(current.getTurno())).toArray();
-                List<String> list_of_dias = new ArrayList<>();
+                List<String> list_of_dias_da_sem = new ArrayList<>();
+                List<String> horarios_das_aulas_sem_repetidos = new ArrayList<>();
                 for (int i=indexes.length-1;i>=0;i--) {
                     int index = indexes[i];
-                    Convert_Aula_CSV_to_JSON aula = aulas.get(index);
+                    Convert_Aula_CSV_to_JSON aula_do_mesmo_turno = aulas.get(index);
                     if (j != index) {aulas_para_percorrer.set(index,-1);aulas_para_remover.add(index);}
-                    if (!list_of_dias.contains(aula.getDia_da_semana())) list_of_dias.add(aula.getDia_da_semana());
+                    if (!check_se_ja_esta_guardado(list_of_dias_da_sem,horarios_das_aulas_sem_repetidos,aula_do_mesmo_turno)) {
+                        list_of_dias_da_sem.add(aula_do_mesmo_turno.getDia_da_semana());
+                        horarios_das_aulas_sem_repetidos.add(aula_do_mesmo_turno.getHora_inicio()+";"+aula_do_mesmo_turno.getHora_fim());
+                    }
+                    current.addHoras(aula_do_mesmo_turno.getHora_inicio()+";"+aula_do_mesmo_turno.getHora_fim());
+                    current.addDatas(aula_do_mesmo_turno.getData());
                 }
-                String dias = list_of_dias.toString().replace("[","").replace("]","");
-                aulas.get(j).setDias(dias);
+                String dias = list_of_dias_da_sem.toString().replace("[","").replace("]","");
+                String horas = horarios_das_aulas_sem_repetidos.toString().replace("[","").replace("]","");
+                current.setDias(dias);
+                current.setHoras(horas);
             }
         }
         return remover_aulas(aulas,aulas_para_remover);
+    }
+
+    private boolean check_se_ja_esta_guardado(List<String> list_of_dias_da_sem, List<String> horarios_das_aulas, Convert_Aula_CSV_to_JSON aula_do_mesmo_turno) {
+        for (int i=0; i<list_of_dias_da_sem.size(); i++) {
+            String[] temp_horas = horarios_das_aulas.get(i).split(";");
+            if (list_of_dias_da_sem.get(i).equals(aula_do_mesmo_turno.getDia_da_semana()) &&
+                    temp_horas[0].equals(aula_do_mesmo_turno.getHora_inicio()) &&
+                    temp_horas[1].equals(aula_do_mesmo_turno.getHora_fim())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<Convert_Aula_CSV_to_JSON> getAulas() {
@@ -144,5 +162,52 @@ public class FuncoesAuxiliares {
             }
         }
     }
+
+    public Calendar setCalendar(Calendar calendar, String[] data_fields) {
+        calendar.add(Calendar.DAY_OF_MONTH, Integer.parseInt(data_fields[0]));
+        calendar.add(Calendar.MONTH, Integer.parseInt(data_fields[1]));
+        calendar.add(Calendar.YEAR, Integer.parseInt(data_fields[2]));
+        return calendar;
+    }
+
+    public int get_int_dia_de_semana(String dia_da_sem) {
+        int i = 0;
+        switch (dia_da_sem) {
+            case "Dom": i =  1;break;
+            case "Seg": i =  2;break;
+            case "Ter": i =  3;break;
+            case "Qua": i =  4;break;
+            case "Qui": i =  5;break;
+            case "Sex": i =  6;break;
+            case "Sab": i =  7;break;
+        }
+        return i;
+    }
+
+    public String ajustar_data_horario_sem(int dia_da_sem_de_hj, String data_de_hj, String dia_da_sem_da_aula) {
+        int dif_entre_dias = dia_da_sem_de_hj - get_int_dia_de_semana(dia_da_sem_da_aula);
+        Calendar c = Calendar.getInstance();
+        c = setCalendar(c,data_de_hj.split("/"));
+        c.add(Calendar.DAY_OF_MONTH, dif_entre_dias);
+        return c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public String[] split_list_elements(String s) {
+        return s.split(",");
+    }
+
+    public List<Integer> get_number_of_weeks_of_slot(String[] datas, String[] horas_repetidas, Calendar calendar, Calendar primeiro_dia_de_aulas_cal,
+                                       String dia_da_sem, String horarios_das_aulas) {
+        List<Integer> number_of_weeks = new ArrayList<>();
+        for(int j = 0; j < datas.length; j++) {
+            String[] data_fields = datas[j].split("/");
+            calendar = setCalendar(calendar,data_fields);
+            if (get_int_dia_de_semana(dia_da_sem) == calendar.get(Calendar.DAY_OF_WEEK) &&
+                    horas_repetidas[j].equals(horarios_das_aulas))
+                number_of_weeks.add(primeiro_dia_de_aulas_cal.get(Calendar.WEEK_OF_YEAR) - calendar.get(Calendar.WEEK_OF_YEAR) +1);
+        }
+        return number_of_weeks;
+    }
+
 }
 
