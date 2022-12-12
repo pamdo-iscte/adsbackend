@@ -186,7 +186,13 @@ public class FuncoesAuxiliares {
         Calendar c = Calendar.getInstance();
         c = setCalendar(c,data_de_hj.split("/"));
         c.add(Calendar.DAY_OF_MONTH, dif_entre_dias);
-        return c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH);
+        int month=c.get(Calendar.MONTH)+1;
+        int day=c.get(Calendar.DAY_OF_MONTH);
+        String dayS= String.valueOf(day);
+        if(day<10){
+            dayS="0"+dayS;
+        }
+        return c.get(Calendar.YEAR)+"-"+month+"-"+dayS;
     }
 
     public String[] split_list_elements(String s) {
@@ -197,6 +203,7 @@ public class FuncoesAuxiliares {
                                        String dia_da_sem, String horarios_das_aulas) {
         List<Integer> number_of_weeks = new ArrayList<>();
         int sem_primeiro_dia_de_aulas = primeiro_dia_de_aulas_cal.get(Calendar.WEEK_OF_YEAR);
+        System.out.println("PRMIERO     "+primeiro_dia_de_aulas_cal.getTime());
         for(int j = 0; j < datas.size(); j++) {
             String[] data_fields = datas.get(j).split("/");
             calendar = setCalendar(calendar,data_fields);

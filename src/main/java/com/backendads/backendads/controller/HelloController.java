@@ -21,8 +21,8 @@ import java.util.stream.IntStream;
 @RestController
 public class HelloController {
     private final String primeiro_dia_de_aulas = "2022/09/12";
-    private Calendar primeiro_dia_de_aulas_cal = null;
     private FuncoesAuxiliares aux = new FuncoesAuxiliares();
+    private Calendar primeiro_dia_de_aulas_cal = aux.setCalendar(Calendar.getInstance(),primeiro_dia_de_aulas.split("/"));
 
     @GetMapping("/cena")
     public String cena() {
@@ -93,10 +93,11 @@ public class HelloController {
         List<String> horas_repetidas = uc.getHoras_repetidas();
 
         Calendar calendar = Calendar.getInstance();
-        if (primeiro_dia_de_aulas_cal == null) {
-            String[] data_fields = primeiro_dia_de_aulas.split("/");
-            primeiro_dia_de_aulas_cal = aux.setCalendar(calendar, data_fields);
-        }
+//        if (primeiro_dia_de_aulas_cal == null) {
+//            System.out.println("ENTREI");
+//            String[] data_fields = primeiro_dia_de_aulas.split("/");
+//            primeiro_dia_de_aulas_cal = aux.setCalendar(calendar, data_fields);
+//        }
 
         for (int i = 0; i < horarios_das_aulas.length; i++) {
             String[] hora_inicio_fim = horarios_das_aulas[i].split(";");
@@ -115,7 +116,7 @@ public class HelloController {
             String start = data_ajustada + "T" + hora_inicio_fim[0];
             String end = data_ajustada + "T" + hora_inicio_fim[1];
 
-            slots.add(new Slot_horario_semestral(id, text, "Hoje", "Fim"));
+            slots.add(new Slot_horario_semestral(id, text, start, end));
         }
         return new Gson().toJson(slots);
     }
