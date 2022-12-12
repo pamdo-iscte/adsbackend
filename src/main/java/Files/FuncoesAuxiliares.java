@@ -184,12 +184,13 @@ public class FuncoesAuxiliares {
     public String ajustar_data_horario_sem(int dia_da_sem_de_hj, String data_de_hj, String dia_da_sem_da_aula) {
         int dif_entre_dias = dia_da_sem_de_hj - get_int_dia_de_semana(dia_da_sem_da_aula);
         Calendar c = Calendar.getInstance();
-        c = setCalendar(c,data_de_hj.split("/"));
+        String[] data_fields = data_de_hj.split("/");
+        c = setCalendar(c,data_fields);
         c.add(Calendar.DAY_OF_MONTH, dif_entre_dias);
         int month=c.get(Calendar.MONTH)+1;
         int day=c.get(Calendar.DAY_OF_MONTH);
         String dayS= String.valueOf(day);
-        if(day<10){
+        if(day<10 && data_fields[2].length() < 2){
             dayS="0"+dayS;
         }
         return c.get(Calendar.YEAR)+"-"+month+"-"+dayS;
