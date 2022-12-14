@@ -26,6 +26,8 @@ public class HelloController {
     private FuncoesAuxiliares aux = new FuncoesAuxiliares();
     private Calendar primeiro_dia_de_aulas_cal = aux.setCalendar(Calendar.getInstance(),primeiro_dia_de_aulas.split("/"));
 
+    private List<String> colors = Arrays.asList("#1cceb1", "#97fca3", "#5d8ce9","#6cda72","#a1f2e5","#9799fc","#fcf897");
+
     @GetMapping("/cena")
     public String cena() {
         Curso a = new Curso("ola", "adu");
@@ -101,8 +103,7 @@ public class HelloController {
         List<String> datas = uc.getDatas();
         List<String> horas_repetidas = uc.getHoras_repetidas();
 
-        Random random = new Random();
-        int color = random.nextInt(0xffffff + 1);
+        String color = colors.remove(0);
 
         for (int i = 0; i < horarios_das_aulas.length; i++) {
             String dia_de_sem = dias_de_semana[i];
@@ -126,7 +127,7 @@ public class HelloController {
             String start = data_ajustada + "T" + hora_inicio_fim[0];
             String end = data_ajustada + "T" + hora_inicio_fim[1];
 
-            slots.add(new Slot_horario_semestral(id, text, start, end, String.format("#%06x", color)));
+            slots.add(new Slot_horario_semestral(id, text, start, end, color));
         }
         System.out.println(new Gson().toJson(slots));
         return new Gson().toJson(slots);
