@@ -101,6 +101,9 @@ public class HelloController {
         List<String> datas = uc.getDatas();
         List<String> horas_repetidas = uc.getHoras_repetidas();
 
+        Random random = new Random();
+        int color = random.nextInt(0xffffff + 1);
+
         for (int i = 0; i < horarios_das_aulas.length; i++) {
             String dia_de_sem = dias_de_semana[i];
             if (i>0) {dia_de_sem = dia_de_sem.substring(1);horarios_das_aulas[i]=horarios_das_aulas[i].substring(1);}
@@ -122,9 +125,6 @@ public class HelloController {
             String data_ajustada = aux.ajustar_data_horario_sem(dia_de_sem);
             String start = data_ajustada + "T" + hora_inicio_fim[0];
             String end = data_ajustada + "T" + hora_inicio_fim[1];
-
-            Random random = new Random();
-            int color = random.nextInt(0xffffff + 1);
 
             slots.add(new Slot_horario_semestral(id, text, start, end, String.format("#%06x", color)));
         }
