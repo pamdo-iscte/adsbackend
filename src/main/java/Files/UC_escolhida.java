@@ -23,12 +23,6 @@ public class UC_escolhida {
     @JsonProperty("unidade_de_execucao")
     private String unidade_de_execucao;
 
-    @JsonProperty("data_de_hoje")
-    private String data_de_hoje;
-
-    @JsonProperty("dia_da_sem_de_hoje")
-    private int dia_da_sem_de_hoje;
-
     public String getHoras() {
         return horas;
     }
@@ -53,11 +47,4 @@ public class UC_escolhida {
         return horas_repetidas;
     }
 
-    public String getData_de_hoje() {
-        return data_de_hoje;
-    }
-
-    public int getDia_da_sem_de_hoje() {
-        return dia_da_sem_de_hoje;
-    }
 }

@@ -65,12 +65,6 @@ public class HelloController {
         return new Gson().toJson(lista_de_aulas_com_aulas_unicas);
     }
 
-    @GetMapping("/enviar_slots_da_uc")
-    public String enviar_slots_da_uc(List<Slot_horario_semestral> slots) {
-        return new Gson().toJson(slots);
-    }
-
-
     @PostMapping("/post")
     public ResponseEntity<?> readPost(@RequestBody MetodosSelecionados json_metodos) throws InvocationTargetException, IllegalAccessException, InstantiationException {
         MetodosSelecionados metodos = new MetodosSelecionados(json_metodos.getMetodos_aulas(), json_metodos.getMetodos_avaliacoes());
@@ -93,36 +87,33 @@ public class HelloController {
         List<String> horas_repetidas = uc.getHoras_repetidas();
 
         Calendar calendar = Calendar.getInstance();
-//        if (primeiro_dia_de_aulas_cal == null) {
-//            System.out.println("ENTREI");
-//            String[] data_fields = primeiro_dia_de_aulas.split("/");
-//            primeiro_dia_de_aulas_cal = aux.setCalendar(calendar, data_fields);
-//        }
 
         for (int i = 0; i < horarios_das_aulas.length; i++) {
             String[] hora_inicio_fim = horarios_das_aulas[i].split(";");
-            System.out.println(hora_inicio_fim[0] + " "+ hora_inicio_fim[1]);
+//            System.out.println(hora_inicio_fim[0] + " "+ hora_inicio_fim[1]);
             String dia_de_sem = dias_de_semana[i];
-            String id = uc.getTurno() + dia_de_sem + hora_inicio_fim[0];
-            String text = uc.getUnidade_de_execucao() + " Semanas: ";
+            String id = uc.getTurno() + dia_de_sem + hora_inicio_fim[0]+hora_inicio_fim[1];
+            String text = uc.getUnidade_de_execucao() + "\nSemanas: ";
 
             List<Integer> number_of_weeks = aux.get_number_of_weeks_of_slot(datas, horas_repetidas, calendar, primeiro_dia_de_aulas_cal,
                     dia_de_sem, horarios_das_aulas[i]);
-            System.out.println(number_of_weeks);
-            text = text.concat(number_of_weeks.toString().replace("[", "").replace("]", ""));
+//            System.out.println(number_of_weeks);
+            Collections.sort(number_of_weeks);
+            System.out.println("Number of weeks: "+number_of_weeks);
+            System.out.println(aux.reduzir_list_number_of_weeks(number_of_weeks));
+//            text = text.concat(number_of_weeks.toString().replace("[", "").replace("]", ""));
+            text = text.concat(aux.reduzir_list_number_of_weeks(number_of_weeks));
 
             //"2022-12-06T10:30:00"
-            String data_ajustada = aux.ajustar_data_horario_sem(uc.getDia_da_sem_de_hoje(), uc.getData_de_hoje(), dia_de_sem);
+            if (i>0) {dia_de_sem = dia_de_sem.substring(1);hora_inicio_fim[0]=hora_inicio_fim[0].substring(1);}
+            String data_ajustada = aux.ajustar_data_horario_sem(dia_de_sem);
             String start = data_ajustada + "T" + hora_inicio_fim[0];
             String end = data_ajustada + "T" + hora_inicio_fim[1];
 
             slots.add(new Slot_horario_semestral(id, text, start, end));
         }
+        System.out.println(new Gson().toJson(slots));
         return new Gson().toJson(slots);
     }
 
-    @PostMapping("/teste")
-    public String teste(@RequestBody UC_escolhida uc) {
-        return uc.getHoras_repetidas().toString();
-    }
 }
