@@ -209,19 +209,19 @@ public class FuncoesAuxiliares {
         return s.split(",");
     }
 
-    public List<Integer> get_number_of_weeks_of_slot(List<String> datas, List<String> horas_repetidas, Calendar calendar, Calendar primeiro_dia_de_aulas_cal,
+    public List<Integer> get_number_of_weeks_of_slot(List<String> datas, List<String> horas_repetidas, Calendar primeiro_dia_de_aulas_cal,
                                        String dia_da_sem, String horarios_das_aulas) {
         List<Integer> number_of_weeks = new ArrayList<>();
         int sem_primeiro_dia_de_aulas = primeiro_dia_de_aulas_cal.get(Calendar.WEEK_OF_YEAR);
 //        System.out.println("PRMIERO     "+primeiro_dia_de_aulas_cal.getTime());
+        Calendar calendar = Calendar.getInstance();
         for(int j = 0; j < datas.size(); j++) {
             String[] data_fields = datas.get(j).split("/");
             calendar = setCalendar(calendar,data_fields);
-//            System.out.println("Data: "+datas.get(j) + " Calendar: "+calendar.getTime());
+            System.out.println("Data: "+datas.get(j) + " Calendar: "+calendar.getTime());
             int int_dia_de_semana = get_int_dia_de_semana(dia_da_sem);
-//            System.out.println(datas.get(j) + " "+dia_da_sem + " "+int_dia_de_semana);
-            int t1 = calendar.get(Calendar.DAY_OF_WEEK);
-//            System.out.println(t1);
+            System.out.println(datas.get(j) + " "+dia_da_sem + " "+int_dia_de_semana + " Calendar: "+calendar.get(Calendar.DAY_OF_WEEK));
+            System.out.println("Horas repetidas: "+horas_repetidas.get(j) + " Horatios das aulas: "+horarios_das_aulas);
             if (int_dia_de_semana == calendar.get(Calendar.DAY_OF_WEEK) &&
                     horas_repetidas.get(j).equals(horarios_das_aulas)) {
                 number_of_weeks.add(calendar.get(Calendar.WEEK_OF_YEAR) +1 - sem_primeiro_dia_de_aulas);

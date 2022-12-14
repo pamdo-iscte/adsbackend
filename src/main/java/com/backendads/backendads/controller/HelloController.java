@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.*;
+import java.nio.file.Files;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -60,9 +62,22 @@ public class HelloController {
     }
 
     @GetMapping("/get_aluno_professor")
-    public String aulas() {
-        List<Convert_Aula_CSV_to_JSON> lista_de_aulas_com_aulas_unicas = aux.get_Dias_da_semana(aux.getAulas());
-        return new Gson().toJson(lista_de_aulas_com_aulas_unicas);
+    public String aulas() throws IOException {
+        String str_file = Files.readString(Path.of("horario_sem_aulas_repetidas.json"));
+        if (str_file.equals("")) {
+            List<Convert_Aula_CSV_to_JSON> lista_de_aulas_com_aulas_unicas = aux.get_Dias_da_semana(aux.getAulas());
+            String str_list = new Gson().toJson(lista_de_aulas_com_aulas_unicas);
+            try {
+                FileWriter file = new FileWriter("horario_sem_aulas_repetidas.json");
+                file.write(str_list);
+                file.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return str_list;
+        }
+        else return str_file;
     }
 
     @PostMapping("/post")
@@ -86,16 +101,15 @@ public class HelloController {
         List<String> datas = uc.getDatas();
         List<String> horas_repetidas = uc.getHoras_repetidas();
 
-        Calendar calendar = Calendar.getInstance();
-
         for (int i = 0; i < horarios_das_aulas.length; i++) {
+            String dia_de_sem = dias_de_semana[i];
+            if (i>0) {dia_de_sem = dia_de_sem.substring(1);horarios_das_aulas[i]=horarios_das_aulas[i].substring(1);}
             String[] hora_inicio_fim = horarios_das_aulas[i].split(";");
 //            System.out.println(hora_inicio_fim[0] + " "+ hora_inicio_fim[1]);
-            String dia_de_sem = dias_de_semana[i];
             String id = uc.getTurno() + dia_de_sem + hora_inicio_fim[0]+hora_inicio_fim[1];
-            String text = uc.getUnidade_de_execucao() + "\nSemanas: ";
+            String text = uc.getUnidade_de_execucao() + "   Semanas: ";
 
-            List<Integer> number_of_weeks = aux.get_number_of_weeks_of_slot(datas, horas_repetidas, calendar, primeiro_dia_de_aulas_cal,
+            List<Integer> number_of_weeks = aux.get_number_of_weeks_of_slot(datas, horas_repetidas, primeiro_dia_de_aulas_cal,
                     dia_de_sem, horarios_das_aulas[i]);
 //            System.out.println(number_of_weeks);
             Collections.sort(number_of_weeks);
@@ -105,12 +119,14 @@ public class HelloController {
             text = text.concat(aux.reduzir_list_number_of_weeks(number_of_weeks));
 
             //"2022-12-06T10:30:00"
-            if (i>0) {dia_de_sem = dia_de_sem.substring(1);hora_inicio_fim[0]=hora_inicio_fim[0].substring(1);}
             String data_ajustada = aux.ajustar_data_horario_sem(dia_de_sem);
             String start = data_ajustada + "T" + hora_inicio_fim[0];
             String end = data_ajustada + "T" + hora_inicio_fim[1];
 
-            slots.add(new Slot_horario_semestral(id, text, start, end));
+            Random random = new Random();
+            int color = random.nextInt(0xffffff + 1);
+
+            slots.add(new Slot_horario_semestral(id, text, start, end, String.format("#%06x", color)));
         }
         System.out.println(new Gson().toJson(slots));
         return new Gson().toJson(slots);
