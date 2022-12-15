@@ -194,8 +194,8 @@ public class FuncoesAuxiliares {
     public String ajustar_data_horario_sem(String dia_da_sem_da_aula) {
         Calendar c = Calendar.getInstance();
         int dif_entre_dias = get_int_dia_de_semana(dia_da_sem_da_aula) - c.get(Calendar.DAY_OF_WEEK);
-        System.out.println("Dia da sem de hj: "+c.get(Calendar.DAY_OF_WEEK)+ " Dia da sem da aula: "+get_int_dia_de_semana(dia_da_sem_da_aula) +
-                " Diferença: "+dif_entre_dias);
+//        System.out.println("Dia da sem de hj: "+c.get(Calendar.DAY_OF_WEEK)+ " Dia da sem da aula: "+get_int_dia_de_semana(dia_da_sem_da_aula) +
+//                " Diferença: "+dif_entre_dias);
         c.add(Calendar.DAY_OF_MONTH, dif_entre_dias);
         int month=c.get(Calendar.MONTH)+1;
         int day=c.get(Calendar.DAY_OF_MONTH);
@@ -228,12 +228,13 @@ public class FuncoesAuxiliares {
                 number_of_weeks.add(calendar.get(Calendar.WEEK_OF_YEAR) +1 - sem_primeiro_dia_de_aulas);
             }
         }
-        System.out.println(number_of_weeks);
+//        System.out.println(number_of_weeks);
         return number_of_weeks;
     }
 
     public String reduzir_list_number_of_weeks(List<Integer> number_of_weeks) {
         String str_number_of_weeks = "";
+        if (number_of_weeks.size() == 1) return String.valueOf(number_of_weeks.get(0))+";";
         for (int j=0; j<number_of_weeks.size()-1;j++) {
             int next_iteration = j+1;
             int dif = number_of_weeks.get(next_iteration) - number_of_weeks.get(j);

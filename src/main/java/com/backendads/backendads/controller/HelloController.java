@@ -29,16 +29,6 @@ public class HelloController {
     private List<String> colors = Arrays.asList("#1cceb1", "#97fca3", "#5d8ce9","#6cda72","#a1f2e5","#9799fc","#fcf897");
     private int index_of_colors = 0;
 
-    @GetMapping("/cena")
-    public String cena() {
-        Curso a = new Curso("ola", "adu");
-        Curso b = new Curso("ola", "adu");
-        List<Curso> x = new ArrayList<>();
-        x.add(a);
-        x.add(b);
-        return new Gson().toJson(x);
-    }
-
     @GetMapping("/get_metodos")
     public String index() {
         List<String> result = new ArrayList<>();
@@ -116,15 +106,12 @@ public class HelloController {
             String[] hora_inicio_fim = horarios_das_aulas[i].split(";");
 //            System.out.println(hora_inicio_fim[0] + " "+ hora_inicio_fim[1]);
             String id = uc.getTurno() + dia_de_sem + hora_inicio_fim[0]+hora_inicio_fim[1];
-            String informacao_detalhada = uc.getUnidade_de_execucao() + "   Semanas: ";
-
+            String informacao_detalhada = uc.getUnidade_de_execucao() +" "+"   Semanas: ";
+            System.out.println("\nDia de sem: "+dia_de_sem+" Horas: "+horarios_das_aulas[i]);
             List<Integer> number_of_weeks = aux.get_number_of_weeks_of_slot(datas, horas_repetidas, primeiro_dia_de_aulas_cal,
                     dia_de_sem, horarios_das_aulas[i]);
-//            System.out.println(number_of_weeks);
             Collections.sort(number_of_weeks);
-//            System.out.println("Number of weeks: "+number_of_weeks);
 //            System.out.println(aux.reduzir_list_number_of_weeks(number_of_weeks));
-//            informacao_detalhada = informacao_detalhada.concat(number_of_weeks.toString().replace("[", "").replace("]", ""));
             String number_of_weeks_reduzida = aux.reduzir_list_number_of_weeks(number_of_weeks);
             informacao_detalhada = informacao_detalhada.concat(number_of_weeks_reduzida);
             String text = sigla + " " + number_of_weeks_reduzida;
