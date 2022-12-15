@@ -2,8 +2,6 @@ package com.backendads.backendads.controller;
 
 import Files.*;
 import com.google.gson.Gson;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,16 +35,10 @@ public class HelloController {
         Method[] methods_aulas = aulas.getDeclaredMethods();
         Method[] methods_avaliacoes = avaliacoes.getDeclaredMethods();
         String name = "";
-        for (Method metodo_aula : methods_aulas) {
-            name = metodo_aula.getName().replace("_", " ");
-            name = name.substring(0, 1).toUpperCase() + name.substring(1);
-            nomes_metodos_aulas.add(name);
-        }
-        for (Method metodo_avaliacao : methods_avaliacoes) {
-            name = metodo_avaliacao.getName().replace("_", " ");
-            name = name.substring(0, 1).toUpperCase() + name.substring(1);
-            nomes_metodos_avaliacoes.add(name);
-        }
+
+        for (Method metodo_aula : methods_aulas) nomes_metodos_aulas.add(aux.replace_nome_metodo(metodo_aula.getName()));
+        for (Method metodo_avaliacao : methods_avaliacoes) nomes_metodos_avaliacoes.add(aux.replace_nome_metodo(metodo_avaliacao.getName()));
+
         metodos.add(nomes_metodos_aulas);metodos.add(nomes_metodos_avaliacoes);
         return new Gson().toJson(metodos);
     }
@@ -72,16 +64,23 @@ public class HelloController {
         else return str_file;
     }
 
-    @PostMapping("/post")
-    public ResponseEntity<?> readPost(@RequestBody MetodosSelecionados json_metodos) throws InvocationTargetException, IllegalAccessException, InstantiationException {
-        MetodosSelecionados metodos = new MetodosSelecionados(json_metodos.getMetodos_aulas(), json_metodos.getMetodos_avaliacoes());
-        for (String n : metodos.getList_metodos_aulas()) {
-            System.out.println(n);
+    @PostMapping("/obter_metodos_selecionados")
+    public String obter_metodos_selecionados(@RequestBody MetodosSelecionados json_metodos) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+        List<String> aulas = json_metodos.getAulas();
+        System.out.println("Aulas antes do replace: "+aulas);
+        List<String> avaliacoes = json_metodos.getAvaliacoes();
+        System.out.println("Avaliacoes antes do replace: "+avaliacoes);
+        aulas.replaceAll(s -> (s.substring(0, 1).toLowerCase() + s.substring(1)).replace(" ", "_"));
+        avaliacoes.replaceAll(s -> (s.substring(0, 1).toLowerCase() + s.substring(1)).replace(" ", "_"));
+
+        System.out.println("Metodos Aulas: "+aulas);
+        for (String m : aulas) {
+            aux.invoke_method(m);
         }
-        for (String m : metodos.getList_metodos_avaliacoes())
-            System.out.println(m);
-        aux.invoke_method("presevar_caracteristica_da_aula");
-        return new ResponseEntity<>("CHEGOU", HttpStatus.OK);
+//        for (String m : avaliacoes) {
+//            aux.invoke_method(m);
+//        }
+        return "";
     }
 
     @PostMapping("/obter_aulas_da_UC_escolhida")

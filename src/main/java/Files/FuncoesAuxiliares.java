@@ -168,7 +168,8 @@ public class FuncoesAuxiliares {
         Method[] metodos = class_metodos_aulas.getDeclaredMethods();
         for (Method m: metodos) {
             if (m.getName().equals(name)) {
-                System.out.println(m.invoke(t,1));
+                System.out.println(m.getName().equals(name));
+                m.invoke(t,1);
             }
         }
     }
@@ -283,6 +284,11 @@ public class FuncoesAuxiliares {
             sigla = sigla.concat(c);
         }
         return sigla;
+    }
+
+    public String replace_nome_metodo(String metodo) {
+        String name = metodo.replace("_", " ");
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 }
 

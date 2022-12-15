@@ -8,11 +8,11 @@ public class MetodosParaAulas {
         return temp;
     }
 
-    public void garantir_que_haja_lugar_para_todos() {
+    public void garantir_que_haja_lugar_para_todos(int i) {
         System.out.println("MetodosParaAulas: method2");
     }
 
-    public void menor_distancia_entre_salas_numa_aula() {
+    public void menor_distancia_entre_salas_numa_aula(int i) {
         System.out.println("MetodosParaAulas: menor_distancia_entre_salas_numa_aula");
     }
 
