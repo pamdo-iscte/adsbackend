@@ -2,7 +2,6 @@ package com.backendads.backendads.controller;
 
 import Files.*;
 import com.google.gson.Gson;
-import com.opencsv.CSVReader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +15,6 @@ import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.*;
 import java.nio.file.Files;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
 @RestController
@@ -30,28 +27,28 @@ public class HelloController {
     private int index_of_colors = 0;
 
     @GetMapping("/get_metodos")
-    public String index() {
-        List<String> result = new ArrayList<>();
-        Class<MetodosParaAulas> test = MetodosParaAulas.class;
-        Class<MetodosdeAvaliacao> ava = MetodosdeAvaliacao.class;
-        Method[] methods = test.getDeclaredMethods();
-        Method[] m = ava.getDeclaredMethods();
-        String name = "";
-        result.add("\nMétodos para aulas: \n");
-        for (Method m1 : methods) {
-            name = m1.getName().replace("_", " ");
-            name = name.substring(0, 1).toUpperCase() + name.substring(1);
-            result.add(name);
-        }
-        result.add("\nMétodos para avaliações: \n");
-        for (Method m2 : m) {
-            name = m2.getName().replace("_", " ");
-            name = name.substring(0, 1).toUpperCase() + name.substring(1);
-            result.add(name);
-        }
+    public String get_metodos() {
+        List<List<String>> metodos = new ArrayList<>();
+        List<String> nomes_metodos_aulas = new ArrayList<>();
+        List<String> nomes_metodos_avaliacoes = new ArrayList<>();
 
-        String json = new Gson().toJson(result);
-        return json;
+        Class<MetodosParaAulas> aulas = MetodosParaAulas.class;
+        Class<MetodosdeAvaliacao> avaliacoes = MetodosdeAvaliacao.class;
+        Method[] methods_aulas = aulas.getDeclaredMethods();
+        Method[] methods_avaliacoes = avaliacoes.getDeclaredMethods();
+        String name = "";
+        for (Method metodo_aula : methods_aulas) {
+            name = metodo_aula.getName().replace("_", " ");
+            name = name.substring(0, 1).toUpperCase() + name.substring(1);
+            nomes_metodos_aulas.add(name);
+        }
+        for (Method metodo_avaliacao : methods_avaliacoes) {
+            name = metodo_avaliacao.getName().replace("_", " ");
+            name = name.substring(0, 1).toUpperCase() + name.substring(1);
+            nomes_metodos_avaliacoes.add(name);
+        }
+        metodos.add(nomes_metodos_aulas);metodos.add(nomes_metodos_avaliacoes);
+        return new Gson().toJson(metodos);
     }
 
     @GetMapping("/get_aluno_professor")
