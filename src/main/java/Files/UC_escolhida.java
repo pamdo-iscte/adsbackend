@@ -20,6 +20,9 @@ public class UC_escolhida {
     @JsonProperty("turno")
     private String turno;
 
+    @JsonProperty("curso")
+    private String curso;
+
     @JsonProperty("unidade_de_execucao")
     private String unidade_de_execucao;
 
@@ -47,4 +50,7 @@ public class UC_escolhida {
         return horas_repetidas;
     }
 
+    public String getCurso() {
+        return curso;
+    }
 }

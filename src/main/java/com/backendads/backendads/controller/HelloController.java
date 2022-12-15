@@ -106,15 +106,15 @@ public class HelloController {
             String[] hora_inicio_fim = horarios_das_aulas[i].split(";");
 //            System.out.println(hora_inicio_fim[0] + " "+ hora_inicio_fim[1]);
             String id = uc.getTurno() + dia_de_sem + hora_inicio_fim[0]+hora_inicio_fim[1];
-            String informacao_detalhada = uc.getUnidade_de_execucao() +" "+"   Semanas: ";
-            System.out.println("\nDia de sem: "+dia_de_sem+" Horas: "+horarios_das_aulas[i]);
+            String informacao_detalhada = uc.getUnidade_de_execucao() +" | Curso(s): "+uc.getCurso()+" | Semanas: ";
+//            System.out.println("\nDia de sem: "+dia_de_sem+" Horas: "+horarios_das_aulas[i]);
             List<Integer> number_of_weeks = aux.get_number_of_weeks_of_slot(datas, horas_repetidas, primeiro_dia_de_aulas_cal,
                     dia_de_sem, horarios_das_aulas[i]);
             Collections.sort(number_of_weeks);
 //            System.out.println(aux.reduzir_list_number_of_weeks(number_of_weeks));
             String number_of_weeks_reduzida = aux.reduzir_list_number_of_weeks(number_of_weeks);
             informacao_detalhada = informacao_detalhada.concat(number_of_weeks_reduzida);
-            String text = sigla + " " + number_of_weeks_reduzida;
+            String text = sigla + " | " + number_of_weeks_reduzida;
 
             //"2022-12-06T10:30:00"
             String data_ajustada = aux.ajustar_data_horario_sem(dia_de_sem);
@@ -123,7 +123,7 @@ public class HelloController {
 
             slots.add(new Slot_horario_semestral(id, text, start, end, color,informacao_detalhada));
         }
-        System.out.println(new Gson().toJson(slots));
+//        System.out.println(new Gson().toJson(slots));
         return new Gson().toJson(slots);
     }
 
