@@ -3,6 +3,7 @@ package Files;
 import com.opencsv.CSVReader;
 
 import java.io.FileReader;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -218,15 +219,16 @@ public class FuncoesAuxiliares {
         for(int j = 0; j < datas.size(); j++) {
             String[] data_fields = datas.get(j).split("/");
             calendar = setCalendar(calendar,data_fields);
-            System.out.println("Data: "+datas.get(j) + " Calendar: "+calendar.getTime());
+//            System.out.println("Data: "+datas.get(j) + " Calendar: "+calendar.getTime());
             int int_dia_de_semana = get_int_dia_de_semana(dia_da_sem);
-            System.out.println(datas.get(j) + " "+dia_da_sem + " "+int_dia_de_semana + " Calendar: "+calendar.get(Calendar.DAY_OF_WEEK));
-            System.out.println("Horas repetidas: "+horas_repetidas.get(j) + " Horatios das aulas: "+horarios_das_aulas);
+//            System.out.println(datas.get(j) + " "+dia_da_sem + " "+int_dia_de_semana + " Calendar: "+calendar.get(Calendar.DAY_OF_WEEK));
+//            System.out.println("Horas repetidas: "+horas_repetidas.get(j) + " Horatios das aulas: "+horarios_das_aulas);
             if (int_dia_de_semana == calendar.get(Calendar.DAY_OF_WEEK) &&
                     horas_repetidas.get(j).equals(horarios_das_aulas)) {
                 number_of_weeks.add(calendar.get(Calendar.WEEK_OF_YEAR) +1 - sem_primeiro_dia_de_aulas);
             }
         }
+        System.out.println(number_of_weeks);
         return number_of_weeks;
     }
 
@@ -251,5 +253,35 @@ public class FuncoesAuxiliares {
         return str_number_of_weeks;
     }
 
+    public String setColor_evento(List<String> colors, int index_of_colors) {
+        String color="";
+        if (index_of_colors >= colors.size()) {
+            Random random = new Random();
+            int nextInt = random.nextInt(0xffffff + 1);
+            color = String.format("#%06x", nextInt);
+        } else {
+            color = colors.get(index_of_colors);
+        }
+        return color;
+    }
+
+    public String substring_a_str(String str) {
+        return str.substring(1);
+    }
+
+    public String obter_sigla_da_uc(String uc) {
+        List<String> palavras_para_ignorar = Arrays.asList("de","e","dos");
+        List<String> chars_para_ignorar = Arrays.asList("(",")","[","]");
+        String[] fields = uc.split(" ");
+        String sigla = "";
+
+        for (String f: fields) {
+            if (palavras_para_ignorar.contains(f)) continue;
+            String c = String.valueOf(Character.toUpperCase(f.charAt(0)));
+            if (chars_para_ignorar.contains(c)) continue;
+            sigla = sigla.concat(c);
+        }
+        return sigla;
+    }
 }
 
