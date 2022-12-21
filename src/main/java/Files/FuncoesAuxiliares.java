@@ -162,17 +162,17 @@ public class FuncoesAuxiliares {
 //    }
 
     //Apenas para testar
-    public void invoke_method(String name) throws InvocationTargetException, IllegalAccessException, InstantiationException {
-        Class<MetodosParaAulas> class_metodos_aulas = MetodosParaAulas.class;
-        Object t = class_metodos_aulas.newInstance();
-        Method[] metodos = class_metodos_aulas.getDeclaredMethods();
-        for (Method m: metodos) {
-            if (m.getName().equals(name)) {
-                System.out.println(m.getName().equals(name));
-                m.invoke(t,1);
-            }
-        }
-    }
+//    public void invoke_method(String name) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+//        Class<MetodosParaAulas> class_metodos_aulas = MetodosParaAulas.class;
+//        Object t = class_metodos_aulas.newInstance();
+//        Method[] metodos = class_metodos_aulas.getDeclaredMethods();
+//        for (Method m: metodos) {
+//            if (m.getName().equals(name)) {
+//                System.out.println(m.getName().equals(name));
+//                m.invoke(t,1);
+//            }
+//        }
+//    }
 
     public Calendar setCalendar(Calendar calendar, String[] data_fields) {
         calendar.set(Integer.parseInt(data_fields[0]),Integer.parseInt(data_fields[1])-1,Integer.parseInt(data_fields[2]));
