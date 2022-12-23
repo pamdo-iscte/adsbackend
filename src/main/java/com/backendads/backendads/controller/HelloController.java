@@ -2,10 +2,9 @@ package com.backendads.backendads.controller;
 
 import Files.*;
 import com.google.gson.Gson;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +23,7 @@ public class HelloController {
     private List<String> colors = Arrays.asList("#1cceb1", "#97fca3", "#5d8ce9","#6cda72","#a1f2e5","#9799fc","#fcf897");
     private int index_of_colors = 0;
 
+    private final String dir="HorariosCriados";
     private Main main;
 
     @GetMapping("/get_metodos")
@@ -122,6 +122,52 @@ public class HelloController {
     @GetMapping("/carregar_pagina_servicos_academicos")
     public void carregar_pagina_servicos_academicos() {
         main = new Main();
+    }
+
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file) {
+
+        String fileName = file.getOriginalFilename();
+        System.out.println(fileName);
+        String send = new Gson().toJson("File uploaded successfully.");
+        return ResponseEntity.ok(send);
+    }
+
+    @PostMapping("/saveclasses")
+    public String saveclasses(@RequestBody ReceiveClasses slots) throws IOException {
+        System.out.println(slots.getSlots());
+        //FileWriter myWriter = new FileWriter(dir + "\\"+slots.getNum()+".txt");
+        String nodeValue = "i am mostafa";
+
+        // you want to output to file
+        // BufferedWriter writer = new BufferedWriter(new FileWriter(file3, true));
+        // but let's print to console while debugging
+        BufferedWriter writer = new BufferedWriter(new FileWriter(dir + "\\"+slots.getNum()+".txt",false));
+        String[] words = nodeValue.split(" ");
+        for (Slot_horario_semestral slot: slots.getSlots()) {
+            writer.write(slot.toString());
+            writer.newLine();
+        }
+        writer.close();
+        return new Gson().toJson("OLA");
+    }
+
+    @PostMapping("/teste")
+    public String teste() {
+        try {
+            File myObj = new File("HorariosCriados/p.txt");
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                System.out.println(data);
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        return "OLA";
     }
 
 }
