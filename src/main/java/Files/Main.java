@@ -59,16 +59,15 @@ public class Main {
 */
 		Slot s = slots.get(1);
 		Evento e = s.eventos.get(7); // slot 1, evento 7 é o q tem bues pessoas
-		List<Sala> sala_to_return = new ArrayList<>();
+//		List<Sala> sala_to_return = new ArrayList<>();
 		//for (Slot s : slots) {
 		//for (Evento e : s.eventos) {
-		System.out.println("\n novo evento");
-		menorNumSalas(s.salas_livres, (Avaliacao) e, s);
+//		System.out.println("\n novo evento");
+//		menorNumSalas(s.salas_livres, (Avaliacao) e, s);
 		//nearest_room_for_evaluation(s.salas_livres, e.getNumero_de_alunos(), sala_to_return);
-		//doMethods(s.salas_livres, (Aula) e, s, metodos);
+//		doMethods(s.salas_livres, (Aula) e, s, metodos_aulas);
 		//}
 		//}
-
 	}
 
 	private List<Sala> readFile_caracterizacaoDasSalas() {
@@ -129,7 +128,7 @@ public class Main {
 		}
 	}
 
-	private List<Sala> nearest_room_for_evaluation(List<Sala> salas, int numero_alunos, List<Sala> sala_to_return) {
+	public List<Sala> nearest_room_for_evaluation(List<Sala> salas, int numero_alunos, List<Sala> sala_to_return) {
 
 		int distance = salas.get(0).getCapacidade_exame() - numero_alunos;
 		int index=0;
@@ -157,6 +156,24 @@ public class Main {
 		return sala_to_return;
 	}
 
+	public List<Sala> dividirAlunos(List<Sala> salas_livres, int dividir, Avaliacao aval) {
+		int num = aval.getNumero_de_alunos()/dividir;
+		List<Sala> conjunto_salas = new ArrayList<>();
+
+		for (Sala s : salas_livres) {
+			if (s.getCapacidade_exame() > 0) {
+				if(conjunto_salas.size() < dividir) {
+					if (s.getCapacidade_exame() >= num) {
+						conjunto_salas.add(s);
+					}}
+			}
+		}
+		if(conjunto_salas.size() < dividir) {
+			conjunto_salas.clear();
+		}
+		return conjunto_salas;
+	}
+
 	private void check_salas_para_avaliacao(Avaliacao a, Slot slot) {
 		List<Sala> salas_livres = slot.salas_livres;
 		String estado_pedido = a.getEstado_pedido_sala();
@@ -176,7 +193,7 @@ public class Main {
 		}
 	}
 
-	private List<Sala> salas_match_caracteristica(String caracteristica, List<Sala> salas_livres) {
+	public List<Sala> salas_match_caracteristica(String caracteristica, List<Sala> salas_livres) {
 		List<Sala> salas = new ArrayList<>();
 		//System.out.println("caracteristica pedida "+caracteristica );
 		for (Sala s : salas_livres) {
@@ -221,10 +238,13 @@ public class Main {
 		return null;
 	}
 
+	public List<Slot> getSlots() {
+		return slots;
+	}
 
-
-
-
+	public String[] getColumns() {
+		return columns;
+	}
 
 	private Sala doMethods(List<Sala> sala_apos_metodo, Aula a, Slot help, List<String> list_methods) {
 		System.out.println(a.caracteristica + a.inscritos + a.unidade_de_execucao);
@@ -247,35 +267,21 @@ public class Main {
 			for (Method m: metodos) {
 				if (m.getName().equals(list_methods.get(0))) {
 					Parameter[] parameters = m.getParameters();
-					if (parameters.length == 3)
-						m.invoke(t,sala_apos_metodo,a,help);
-					System.out.println(m.getName().equals(list_methods.get(0)));
-					m.invoke(t,1);
+					if (parameters.length == 4)
+						m.invoke(t,sala_apos_metodo,a,help,this);
+					else {
+						m.invoke(t,a,help,this);
+					}
 				}
 			}
 
-		}catch (Exception e){}
-
-
-		if (list_methods.get(0).equals("caracteristica")) { // aqui o nome dps logo se vê
-
-			salas_possiveis = keepCaracteristic(sala_apos_metodo, a, help);
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 
-		if (list_methods.get(0).equals("evitar sobrelotaçao")) { // aqui o nome dps logo se vê
-
-			salas_possiveis = evitarSobrelotacao(sala_apos_metodo, a, help);
-		}
-		if (list_methods.get(0).equals("menor distancia")) { // aqui o nome dps logo se vê
-			salas_possiveis = sala_menor_distancia(a, help);
-		}
-
-		assert salas_possiveis != null;
-		if (salas_possiveis.size()== 0) {
-			salas_possiveis = sala_apos_metodo;
-			if (sala_apos_metodo.size()==0) {
-				salas_possiveis = resolver_conflito(a,help);
-			}
+		salas_possiveis = sala_apos_metodo;
+		if (sala_apos_metodo.size()==0) {
+			salas_possiveis = resolver_conflito(a,help);
 		}
 
 		if (list_methods.size()>1) {
@@ -308,64 +314,6 @@ public class Main {
 			System.out.println("sala escolhida "+sala_escolhida);
 			return sala_escolhida;
 		}
-	}
-
-
-
-	private List<Sala> evitarSobrelotacao(List<Sala> salas_livres, Aula aula, Slot slot) {
-		List<Sala> salas_to_return = new ArrayList<>();
-		int difference = 30;
-		for (Sala s: salas_livres) {
-			int temp_dif = s.getCapacidade_normal() - aula.inscritos;// aula.turno.inscritos
-			if (s.getCaracteristicas().size()!=1 && temp_dif >= 0 && temp_dif < difference) {
-				salas_to_return.add(s);
-			}
-		}
-		/*for(Sala sa: salas_to_return) {
-			System.out.println(sa.getNome() + " com " + sa.getCapacidade_normal());
-		}*/
-		return salas_to_return;
-	}
-
-
-
-	private List<Sala> keepCaracteristic(List<Sala> salas_livres, Aula aula, Slot slot) {
-		//List<Sala> salas_livres = slot.salas_livres;
-		String caracteristica_aula1 = aula.caracteristica;
-		String caracteristica_aula = caracteristica_aula1.replace(" ", "_");
-
-
-		if (caracteristica_aula.equals("Sala/anfiteatro_aulas")) {
-			caracteristica_aula = "";
-			for (int i = 0; i < columns.length; i++) {
-				if ((columns[i].contains("Sala") && !columns[i].equals("Sala_de_Arquitectura"))
-						|| columns[i].equals("Anfiteatro_aulas")) {
-					caracteristica_aula += " " + columns[i];
-				}
-			}
-		}
-
-		if (caracteristica_aula.equals("Lab_ISTA")) {
-
-			caracteristica_aula = "";
-			for (int i = 0; i < columns.length; i++) {
-				if ((columns[i].contains("Laboratório") && !columns[i].equals("Laboratório_de_Jornalismo"))) {
-					caracteristica_aula += " " + columns[i];
-				}
-			}
-		}
-
-		List<Sala> salas_livres_com_caracteristica = salas_match_caracteristica(caracteristica_aula, salas_livres);
-		System.out.println("\n");
-		System.out.println("Aula "+caracteristica_aula+" " + aula.inscritos);
-		if(caracteristica_aula.equals("Não_necessita_de_sala")) {
-			System.out.println("Não necessita de sala");
-			return null;
-		}
-		List<Sala> salas_to_return = new ArrayList<>();
-		salas_to_return = salas_livres_com_caracteristica;
-
-		return salas_to_return;
 	}
 
 
@@ -402,109 +350,11 @@ public class Main {
 
 
 
-	public List<Sala> sala_menor_distancia(Aula aula, Slot slot){
-		List<Sala> salas_return = new ArrayList<>();
-		for(Slot slotes: slots) {
-			if(slot.data.equals(slotes.data) && slot.hora_inicio.equals(slotes.hora_final)) {
-				//System.out.println();
-				List<Evento> eventos = slotes.eventos;
-				for(Evento e: eventos) {
-					//System.out.println("antes do if");
-					if(e instanceof Aula) {
-						//System.out.println("dentro do if");
-						Aula aula_anterior = (Aula) e;
-						if(aula.getTurno().equals(aula_anterior.getTurno())){
-							Sala sala_anterior = aula_anterior.sala;
-							if(slot.salas_livres.contains(sala_anterior)){
-								if(aula_anterior.caracteristica.equals(aula.caracteristica)) {
-									salas_return.add(sala_anterior);
-									System.out.println("Sala "+salas_return.get(0));
-									return salas_return;
-								}
-							}
-							else {
-								for(Sala sala: slot.salas_livres) {
-									if(sala.getCaracteristicas().equals(aula.getCaracteristica())) {
-										if(sala.getEdificio().equals(aula.getSala().getEdificio())) {
-											salas_return.add(sala);
-											System.out.println("caso especial");
-
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		if(salas_return.size() < 1) {
-			//System.out.println("Sala "+salas_return.get(0));
-			//System.out.println("n há salas");
-			return slot.salas_livres;
-		}
-		System.out.println("Sala "+salas_return.get(0));
-		return salas_return;
-	}
-
-
-
-
 
 	//métodos para avaliações
 
 	//menor numero de salas
 
-	private List<List<Sala>> menorNumSalas(List<Sala> salas_livres, Avaliacao aval, Slot slot) {
-		List<List<Sala>> salas_to_return = new ArrayList<>();
-		if (aval.getNumero_de_alunos() == 0) {
-			System.out.println("não há alunos");
-			return null;
-		}
-
-		//dar um aviso qq
-		if(!aval.getData().equals(aval.getData_final())) {
-			System.out.println("Tem datas diferentes");
-			return null;
-		}
-
-		List<Sala> aux = new ArrayList<>();
-		List<Sala> aux2 = new ArrayList<>();
-
-		for(Sala s: salas_livres) {
-			aux2.add(s);
-		}
-
-		List<Sala> conjunto_salas = new ArrayList<>();
-
-		int i = 1;
-		int[] indexes = new int[6];
-		indexes[0] = 0;
-
-		while (i < 6) {
-			conjunto_salas = nearest_room_for_evaluation(aux2, aval.getNumero_de_alunos(),aux);
-			for(Sala s: conjunto_salas) {
-				aux2.remove(s);
-			}
-			indexes[i] = conjunto_salas.size();
-			i++;
-		}
-
-		i = 0;
-		while (i < 5) {
-			salas_to_return.add(conjunto_salas.subList(indexes[i], indexes[i+1]));
-			i++;
-		}
-
-		for (List<Sala> sa : salas_to_return) {
-			System.out.println(".");
-			System.out.println(aval);
-			for (Sala s : sa) {
-				System.out.println(s);
-			}
-		}
-		return salas_to_return;
-	}
 
 
 
@@ -519,75 +369,6 @@ public class Main {
 
 	//  distribuir de igual forma os alunos pelas salas
 
-	private List<List<Sala>> igualForma(List<Sala> salas_livres, Avaliacao aval, Slot slot) { //dar int div cm parametro?
-		List<List<Sala>> salas_to_return = new ArrayList<>();
-		List<Sala> conjunto_salas = new ArrayList<>();
-		System.out.println(aval);
-		if (aval.getNumero_de_alunos() == 0) {
-			System.out.println("não há alunos");
-			return null;
-		}
-
-		if(!aval.getData().equals(aval.getData_final())) {
-			System.out.println("Tem datas diferentes");
-			return null;
-		}
-
-		int dividir = 1;
-		List<Sala> aux = new ArrayList<>();
-		for(Sala s: salas_livres) {
-			aux.add(s);
-		}
-
-		while(salas_to_return.size()<5)
-		{
-			conjunto_salas = dividirAlunos(aux, dividir, aval);
-			if(conjunto_salas.size() == 0) {
-				dividir++;
-				aux.clear();
-				for(Sala s: salas_livres) {
-					aux.add(s);
-				}
-				System.out.println("Impossivel de fazer essa divisão, dividir alunos agora em " + dividir);
-
-			}else {
-				salas_to_return.add(conjunto_salas);
-				for(Sala s: conjunto_salas) {
-					aux.remove(s);
-				}
-			}
-		}
-		for(List<Sala> l: salas_to_return) {
-			System.out.println(".");
-			for (Sala d: l) {
-				System.out.println(d);
-			}
-		}
-
-		return salas_to_return;
-	}
-
-
-
-
-
-	private List<Sala> dividirAlunos(List<Sala> salas_livres, int dividir, Avaliacao aval) {
-		int num = aval.getNumero_de_alunos()/dividir;
-		List<Sala> conjunto_salas = new ArrayList<>();
-
-		for (Sala s : salas_livres) {
-			if (s.getCapacidade_exame() > 0) {
-				if(conjunto_salas.size() < dividir) {
-					if (s.getCapacidade_exame() >= num) {
-						conjunto_salas.add(s);
-					}}
-			}
-		}
-		if(conjunto_salas.size() < dividir) {
-			conjunto_salas.clear();
-		}
-		return conjunto_salas;
-	}
 
 
 
