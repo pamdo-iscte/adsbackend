@@ -5,12 +5,7 @@ import java.util.List;
 
 public class MetodosParaAulas {
 
-    private List<Slot> slots = new ArrayList<>();
-    private String[] columns = null;
-
-
-
-    private List<Sala> evitar_sobrelotacao(List<Sala> salas_livres, Aula aula, Slot slot) {
+    public List<Sala> evitar_sobrelotacao(List<Sala> salas_livres, Aula aula, Slot slot, Main main) {
         List<Sala> salas_to_return = new ArrayList<>();
         int difference = 30;
         for (Sala s: salas_livres) {
@@ -25,7 +20,9 @@ public class MetodosParaAulas {
         return salas_to_return;
     }
 
-    private List<Sala> manter_caracteristica(List<Sala> salas_livres, Aula aula, Slot slot) {
+    public List<Sala> manter_caracteristica(List<Sala> salas_livres, Aula aula, Slot slot, Main main) {
+        System.out.println("Aulas manter caracteristica");
+        String[] columns = main.getColumns();
         //List<Sala> salas_livres = slot.salas_livres;
         String caracteristica_aula1 = aula.caracteristica;
         String caracteristica_aula = caracteristica_aula1.replace(" ", "_");
@@ -51,20 +48,22 @@ public class MetodosParaAulas {
             }
         }
 
-//        List<Sala> salas_livres_com_caracteristica = salas_match_caracteristica(caracteristica_aula, salas_livres);
-//        System.out.println("\n");
-//        System.out.println("Aula "+caracteristica_aula+" " + aula.inscritos);
-//        if(caracteristica_aula.equals("Não_necessita_de_sala")) {
-//            System.out.println("Não necessita de sala");
-//            return null;
-//        }
+        List<Sala> salas_livres_com_caracteristica = main.salas_match_caracteristica(caracteristica_aula, salas_livres);
+        System.out.println("\n");
+        System.out.println("Aula "+caracteristica_aula+" " + aula.inscritos);
+        if(caracteristica_aula.equals("Não_necessita_de_sala")) {
+            System.out.println("Não necessita de sala");
+            return null;
+        }
         List<Sala> salas_to_return = new ArrayList<>();
-//        salas_to_return = salas_livres_com_caracteristica;
+        salas_to_return = salas_livres_com_caracteristica;
 
         return salas_to_return;
     }
 
-    public List<Sala> menor_distancia_entre_salas(Aula aula, Slot slot){
+    public List<Sala> menor_distancia_entre_salas(Aula aula, Slot slot, Main main){
+        System.out.println("Aulas menor distancia");
+        List<Slot> slots = main.getSlots();
         List<Sala> salas_return = new ArrayList<>();
         for(Slot slotes: slots) {
             if(slot.data.equals(slotes.data) && slot.hora_inicio.equals(slotes.hora_final)) {

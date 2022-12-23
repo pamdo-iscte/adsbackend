@@ -28,17 +28,18 @@ public class HelloController {
 
     @GetMapping("/get_metodos")
     public String get_metodos() {
+        main = new Main();
         List<List<String>> metodos = new ArrayList<>();
         List<String> nomes_metodos_aulas = new ArrayList<>();
         List<String> nomes_metodos_avaliacoes = new ArrayList<>();
 
         Class<MetodosParaAulas> aulas = MetodosParaAulas.class;
-//        Class<MetodosdeAvaliacao> avaliacoes = MetodosdeAvaliacao.class;
+        Class<MetodosdeAvaliacao> avaliacoes = MetodosdeAvaliacao.class;
         Method[] methods_aulas = aulas.getDeclaredMethods();
-//        Method[] methods_avaliacoes = avaliacoes.getDeclaredMethods();
+        Method[] methods_avaliacoes = avaliacoes.getDeclaredMethods();
 
         for (Method metodo_aula : methods_aulas) nomes_metodos_aulas.add(aux.replace_nome_metodo(metodo_aula.getName()));
-//        for (Method metodo_avaliacao : methods_avaliacoes) nomes_metodos_avaliacoes.add(aux.replace_nome_metodo(metodo_avaliacao.getName()));
+        for (Method metodo_avaliacao : methods_avaliacoes) nomes_metodos_avaliacoes.add(aux.replace_nome_metodo(metodo_avaliacao.getName()));
 
         metodos.add(nomes_metodos_aulas);metodos.add(nomes_metodos_avaliacoes);
         return new Gson().toJson(metodos);
@@ -68,14 +69,16 @@ public class HelloController {
     @PostMapping("/obter_metodos_selecionados")
     public String obter_metodos_selecionados(@RequestBody MetodosSelecionados json_metodos) throws InvocationTargetException, IllegalAccessException, InstantiationException {
         List<String> aulas = json_metodos.getAulas();
-//        System.out.println("Aulas antes do replace: "+aulas);
-//        List<String> avaliacoes = json_metodos.getAvaliacoes();
-//        System.out.println("Avaliacoes antes do replace: "+avaliacoes);
+        System.out.println("Aulas antes do replace: "+aulas);
+        List<String> avaliacoes = json_metodos.getAvaliacoes();
+        System.out.println("Avaliacoes antes do replace: "+avaliacoes);
         aulas.replaceAll(s -> (s.substring(0, 1).toLowerCase() + s.substring(1)).replace(" ", "_"));
-//        avaliacoes.replaceAll(s -> (s.substring(0, 1).toLowerCase() + s.substring(1)).replace(" ", "_"));
+        avaliacoes.replaceAll(s -> (s.substring(0, 1).toLowerCase() + s.substring(1)).replace(" ", "_"));
 
         System.out.println("Metodos Aulas: "+aulas);
-        main.start(aulas,new ArrayList<>());
+        System.out.println("Metodos Aulas: "+avaliacoes);
+        main.start(aulas,avaliacoes);
+        //objetivo é dar return ao filename do horario criado
         return "";
     }
 
@@ -119,9 +122,9 @@ public class HelloController {
         return new Gson().toJson(slots);
     }
 
-    @GetMapping("/carregar_pagina_servicos_academicos")
-    public void carregar_pagina_servicos_academicos() {
-        main = new Main();
-    }
+//    @GetMapping("/carregar_pagina_servicos_academicos")
+//    public void carregar_pagina_servicos_academicos() {
+//        main = new Main();
+//    }
 
 }
