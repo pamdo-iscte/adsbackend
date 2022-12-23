@@ -28,9 +28,12 @@ public class Avaliacao extends Evento {
         this.periodo_inscricao = line[7];
         this.estado_pedido_sala = line[10];
     }
+    
+    public List<Sala> getSalas() {
+		return salas;
+	}
 
-
-    public void setSalas(List<Sala> salas) {
+	public void setSalas(List<Sala> salas) {
         this.salas = salas;
     }
 

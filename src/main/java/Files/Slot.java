@@ -25,6 +25,14 @@ public class Slot {
 		return "Slot [data=" + data + ", hora_inicio=" + hora_inicio + ", hora_final=" + hora_final + ", eventos="
 				+ eventos + ", salas_livres=" + salas_livres + "]";
 	}
+
+	public List<Sala> getSalas_livres() {
+		return salas_livres;
+	}
+
+	public void setSalas_livres(List<Sala> salas_livres) {
+		this.salas_livres = salas_livres;
+	}
 	
 	
 	
