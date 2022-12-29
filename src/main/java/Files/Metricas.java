@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Metricas {
 
-	List<Integer> salas_livres = new ArrayList<Integer>();
+	List<Integer> salas_livres = new ArrayList<>();
 	
 //é preciso meter as salas das aulas a null se nao for feito de forma automatica!
 	public Metricas(List<Slot> slots) {
