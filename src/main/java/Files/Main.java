@@ -338,13 +338,27 @@ public class Main {
 	}
 
 
+	public void aulas_seguidas(Aula aula_anterior, List<Slot> slots, Sala sala_escolhida){
+		for(Slot slotes: slots) {
+			if(aula_anterior.getData().equals(slotes.getData()) && aula_anterior.hora_final.equals(slotes.hora_inicio)) {
+				List<Evento> eventos = slotes.eventos;
+				for(Evento e: eventos) {
+					if(e instanceof Aula) {
+						Aula aula_seguinte = (Aula) e;
+						if(aula_seguinte.getTurno().equals(aula_anterior.getTurno())){
+							if(aula_anterior.getCaracteristica().equals(aula_seguinte.getCaracteristica())) {
+								aula_seguinte.setSala(sala_escolhida); //Sala escolhida está na salas livres pq nenhuma sala foi atribuida para o slot em questão!
+								slotes.salas_livres.remove(sala_escolhida);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
-
-
-
-
-
-
+	//Tem de existir um if se já estiver alocada uma sala a um evento, não é preciso meter outra sala
+	//Os slots tem de ser vistos por ordem cronolofica
 
 
 

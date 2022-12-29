@@ -33,9 +33,9 @@ public class Slot {
 	public void setSalas_livres(List<Sala> salas_livres) {
 		this.salas_livres = salas_livres;
 	}
-	
-	
-	
-	
-	
+
+	public String getData() {
+		return data;
+	}
+
 }
