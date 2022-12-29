@@ -180,14 +180,15 @@ public class FuncoesAuxiliares {
     }
 
     public int get_int_dia_de_semana(String dia_da_sem) {
-        return switch (dia_da_sem) {
-            case "Dom" -> Calendar.SUNDAY;
-            case "Seg" -> Calendar.MONDAY;
-            case "Ter" -> Calendar.TUESDAY;
-            case "Qua" -> Calendar.WEDNESDAY;
-            case "Qui" -> Calendar.THURSDAY;
-            case "Sex" -> Calendar.FRIDAY;
-            case "Sáb" -> Calendar.SATURDAY;
+        String lower_case_dia_da_sem = dia_da_sem.toLowerCase();
+        return switch (lower_case_dia_da_sem) {
+            case "dom", "domingo" -> Calendar.SUNDAY;
+            case "seg", "segunda", "segunda-feira" -> Calendar.MONDAY;
+            case "ter", "terça", "terça-feira" -> Calendar.TUESDAY;
+            case "qua", "quarta", "quarta-feira" -> Calendar.WEDNESDAY;
+            case "qui", "quinta", "quinta-feira" -> Calendar.THURSDAY;
+            case "sex", "sexta", "sexta-feira" -> Calendar.FRIDAY;
+            case "sáb", "sábado" -> Calendar.SATURDAY;
             default -> 0;
         };
     }

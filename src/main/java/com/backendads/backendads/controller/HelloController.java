@@ -116,17 +116,11 @@ public class HelloController {
             String start = data_ajustada + "T" + hora_inicio_fim[0];
             String end = data_ajustada + "T" + hora_inicio_fim[1];
 
-            slots.add(new Slot_horario_semestral(id, text, start, end, color,informacao_detalhada));
+            slots.add(new Slot_horario_semestral(id, text, start, end, color,informacao_detalhada,uc.getTurno()));
         }
 //        System.out.println(new Gson().toJson(slots));
         return new Gson().toJson(slots);
     }
-
-//    @GetMapping("/carregar_pagina_servicos_academicos")
-//    public void carregar_pagina_servicos_academicos() {
-//        main = new Main();
-//    }
-
 
     @PostMapping("/upload")
     public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file) {
@@ -137,36 +131,46 @@ public class HelloController {
         return ResponseEntity.ok(send);
     }
 
+
     @PostMapping("/saveclasses")
     public String saveclasses(@RequestBody ReceiveClasses slots) throws IOException {
         System.out.println(slots.getSlots());
-        //FileWriter myWriter = new FileWriter(dir + "\\"+slots.getNum()+".txt");
-        String nodeValue = "i am mostafa";
 
-        // you want to output to file
-        // BufferedWriter writer = new BufferedWriter(new FileWriter(file3, true));
-        // but let's print to console while debugging
-        BufferedWriter writer = new BufferedWriter(new FileWriter(dir + "\\"+slots.getNum()+".txt",false));
-        String[] words = nodeValue.split(" ");
-        for (Slot_horario_semestral slot: slots.getSlots()) {
-            writer.write(slot.toString());
-            writer.newLine();
-        }
-        writer.close();
+        FileOutputStream fo = new FileOutputStream(dir + "\\"+slots.getNum()+".txt");
+        ObjectOutputStream oo = new ObjectOutputStream(fo);
+
+        for (Slot_horario_semestral slot : slots.getSlots())
+            oo.writeObject(slot);
+        oo.writeObject(null);
+
+        oo.close();
+        fo.close();
+
         return new Gson().toJson("OLA");
     }
 
-    @PostMapping("/teste")
-    public String teste() {
+    @PostMapping("/ler_horario_guardado")
+    public String ler_horario_guardado() {
+        List<Slot_horario_semestral> slots = new ArrayList<>();
         try {
-            File myObj = new File("HorariosCriados/p.txt");
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                System.out.println(data);
+            FileInputStream fi = new FileInputStream("HorariosCriados/93028.txt");
+            ObjectInputStream oi = new ObjectInputStream(fi);
+
+            while (true) {
+                Slot_horario_semestral slot = (Slot_horario_semestral) oi.readObject();
+
+                if (slot != null) slots.add(slot);
+                else break;
             }
-            myReader.close();
-        } catch (FileNotFoundException e) {
+
+            oi.close();
+            fi.close();
+
+            for (Slot_horario_semestral s: slots) {
+                System.out.println(s.toString());
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
