@@ -2,6 +2,7 @@ package com.backendads.backendads.controller;
 
 import Files.*;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -176,5 +177,4 @@ public class HelloController {
         }
         return "OLA";
     }
-
 }
