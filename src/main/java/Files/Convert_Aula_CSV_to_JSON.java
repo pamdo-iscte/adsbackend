@@ -1,12 +1,13 @@
 package Files;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class Convert_Aula_CSV_to_JSON {
+public class Convert_Aula_CSV_to_JSON implements Serializable {
 
 
     private final String curso;

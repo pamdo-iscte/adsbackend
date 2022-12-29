@@ -139,7 +139,7 @@ public class HelloController {
         FileOutputStream fo = new FileOutputStream(dir + "\\"+slots.getNum()+".txt");
         ObjectOutputStream oo = new ObjectOutputStream(fo);
 
-        for (Slot_horario_semestral slot : slots.getSlots())
+        for (Convert_Aula_CSV_to_JSON slot : slots.getSlots())
             oo.writeObject(slot);
         oo.writeObject(null);
 
@@ -175,6 +175,14 @@ public class HelloController {
             e.printStackTrace();
         }
         return "OLA";
+    }
+    @PostMapping("/fileexists")
+    public String FileExists(@RequestBody NameOfFile file) throws IOException {
+        System.out.println(dir + "\\"+file.getFile()+".txt");
+        File tempFile = new File(dir + "\\"+file.getFile()+".txt");
+        boolean exists = tempFile.exists();
+        System.out.println(exists);//true
+        return new Gson().toJson(exists);
     }
 
 }
