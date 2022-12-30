@@ -139,4 +139,16 @@ public class Convert_Aula_CSV_to_JSON implements Serializable {
              else return hora_fim_int == horas_int && Integer.parseInt(hora_fim_fields[1]) < Integer.parseInt(horas_fields[1]);
          }
     }
+
+    public List<String> getDatas() {
+        return datas;
+    }
+
+    public List<String> getHoras_repetidas() {
+        return horas_repetidas;
+    }
+
+    public String getCurso() {
+        return curso;
+    }
 }

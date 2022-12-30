@@ -1,6 +1,7 @@
 package Files;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
 public class Slot_horario_semestral implements Serializable {
 
@@ -13,6 +14,8 @@ public class Slot_horario_semestral implements Serializable {
     private String informacao_detalhada;
 
     private String turno;
+
+    private Calendar cal = null;
 
 
     public Slot_horario_semestral(String id, String text, String start, String end, String backColor, String informacao_detalhada, String turno) {
@@ -35,6 +38,15 @@ public class Slot_horario_semestral implements Serializable {
                 ", backColor='" + backColor + '\'' +
                 ", informacao_detalhada='" + informacao_detalhada + '\'' +
                 ", turno='" + turno + '\'' +
+                ", cal=" + cal +
                 '}';
+    }
+
+    public Calendar getCalendar() {
+        return cal;
+    }
+
+    public void setBackColor(String backColor) {
+        this.backColor = backColor;
     }
 }

@@ -2,10 +2,7 @@ package Files;
 
 import com.opencsv.CSVReader;
 
-import java.io.FileReader;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.*;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -106,73 +103,6 @@ public class FuncoesAuxiliares {
         return aulas;
     }
 
-//    public List<Convert_Aula_CSV_to_JSON> juntar_aulas(List<Convert_Aula_CSV_to_JSON> aulas, List<String> datas) {
-//        HashSet<String> hset_datas = new HashSet<>(datas);
-//        for (String d : hset_datas) {
-//            int[] indexes = IntStream.range(0, aulas.size()).filter(i -> aulas.get(i).getData().equals(d)).toArray();
-//            Comparator<Convert_Aula_CSV_to_JSON> compare = Comparator.comparing(Convert_Aula_CSV_to_JSON::getTurno);
-//
-//        }
-//        aulas.sort(compare);
-//        List<Integer> aulas_para_remover = new ArrayList<>();
-//
-//        for (Convert_Aula_CSV_to_JSON current : aulas) {
-//            int index = aulas.indexOf(current);
-//            if (index == 0) continue;
-//            Convert_Aula_CSV_to_JSON previous = aulas.get(index-1);
-//
-//            if (string_equals(previous.getData(),current.getData()) && string_equals(previous.getUnidade_de_execucao(),current.getUnidade_de_execucao()) &&
-//                    string_equals(previous.getTurno(),current.getTurno()) && string_equals(previous.getSala(), current.getSala())) {
-//                String hora_inicio = previous.getHora_inicio();
-//                if (!previous.compareHoras(current.getHora_inicio(),true)) hora_inicio = current.getHora_inicio();
-//                String hora_fim = current.getHora_fim();
-//                if (!previous.compareHoras(current.getHora_fim(),false)) hora_fim = previous.getHora_fim();
-//                previous.setHora_inicio(hora_inicio);
-//                previous.setHora_fim(hora_fim);
-//
-//                aulas_para_remover.add(index);
-//            }
-//        }
-//
-//        return remover_aulas(aulas,aulas_para_remover);
-//    }
-//
-//    public Boolean string_equals(String s1,String s2) {
-//        return s1.equals(s2);
-//    }
-//
-//    public List<String> get_slots_30_min(String hora_inicio, String hora_final) {
-//        String[] fields_hora_inicio = hora_inicio.split(":");
-//        String[] fields_hora_final = hora_final.split(":");
-//        int[] int_hora_ini = {Integer.parseInt(fields_hora_inicio[0]),Integer.parseInt(fields_hora_inicio[1]),Integer.parseInt(fields_hora_inicio[2])};
-//        int[] int_hora_fin = {Integer.parseInt(fields_hora_final[0]),Integer.parseInt(fields_hora_final[1]),Integer.parseInt(fields_hora_final[2])};
-//
-//        int number_of_slots = 0;
-//
-//        if (int_hora_fin[1] < int_hora_ini[1]) {
-//            number_of_slots = (int_hora_fin[0] - int_hora_ini[0])*2 - 1;
-//        } else {
-//            number_of_slots = (int_hora_fin[0] - int_hora_ini[0])*2 + (int_hora_fin[1] - int_hora_ini[1])/30;
-//        }
-//
-//        for (int i=0; i<number_of_slots;i++) {
-//
-//        }
-//        return new ArrayList<>();
-//    }
-
-    //Apenas para testar
-//    public void invoke_method(String name) throws InvocationTargetException, IllegalAccessException, InstantiationException {
-//        Class<MetodosParaAulas> class_metodos_aulas = MetodosParaAulas.class;
-//        Object t = class_metodos_aulas.newInstance();
-//        Method[] metodos = class_metodos_aulas.getDeclaredMethods();
-//        for (Method m: metodos) {
-//            if (m.getName().equals(name)) {
-//                System.out.println(m.getName().equals(name));
-//                m.invoke(t,1);
-//            }
-//        }
-//    }
 
     public Calendar setCalendar(Calendar calendar, String[] data_fields) {
         calendar.set(Integer.parseInt(data_fields[0]),Integer.parseInt(data_fields[1])-1,Integer.parseInt(data_fields[2]));
@@ -213,7 +143,7 @@ public class FuncoesAuxiliares {
     }
 
     public List<Integer> get_number_of_weeks_of_slot(List<String> datas, List<String> horas_repetidas, Calendar primeiro_dia_de_aulas_cal,
-                                       String dia_da_sem, String horarios_das_aulas) {
+                                                     String dia_da_sem, String horarios_das_aulas) {
         List<Integer> number_of_weeks = new ArrayList<>();
         int sem_primeiro_dia_de_aulas = primeiro_dia_de_aulas_cal.get(Calendar.WEEK_OF_YEAR);
 //        System.out.println("PRMIERO     "+primeiro_dia_de_aulas_cal.getTime());
@@ -290,6 +220,90 @@ public class FuncoesAuxiliares {
     public String replace_nome_metodo(String metodo) {
         String name = metodo.replace("_", " ");
         return name.substring(0, 1).toUpperCase() + name.substring(1);
+    }
+
+    public void guardar_horario_completo(List<Convert_Aula_CSV_to_JSON> slots, int num) {
+        try {
+            FileOutputStream fo = new FileOutputStream("HorariosCompletos" + "\\"+num+".txt");
+            ObjectOutputStream oo = new ObjectOutputStream(fo);
+
+            Calendar calendar = Calendar.getInstance();
+            for (Convert_Aula_CSV_to_JSON slot: slots) {
+                List<String> datas = slot.getDatas();
+                List<String> horas = slot.getHoras_repetidas();
+
+                for (int i=0; i<datas.size(); i++) {
+                    String[] data_fields = datas.get(i).split("/");
+                    String[] inicio_fim = horas.get(i).split(";");
+
+                    setCalendar(calendar,data_fields);
+
+                    String id = slot.getTurno() + slot.getDia_da_semana() + inicio_fim[0]+inicio_fim[1];
+                    String text = obter_sigla_da_uc(slot.getUnidade_de_execucao()) + "      Sala: "+slot.getSala();
+
+                    confirmar_formato_da_data(data_fields);
+                    String data_da_aula = data_fields[0]+"-"+data_fields[1]+"-"+data_fields[2];
+                    String start = data_da_aula+"T"+inicio_fim[0];
+                    String end = data_da_aula+"T"+inicio_fim[1];
+
+                    String informacao_detalhada = slot.getUnidade_de_execucao() +" | Curso(s): "+slot.getCurso() +" | Sala: "+slot.getSala();
+
+                    Slot_horario_semestral new_slot = new Slot_horario_semestral(id,text,start,end,null,informacao_detalhada,slot.getTurno());
+
+                    oo.writeObject(new_slot);
+
+                }
+            }
+            oo.writeObject(null);
+
+            oo.close();
+            fo.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private void confirmar_formato_da_data(String[] data_fields) {
+        int int_day = Integer.parseInt(data_fields[2]);
+        int int_month = Integer.parseInt(data_fields[1]);
+        int OTHER_YEAR_SIZE = 2;
+
+        if(int_day<10 && data_fields[2].length() < 2) data_fields[2]="0"+data_fields[2];
+        if (int_month<10 && data_fields[1].length() < 2) data_fields[1] = "O"+data_fields[1];
+        if (data_fields[0].length() == OTHER_YEAR_SIZE) data_fields[0] = "20"+data_fields[0];
+
+    }
+
+    public List<Slot_horario_semestral> read_file(String dir, String num) {
+        List<Slot_horario_semestral> slots = new ArrayList<>();
+        try {
+            FileInputStream fi = new FileInputStream(dir+"/"+num+".txt");
+            ObjectInputStream oi = new ObjectInputStream(fi);
+
+            while (true) {
+                System.out.println("Entrei");
+                Slot_horario_semestral slot = (Slot_horario_semestral) oi.readObject();
+
+                if (slot != null) slots.add(slot);
+                else break;
+            }
+
+            oi.close();
+            fi.close();
+
+        } catch (IOException  e) {
+            System.out.println("Ocorreu um erro");
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.err.println("Ocorreu um erro ao ler o horário");
+            e.printStackTrace();
+        }
+        return slots;
     }
 }
 

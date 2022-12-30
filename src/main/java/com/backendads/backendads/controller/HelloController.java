@@ -1,6 +1,7 @@
 package com.backendads.backendads.controller;
 
 import Files.*;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,8 @@ public class HelloController {
     private List<String> colors = Arrays.asList("#1cceb1", "#97fca3", "#5d8ce9","#6cda72","#a1f2e5","#9799fc","#fcf897");
     private int index_of_colors = 0;
 
-    private final String dir="HorariosCriados";
+    private final String dir_horariosCriados="HorariosCriados";
+    private final String dir_horariosCompletos="HorariosCompletos";
     private Main main;
 
     @GetMapping("/get_metodos")
@@ -132,57 +134,80 @@ public class HelloController {
     }
 
 
-    @PostMapping("/saveclasses")
-    public String saveclasses(@RequestBody ReceiveClasses slots) throws IOException {
-        System.out.println(slots.getSlots());
+    @PostMapping("/guardar_horario")
+    public String guardar_horario(@RequestBody ReceiveClasses slots)  {
+        //enviar as duas listas Convert_Aula_CSV_to_JSON e Slot_horario_Semestral
+        try {
+            FileOutputStream fo = new FileOutputStream(dir_horariosCriados + "\\" + slots.getNum() + ".txt");
+            ObjectOutputStream oo = new ObjectOutputStream(fo);
 
-        FileOutputStream fo = new FileOutputStream(dir + "\\"+slots.getNum()+".txt");
-        ObjectOutputStream oo = new ObjectOutputStream(fo);
+            for (Slot_horario_semestral slot : slots.getSlots()) {
+                System.out.println(slot.toString());
+                oo.writeObject(slot);
+            }
+            oo.writeObject(null);
 
-        for (Convert_Aula_CSV_to_JSON slot : slots.getSlots())
-            oo.writeObject(slot);
-        oo.writeObject(null);
+            oo.close();
+            fo.close();
 
-        oo.close();
-        fo.close();
-
-        return new Gson().toJson("OLA");
+            aux.guardar_horario_completo(slots.getAulas(), Integer.parseInt(slots.getNum()));
+            return "Horário guardado";
+        } catch (IOException e) {
+            String mensagem_de_erro = "Ocorreu um erro ao guardar o horário do aluno/docente número "+slots.getNum();
+            System.err.println(mensagem_de_erro);
+            return mensagem_de_erro;
+        }
     }
 
-    @PostMapping("/ler_horario_guardado")
-    public String ler_horario_guardado() {
-        List<Slot_horario_semestral> slots = new ArrayList<>();
-        try {
-            FileInputStream fi = new FileInputStream("HorariosCriados/93028.txt");
-            ObjectInputStream oi = new ObjectInputStream(fi);
+    @PostMapping("/ler_horario_semestral_guardado")
+    public String ler_horario_semestral_guardado(@RequestBody JsonNode json) {
+        List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCriados,json.get("num").asText());
 
-            while (true) {
-                Slot_horario_semestral slot = (Slot_horario_semestral) oi.readObject();
-
-                if (slot != null) slots.add(slot);
-                else break;
-            }
-
-            oi.close();
-            fi.close();
-
-            for (Slot_horario_semestral s: slots) {
-                System.out.println(s.toString());
-            }
-
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+        for (Slot_horario_semestral s: slots) {
+            System.out.println(s.toString());
         }
         return "OLA";
     }
     @PostMapping("/fileexists")
     public String FileExists(@RequestBody NameOfFile file) throws IOException {
-        System.out.println(dir + "\\"+file.getFile()+".txt");
-        File tempFile = new File(dir + "\\"+file.getFile()+".txt");
+        System.out.println(dir_horariosCriados + "\\"+file.getFile()+".txt");
+        File tempFile = new File(dir_horariosCriados + "\\"+file.getFile()+".txt");
         boolean exists = tempFile.exists();
         System.out.println(exists);//true
         return new Gson().toJson(exists);
     }
+
+    @PostMapping("/obter_horario_de_uma_semana")
+    public String obter_horario_de_uma_semana(@RequestBody JsonNode json) {
+        String data = json.get("data").asText().split("T")[0];
+        String num = json.get("num").asText();
+
+        System.out.println(data + " "+num);
+        Calendar calendar = Calendar.getInstance();
+        calendar = aux.setCalendar(calendar,data.split("-"));
+
+        List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCompletos,num);
+        List<Slot_horario_semestral> horario_da_semana = new ArrayList<>();
+
+        List<String> colors_da_semana = colors;
+
+        for (Slot_horario_semestral slot :slots) {
+            if (calendar.get(Calendar.WEEK_OF_YEAR) == slot.getCalendar().get(Calendar.WEEK_OF_YEAR)) {
+                String color = "";
+                if (!colors_da_semana.isEmpty())
+                    color = colors_da_semana.remove(0);
+                else {
+                    Random random = new Random();
+                    int nextInt = random.nextInt(0xffffff + 1);
+                    color = String.format("#%06x", nextInt);
+                }
+                slot.setBackColor(color);
+                horario_da_semana.add(slot);
+            }
+        }
+
+        return new Gson().toJson(horario_da_semana);
+    }
+
 
 }
