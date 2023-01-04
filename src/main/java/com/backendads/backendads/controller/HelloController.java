@@ -19,11 +19,11 @@ import java.nio.file.Files;
 
 @RestController
 public class HelloController {
-    private final String primeiro_dia_de_aulas = "2022/09/12";
-    private FuncoesAuxiliares aux = new FuncoesAuxiliares();
+    private String primeiro_dia_de_aulas = "2022/09/12";
+    private final FuncoesAuxiliares aux = new FuncoesAuxiliares();
     private Calendar primeiro_dia_de_aulas_cal = aux.setCalendar(Calendar.getInstance(),primeiro_dia_de_aulas.split("/"));
 
-    private List<String> colors = Arrays.asList("#1cceb1", "#97fca3", "#5d8ce9","#6cda72","#a1f2e5","#9799fc","#fcf897");
+    private final List<String> colors = Arrays.asList("#1cceb1", "#97fca3", "#5d8ce9","#6cda72","#a1f2e5","#9799fc","#fcf897");
     private int index_of_colors = 0;
 
     private final String dir_horariosCriados="HorariosCriados";
@@ -127,12 +127,17 @@ public class HelloController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file) {
-
+    public String upload_horario(@RequestParam("file") MultipartFile file) {
         String fileName = file.getOriginalFilename();
-        System.out.println(fileName);
-        String send = new Gson().toJson("File uploaded successfully.");
-        return ResponseEntity.ok(send);
+        try {
+            File excel_file = file.getResource().getFile();
+            File new_file = new File("Upload_de_Horarios"+ "\\" +fileName);
+            if (excel_file.renameTo(new_file))
+                return "Upload com sucesso";
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "Erro ao dar upload do ficheiro "+fileName;
     }
 
 
