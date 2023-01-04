@@ -262,7 +262,7 @@ public class Main {
 		
 		Random rand = new Random();
 		List<List<Sala>> salas_possiveis = new ArrayList<>();
-		
+		MetodosdeAvaliacao m = new MetodosdeAvaliacao();
 		
 		if (list_methods.get(0).equals("menorNumSalas")) { 
 			if(sala_apos_metodo != null) { 
@@ -272,7 +272,7 @@ public class Main {
 				sala_apos_metodo = new ArrayList<>();
 				sala_apos_metodo.add(help.salas_livres);
 			for(List<Sala> ls: sala_apos_metodo) {
-				salas_possiveis = menorNumSalas(ls, a, help);
+				salas_possiveis =  m.menor_numero_de_salas(ls, a, help,this);
 			}
 			}
 			
@@ -286,7 +286,8 @@ public class Main {
 				sala_apos_metodo = new ArrayList<>();
 				sala_apos_metodo.add(help.salas_livres);
 			for(List<Sala> ls: sala_apos_metodo) {
-				salas_possiveis = igualForma(ls, a, help);
+
+				salas_possiveis = m.igual_numero_de_alunos_por_sala(ls, a, help,this);
 			}
 			}
 		}
@@ -297,7 +298,7 @@ public class Main {
 			salas_possiveis = sala_apos_metodo;
 			if (sala_apos_metodo.size()==0) {
 				//se houver salas disponiveis para colocar tds os alunos, o menorNumSalas dá
-				salas_possiveis = menorNumSalas(help.salas_livres, a, help);
+				salas_possiveis = m.menor_numero_de_salas(help.salas_livres, a, help,this);
 				if (salas_possiveis.size()== 0) {
 				// se não, é impossivel, diz-se q houve um erro?
 				System.out.println("Não existem salas disponiveis para alocar");
