@@ -3,6 +3,7 @@ package com.backendads.backendads.controller;
 import Files.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.*;
 import java.nio.file.Files;
+
 
 
 @RestController
@@ -159,19 +161,20 @@ public class HelloController {
         }
     }
 
-    @PostMapping("/ler_horario_semestral_guardado")
-    public String ler_horario_semestral_guardado(@RequestBody JsonNode json) {
-        List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCriados,json.get("num").asText());
-
-        for (Slot_horario_semestral s: slots) {
-            System.out.println(s.toString());
-        }
-        return "OLA";
-    }
+//    @PostMapping("/ler_horario_semestral_guardado")
+//    public String ler_horario_semestral_guardado(@RequestBody JsonNode json) {
+//        List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCriados,json.get("num").asText());
+//
+//        for (Slot_horario_semestral s: slots) {
+//            System.out.println(s.toString());
+//        }
+//        return "OLA";
+//    }
     @PostMapping("/fileexists")
-    public String FileExists(@RequestBody NameOfFile file) throws IOException {
-        System.out.println(dir_horariosCriados + "\\"+file.getFile()+".txt");
-        File tempFile = new File(dir_horariosCriados + "\\"+file.getFile()+".txt");
+    public String FileExists(@RequestBody JsonNode json) {
+        String file = json.get("file").asText();
+        System.out.println(dir_horariosCriados + "\\"+file+".txt");
+        File tempFile = new File(dir_horariosCriados + "\\"+file+".txt");
         boolean exists = tempFile.exists();
         System.out.println(exists);//true
         return new Gson().toJson(exists);
@@ -219,19 +222,21 @@ public class HelloController {
 
 
     @PostMapping("/reformular_horario")
-    public List<String> reformular_horario(@RequestBody JsonNode json) {
+    public String reformular_horario(@RequestBody JsonNode json) {
         String num = json.get("num").asText();
 
         List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCriados,num);
 
         List<String> turnos = new ArrayList<>();
-        if (slots.isEmpty()) return turnos;
+        if (slots.isEmpty()) return null;
 
         for (Slot_horario_semestral slot: slots) {
             if (!turnos.contains(slot.getTurno())) turnos.add(slot.getTurno());
         }
+        String slots_json = new Gson().toJson(slots);
+        String turnos_json = new Gson().toJson(turnos);
 
-        return turnos;
+        return "["+slots_json+","+turnos_json+"]";
     }
 
 
