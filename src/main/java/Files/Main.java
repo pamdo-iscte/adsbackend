@@ -245,6 +245,89 @@ public class Main {
 	public String[] getColumns() {
 		return columns;
 	}
+	
+	private List<Sala> doMethodsAvals(List<List<Sala>> sala_apos_metodo, Avaliacao a, Slot help, List<String> list_methods) {
+		
+    	System.out.println("salas livres " + help.salas_livres.size());
+    	if(help.salas_livres.size()==0) {
+    		System.out.println("n há mais salas");
+    	}
+		
+		//perguntar ao stor se existe algumas avaliações q n precisam de sala e cm vê-las
+		if(a.getNumero_de_alunos() == 0){
+			System.out.println("0 alunos inscritos");
+			return null;
+		}
+		
+		
+		Random rand = new Random();
+		List<List<Sala>> salas_possiveis = new ArrayList<>();
+		
+		
+		if (list_methods.get(0).equals("menorNumSalas")) { 
+			if(sala_apos_metodo != null) { 
+				salas_possiveis.add(sala_apos_metodo.get(0));
+			}
+			else {
+				sala_apos_metodo = new ArrayList<>();
+				sala_apos_metodo.add(help.salas_livres);
+			for(List<Sala> ls: sala_apos_metodo) {
+				salas_possiveis = menorNumSalas(ls, a, help);
+			}
+			}
+			
+		}
+		if (list_methods.get(0).equals("igualForma")) { 
+			if(sala_apos_metodo != null) { 
+				salas_possiveis = sala_apos_metodo;
+			//	System.out.println("Não é possível realizar o método igualForma pq vem a seguir ao menorNumSalas"); //nem sei se isto vale a pena dizer honestly
+			}
+			else {
+				sala_apos_metodo = new ArrayList<>();
+				sala_apos_metodo.add(help.salas_livres);
+			for(List<Sala> ls: sala_apos_metodo) {
+				salas_possiveis = igualForma(ls, a, help);
+			}
+			}
+		}
+		if(salas_possiveis==null) {
+			return null;
+		}
+		if (salas_possiveis.size()== 0) {
+			salas_possiveis = sala_apos_metodo;
+			if (sala_apos_metodo.size()==0) {
+				//se houver salas disponiveis para colocar tds os alunos, o menorNumSalas dá
+				salas_possiveis = menorNumSalas(help.salas_livres, a, help);
+				if (salas_possiveis.size()== 0) {
+				// se não, é impossivel, diz-se q houve um erro?
+				System.out.println("Não existem salas disponiveis para alocar");
+				return null;
+			}}
+		}
+		
+		if (list_methods.size()>1) {
+			doMethodsAvals(salas_possiveis, a, help, list_methods.subList(1, list_methods.size()));
+			return null;
+		} else {
+			int index = 0;
+			if(salas_possiveis.size() > 1) {
+				index = rand.nextInt(salas_possiveis.size() - 1);
+			}
+			
+			List<Sala> salas_escolhida = salas_possiveis.get(index);
+			
+			for(Sala s: salas_escolhida) {
+				System.out.println("salas escolhidas " + s);
+			}
+			if(salas_escolhida.size() == help.salas_livres.size()) help.salas_livres.clear();
+			else {
+				for(Sala s: salas_escolhida) {
+				help.salas_livres.remove(s);
+			}}
+			
+			return salas_escolhida;
+		}
+	}
 
 	private Sala doMethods(List<Sala> sala_apos_metodo, Aula a, Slot help, List<String> list_methods) {
 		System.out.println(a.caracteristica + a.inscritos + a.unidade_de_execucao);
