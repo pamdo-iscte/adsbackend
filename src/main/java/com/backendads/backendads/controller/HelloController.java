@@ -187,11 +187,14 @@ public class HelloController {
         calendar = aux.setCalendar(calendar,data.split("-"));
 
         List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCompletos,num);
+        System.out.println("        Size: "+slots.size());
         List<Slot_horario_semestral> horario_da_semana = new ArrayList<>();
 
         List<String> colors_da_semana = colors;
 
         for (Slot_horario_semestral slot :slots) {
+            System.out.println(slot.getCalendar().getTime());
+            System.out.println(calendar.getTime());
             if (calendar.get(Calendar.WEEK_OF_YEAR) == slot.getCalendar().get(Calendar.WEEK_OF_YEAR)) {
                 String color = "";
                 if (!colors_da_semana.isEmpty())

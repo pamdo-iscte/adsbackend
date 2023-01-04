@@ -130,12 +130,16 @@ public class FuncoesAuxiliares {
 //                " Diferença: "+dif_entre_dias);
         c.add(Calendar.DAY_OF_MONTH, dif_entre_dias);
         int month=c.get(Calendar.MONTH)+1;
+        String monthS = String.valueOf(month);
+        if(month<10 && monthS.length() < 2){
+            monthS="0"+monthS;
+        }
         int day=c.get(Calendar.DAY_OF_MONTH);
         String dayS= String.valueOf(day);
         if(day<10 && dayS.length() < 2){
             dayS="0"+dayS;
         }
-        return c.get(Calendar.YEAR)+"-"+month+"-"+dayS;
+        return c.get(Calendar.YEAR)+"-"+monthS+"-"+dayS;
     }
 
     public String[] split_list_elements(String s) {
@@ -236,8 +240,8 @@ public class FuncoesAuxiliares {
                     String[] data_fields = datas.get(i).split("/");
                     String[] inicio_fim = horas.get(i).split(";");
 
-                    setCalendar(calendar,data_fields);
-
+                    calendar = setCalendar(calendar,data_fields);
+                    System.out.println(datas.get(i) + " "+calendar.getTime());
                     String id = slot.getTurno() + slot.getDia_da_semana() + inicio_fim[0]+inicio_fim[1];
                     String text = obter_sigla_da_uc(slot.getUnidade_de_execucao()) + "      Sala: "+slot.getSala();
 
@@ -249,7 +253,9 @@ public class FuncoesAuxiliares {
                     String informacao_detalhada = slot.getUnidade_de_execucao() +" | Curso(s): "+slot.getCurso() +" | Sala: "+slot.getSala();
 
                     Slot_horario_semestral new_slot = new Slot_horario_semestral(id,text,start,end,null,informacao_detalhada,slot.getTurno());
+                    new_slot.setCal(calendar);
 
+                    System.out.println(new_slot.getCalendar().getTime());
                     oo.writeObject(new_slot);
 
                 }
@@ -286,10 +292,9 @@ public class FuncoesAuxiliares {
             ObjectInputStream oi = new ObjectInputStream(fi);
 
             while (true) {
-                System.out.println("Entrei");
                 Slot_horario_semestral slot = (Slot_horario_semestral) oi.readObject();
-
-                if (slot != null) slots.add(slot);
+                if (slot != null) {slots.add(slot);
+                System.out.println(slot.getStart() + " "+slot.getCalendar().getTime());}
                 else break;
             }
 

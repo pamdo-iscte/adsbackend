@@ -46,6 +46,14 @@ public class Slot_horario_semestral implements Serializable {
         return cal;
     }
 
+    public void setCal(Calendar cal) {
+        this.cal = cal;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
     public void setBackColor(String backColor) {
         this.backColor = backColor;
     }
