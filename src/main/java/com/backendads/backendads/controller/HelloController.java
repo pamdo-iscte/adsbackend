@@ -150,7 +150,7 @@ public class HelloController {
             oo.close();
             fo.close();
 
-            aux.guardar_horario_completo(slots.getAulas(), Integer.parseInt(slots.getNum()));
+            aux.guardar_horario_completo(slots.getAulas(), Integer.parseInt(slots.getNum()),dir_horariosCompletos);
             return "Horário guardado";
         } catch (IOException e) {
             String mensagem_de_erro = "Ocorreu um erro ao guardar o horário do aluno/docente número "+slots.getNum();
@@ -190,26 +190,48 @@ public class HelloController {
         System.out.println("        Size: "+slots.size());
         List<Slot_horario_semestral> horario_da_semana = new ArrayList<>();
 
-        List<String> colors_da_semana = colors;
+        List<String> turnos_UCs = new ArrayList<>();
 
         for (Slot_horario_semestral slot :slots) {
             System.out.println(slot.getCalendar().getTime());
             System.out.println(calendar.getTime());
             if (calendar.get(Calendar.WEEK_OF_YEAR) == slot.getCalendar().get(Calendar.WEEK_OF_YEAR)) {
-                String color = "";
-                if (!colors_da_semana.isEmpty())
-                    color = colors_da_semana.remove(0);
-                else {
+                horario_da_semana.add(slot);
+                if (!turnos_UCs.contains(slot.getTurno())) turnos_UCs.add(slot.getTurno());
+            }
+        }
+
+        for (Slot_horario_semestral aula: horario_da_semana) {
+            for (int i=0; i<turnos_UCs.size();i++) {
+                String color ="";
+                if (i == colors.size()) {
                     Random random = new Random();
                     int nextInt = random.nextInt(0xffffff + 1);
                     color = String.format("#%06x", nextInt);
                 }
-                slot.setBackColor(color);
-                horario_da_semana.add(slot);
+                else if (turnos_UCs.get(i).equals(aula.getTurno())) color = colors.get(i);
+                aula.setBackColor(color);
             }
         }
 
         return new Gson().toJson(horario_da_semana);
+    }
+
+
+    @PostMapping("/reformular_horario")
+    public List<String> reformular_horario(@RequestBody JsonNode json) {
+        String num = json.get("num").asText();
+
+        List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCriados,num);
+
+        List<String> turnos = new ArrayList<>();
+        if (slots.isEmpty()) return turnos;
+
+        for (Slot_horario_semestral slot: slots) {
+            if (!turnos.contains(slot.getTurno())) turnos.add(slot.getTurno());
+        }
+
+        return turnos;
     }
 
 

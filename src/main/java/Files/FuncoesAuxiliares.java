@@ -226,12 +226,12 @@ public class FuncoesAuxiliares {
         return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
-    public void guardar_horario_completo(List<Convert_Aula_CSV_to_JSON> slots, int num) {
+    public void guardar_horario_completo(List<Convert_Aula_CSV_to_JSON> slots, int num, String dir) {
         try {
-            FileOutputStream fo = new FileOutputStream("HorariosCompletos" + "\\"+num+".txt");
+            FileOutputStream fo = new FileOutputStream(dir + "\\"+num+".txt");
             ObjectOutputStream oo = new ObjectOutputStream(fo);
 
-            Calendar calendar = Calendar.getInstance();
+//            Calendar calendar = Calendar.getInstance();
             for (Convert_Aula_CSV_to_JSON slot: slots) {
                 List<String> datas = slot.getDatas();
                 List<String> horas = slot.getHoras_repetidas();
@@ -240,8 +240,8 @@ public class FuncoesAuxiliares {
                     String[] data_fields = datas.get(i).split("/");
                     String[] inicio_fim = horas.get(i).split(";");
 
-                    calendar = setCalendar(calendar,data_fields);
-                    System.out.println(datas.get(i) + " "+calendar.getTime());
+//                    calendar = setCalendar(calendar,data_fields);
+//                    System.out.println(datas.get(i) + " "+calendar.getTime());
                     String id = slot.getTurno() + slot.getDia_da_semana() + inicio_fim[0]+inicio_fim[1];
                     String text = obter_sigla_da_uc(slot.getUnidade_de_execucao()) + "      Sala: "+slot.getSala();
 
@@ -253,9 +253,9 @@ public class FuncoesAuxiliares {
                     String informacao_detalhada = slot.getUnidade_de_execucao() +" | Curso(s): "+slot.getCurso() +" | Sala: "+slot.getSala();
 
                     Slot_horario_semestral new_slot = new Slot_horario_semestral(id,text,start,end,null,informacao_detalhada,slot.getTurno());
-                    new_slot.setCal(calendar);
+//                    new_slot.setCal(calendar);
 
-                    System.out.println(new_slot.getCalendar().getTime());
+//                    System.out.println(new_slot.getCalendar().getTime() + " "+new_slot.getStart());
                     oo.writeObject(new_slot);
 
                 }
@@ -293,8 +293,13 @@ public class FuncoesAuxiliares {
 
             while (true) {
                 Slot_horario_semestral slot = (Slot_horario_semestral) oi.readObject();
-                if (slot != null) {slots.add(slot);
-                System.out.println(slot.getStart() + " "+slot.getCalendar().getTime());}
+                if (slot != null) {
+                    slots.add(slot);
+                    String data = slot.getStart().split("T")[0];
+                    Calendar calendar = Calendar.getInstance();
+                    slot.setCal(setCalendar(calendar,data.split("-")));
+                    System.out.println(slot.getCalendar().getTime() + " "+slot.getStart());
+                }
                 else break;
             }
 
@@ -302,11 +307,9 @@ public class FuncoesAuxiliares {
             fi.close();
 
         } catch (IOException  e) {
-            System.out.println("Ocorreu um erro");
-            e.printStackTrace();
+            return slots;
         } catch (ClassNotFoundException e) {
-            System.err.println("Ocorreu um erro ao ler o horário");
-            e.printStackTrace();
+            System.err.println("ClassNotFoundException");
         }
         return slots;
     }

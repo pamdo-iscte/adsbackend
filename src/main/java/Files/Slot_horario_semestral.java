@@ -54,6 +54,10 @@ public class Slot_horario_semestral implements Serializable {
         return start;
     }
 
+    public String getTurno() {
+        return turno;
+    }
+
     public void setBackColor(String backColor) {
         this.backColor = backColor;
     }
