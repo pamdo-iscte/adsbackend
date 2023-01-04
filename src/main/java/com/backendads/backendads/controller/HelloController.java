@@ -128,16 +128,15 @@ public class HelloController {
 
     @PostMapping("/upload")
     public String upload_horario(@RequestParam("file") MultipartFile file) {
-        String fileName = file.getOriginalFilename();
         try {
             File excel_file = file.getResource().getFile();
-            File new_file = new File("Upload_de_Horarios"+ "\\" +fileName);
+            File new_file = new File("Upload_de_Horarios"+ "\\" +excel_file.getName());
             if (excel_file.renameTo(new_file))
                 return "Upload com sucesso";
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return "Erro ao dar upload do ficheiro "+fileName;
+        return "Erro ao dar upload do ficheiro ";
     }
 
 
@@ -233,7 +232,7 @@ public class HelloController {
         List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCriados,num);
 
         List<String> turnos = new ArrayList<>();
-        if (slots.isEmpty()) return null;
+        if (slots.isEmpty()) return "[]";
 
         for (Slot_horario_semestral slot: slots) {
             if (!turnos.contains(slot.getTurno())) turnos.add(slot.getTurno());
@@ -242,6 +241,13 @@ public class HelloController {
         String turnos_json = new Gson().toJson(turnos);
 
         return "["+slots_json+","+turnos_json+"]";
+    }
+
+    @PostMapping("/deleteschedule")
+    public void delete_schedule(@RequestBody JsonNode json) throws IOException {
+        String num = json.get("num").asText();
+        new FileWriter(dir_horariosCriados + "\\" + num + ".txt", false).close();
+
     }
 
 
