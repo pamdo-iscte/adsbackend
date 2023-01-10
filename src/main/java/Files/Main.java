@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
@@ -63,7 +64,8 @@ public class Main {
 
 		List<Sala> sala_to_return = new ArrayList<>();
 		Sala sala = null;
-
+		int i = 0;
+		int j = 0;
 		for (Slot s : slots) {
 			System.out.println("\nslot " + i + " " + s.data + " " + s.hora_inicio + " " + s.hora_final);
 			j = 0;
@@ -427,7 +429,7 @@ public class Main {
 			return null;
 		}
 		Random rand = new Random();
-		List<Sala> salas_possiveis;
+		List<Sala> salas_possiveis = new ArrayList<>();
 
 		Class<MetodosParaAulas> class_metodos_aulas = MetodosParaAulas.class;
 		try {
@@ -461,7 +463,7 @@ public class Main {
 			for (Sala s : salas_possiveis) {
 				System.out.println(s);
 			}*/
-			doMethods(salas_possiveis, a, help, list_methods.subList(1, list_methods.size()));
+			doMethodsAulas(salas_possiveis, a, help, list_methods.subList(1, list_methods.size()));
 			return null;
 		} else {
 

@@ -47,7 +47,15 @@ public abstract class Evento {
         return numero_de_alunos;
     }
 
-	@Override
+    public String getHora_inicio() {
+        return hora_inicio;
+    }
+
+    public String getHora_fim() {
+        return hora_fim;
+    }
+
+    @Override
 	public String toString() {
 		return "Evento [data=" + data + ", data_final=" + data_final + ", numero_de_alunos=" + numero_de_alunos
 				+ ", cursos=" + Arrays.toString(cursos) + ", unidade=" + unidade + ", hora_inicio=" + hora_inicio
