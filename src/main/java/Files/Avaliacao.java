@@ -1,17 +1,19 @@
-package Files;
+package org.example;
 
 import java.util.Date;
 import java.util.List;
 
 public class Avaliacao extends Evento {
-    private String codigo;
-    private String tipo;
-    private String epoca;
-    private String nome;
-    private boolean requer_inscricao_previa;
-    private String periodo_inscricao;
-    private List<Sala> salas;
-    private String estado_pedido_sala;
+    public String codigo;
+    public String tipo;
+    public String epoca;
+    public String nome;
+    public String requer_inscricao_previa;
+    public String periodo_inscricao;
+    public List<Sala> salas;
+    public String estado_pedido_sala;
+    public String curso;
+    public String unidade;
 
     private int capacidade_salas;
 
@@ -24,16 +26,15 @@ public class Avaliacao extends Evento {
         this.tipo = line[3];
         this.epoca = line[4];
         this.nome = line[5];
-        this.requer_inscricao_previa= !line[6].equals("Não");
+        this.unidade = line[1];
+        this.requer_inscricao_previa= line[6];
         this.periodo_inscricao = line[7];
         this.estado_pedido_sala = line[10];
+        this.curso = line[2];
     }
-    
-    public List<Sala> getSalas() {
-		return salas;
-	}
 
-	public void setSalas(List<Sala> salas) {
+
+    public void setSalas(List<Sala> salas) {
         this.salas = salas;
     }
 
@@ -48,4 +49,9 @@ public class Avaliacao extends Evento {
     public void setCapacidade_salas(int capacidade_salas) {
         this.capacidade_salas = capacidade_salas;
     }
+
+
+	public List<Sala> getSalas() {
+		return salas;
+	}
 }
