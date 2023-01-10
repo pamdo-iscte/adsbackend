@@ -147,9 +147,13 @@ public class Main {
 
 			i++;
 		}
+		List<String> aux = new ArrayList<>();
+		List<String> lista = new ArrayList<>();
+		
 		for(Slot s: slots) {
 			for(Evento e: s.eventos) {
-				ficheiroAtualizado(e);
+				aux = ficheiroAtualizado(e,lista);
+				lista = aux;
 			}
 		}
 	}
@@ -752,7 +756,7 @@ public class Main {
 		}
 	}
 	
-	public void ficheiroAtualizado(Evento e) {
+	public List<String> ficheiroAtualizado(Evento e, List<String> list) {
 		String delimeter = ";";
 		String namefile = "";
 		String linha = "";
@@ -785,32 +789,20 @@ public class Main {
 		                linha = ((Aula)e).curso + delimeter +((Aula)e).unidade_de_execucao + delimeter +((Aula)e).turno + delimeter +((Aula)e).turma + delimeter +((Aula)e).inscritos + delimeter +
 		                		((Aula)e).turnoCapacidadeSuperior + delimeter +((Aula)e).turnoInscricoesSuperior + delimeter +((Aula)e).dia_semana + delimeter +((Aula)e).hora_inicial + delimeter +((Aula)e).hora_final + delimeter +
 		                		((Aula)e).dia + delimeter +((Aula)e).caracteristica + delimeter +sala + delimeter + capacidade + delimeter +caracteristica;
-		               
-		                
-		                try {
-		                    Scanner scanner = new Scanner(file);
 
-		                    //now read the file line by line...
-		                    int lineNum = 0;
-		                    while (scanner.hasNextLine()) {
-		                        String line = scanner.nextLine();
-		                        lineNum++;
-		                        if(line.equals(linha)) {
-		                            return;
-		                        }
-								else {
-									System.out.println(lineNum);
-								}
-		                    }
-		                } catch(FileNotFoundException et) {
-		                    //handle this
-		                }
 		                
-		                
-		                
-		                
-		                myWriter.append("\n");
-		                myWriter.append(linha);
+		                        boolean existe = false;
+				                
+				                for(String s: list) {
+				                	if(s.equals(linha))
+				                		existe = true;
+				                }
+				                
+				                if(existe == false) {
+				                myWriter.append("\n");
+				                myWriter.append(linha);
+				                list.add(linha);
+				                }
 		                
 		               myWriter.close();
 		                
@@ -855,29 +847,20 @@ public class Main {
 		                linha = ((Avaliacao)e).codigo + delimeter +((Avaliacao)e).unidade + delimeter +((Avaliacao)e).curso + delimeter +((Avaliacao)e).tipo + delimeter +((Avaliacao)e).epoca + delimeter +
 		                		((Avaliacao)e).nome + delimeter +((Avaliacao)e).requer_inscricao_previa + delimeter +((Avaliacao)e).periodo_inscricao + delimeter +((Avaliacao)e).getData() + delimeter +salas + delimeter +
 		                		estado + delimeter +capacidade + delimeter +String.valueOf(((Avaliacao)e).getNumero_de_alunos()) + delimeter + lugares;
+		    
+		                  
+		                boolean existe = false;
 		                
-		                try {
-		                    Scanner scanner = new Scanner(file);
-
-		                    //now read the file line by line...
-		                    int lineNum = 0;
-		                    while (scanner.hasNextLine()) {
-		                        String line = scanner.nextLine();
-		                        lineNum++;
-		                        if(line.equals(linha)) { 
-		                            return;
-		                        }
-		                    }
-		                } catch(FileNotFoundException et) { 
-		                    //handle this
+		                for(String s: list) {
+		                	if(s.equals(linha))
+		                		existe = true;
 		                }
 		                
-		                
-		                
-		                
-		                
+		                if(existe == false) {
 		                myWriter.append("\n");
 		                myWriter.append(linha);
+		                list.add(linha);
+		                }
 		                
 		               myWriter.close();
 		                
@@ -886,7 +869,7 @@ public class Main {
 		                et.printStackTrace();
 		              }
 		}
-		
+		return list;
 		
 	}
 	
