@@ -59,7 +59,6 @@ public class Main {
 	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes) {
 
 		readFile_slotsAula();
-		System.out.println(" Slots list size: "+slots.size());
 //		readFile_slotsAvaliacao();
     	
     	/*List<String> metodos = new ArrayList<String>();
@@ -69,19 +68,29 @@ public class Main {
 //		Slot s = slots.get(1);
 //		Evento e = s.eventos.get(7); // slot 1, evento 7 é o q tem bues pessoas
 //		List<Sala> sala_to_return = new ArrayList<>();
-//		for (Slot s : slots) {
-//			for (Evento e : s.eventos) {
-////		System.out.println("\n novo evento");
-////		menorNumSalas(s.salas_livres, (Avaliacao) e, s);
-//				//nearest_room_for_evaluation(s.salas_livres, e.getNumero_de_alunos(), sala_to_return);
-//				if (e instanceof Aula) {
-//					Sala nova_sala = doMethods(s.salas_livres, (Aula) e, s, metodos_aulas);
-//					((Aula) e).setSala(nova_sala);
-//				}
-////				else if (e instanceof Avaliacao)
-////					doMethodsAvals(s.salas_livres, (Avaliacao) e,s,metodos_avaliacoes);
-//			}
-//		}
+		for (Slot s : slots) {
+			for (Evento e : s.eventos) {
+//		System.out.println("\n novo evento");
+//		menorNumSalas(s.salas_livres, (Avaliacao) e, s);
+				//nearest_room_for_evaluation(s.salas_livres, e.getNumero_de_alunos(), sala_to_return);
+				if (e instanceof Aula a) {
+					Sala nova_sala = doMethods(s.salas_livres, (Aula) e, s, metodos_aulas);
+					a.setSala(nova_sala);
+					if (nova_sala == null) System.out.println("Entrei");
+				}
+//				else if (e instanceof Avaliacao)
+//					doMethodsAvals(s.salas_livres, (Avaliacao) e,s,metodos_avaliacoes);
+			}
+		}
+		int total = 0;
+		for (Slot s: slots) {
+			for (Evento e: s.eventos) {
+				if (e instanceof Aula a) {
+					if (a.sala == null) total++;
+				}
+			}
+		}
+		System.out.println(total);
 	}
 
 	private List<Sala> readFile_caracterizacaoDasSalas() {
@@ -345,7 +354,7 @@ public class Main {
 	}
 
 	private Sala doMethods(List<Sala> sala_apos_metodo, Aula a, Slot help, List<String> list_methods) {
-		System.out.println(a.caracteristica + a.inscritos + a.unidade_de_execucao);
+		System.out.println("\n"+a.caracteristica + a.inscritos + a.unidade_de_execucao);
 		if (sala_apos_metodo == null) {
 			sala_apos_metodo = help.salas_livres;
 		}
@@ -386,8 +395,7 @@ public class Main {
 			for (Sala s : salas_possiveis) {
 				System.out.println(s);
 			}*/
-			doMethods(salas_possiveis, a, help, list_methods.subList(1, list_methods.size()));
-			return null;
+			return doMethods(salas_possiveis, a, help, list_methods.subList(1, list_methods.size()));
 		} else {
 
 			int index = 0;
@@ -509,9 +517,9 @@ public class Main {
 
 
 
-	private void readFile_slotsAula() {
+	public void readFile_slotsAula() {
 		System.out.println("readFile_slotsAula");
-		Instant time = Instant.now();
+		long time = System.currentTimeMillis();
 
 		try {
 
@@ -544,8 +552,6 @@ public class Main {
 						if(!line[10].isEmpty()) {
 							date = new SimpleDateFormat("dd-MM-yyyy").parse(line[10]);}
 
-						if (unidade_de_execucao == null || unidade_de_execucao.equals("")) System.out.println("Entrie");
-
 						evento = new Aula(date, date, Integer.parseInt(line[4]), cursos, unidade_de_execucao,
 								hora_inicial, hora_final, line);
 
@@ -559,7 +565,7 @@ public class Main {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("		Time: "+ Duration.between(time,Instant.now()));
+		System.out.println("		Time: "+ (System.currentTimeMillis()-time));
 	}
 
 
@@ -567,7 +573,7 @@ public class Main {
 
 
 
-	private void readFile_slotsAvaliacao() {
+	public void readFile_slotsAvaliacao() {
 
 		try {
 

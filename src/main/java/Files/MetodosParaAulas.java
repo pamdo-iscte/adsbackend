@@ -21,7 +21,7 @@ public class MetodosParaAulas {
     }
 
     public List<Sala> manter_caracteristica(List<Sala> salas_livres, Aula aula, Slot slot, Main main) {
-        System.out.println("Aulas manter caracteristica");
+//        System.out.println("Aulas manter caracteristica");
         String[] columns = main.getColumns();
         //List<Sala> salas_livres = slot.salas_livres;
         String caracteristica_aula1 = aula.caracteristica;
@@ -49,10 +49,10 @@ public class MetodosParaAulas {
         }
 
         List<Sala> salas_livres_com_caracteristica = main.salas_match_caracteristica(caracteristica_aula, salas_livres);
-        System.out.println("\n");
-        System.out.println("Aula "+caracteristica_aula+" " + aula.inscritos);
+//        System.out.println("\n");
+//        System.out.println("Aula "+caracteristica_aula+" " + aula.inscritos);
         if(caracteristica_aula.equals("Não_necessita_de_sala")) {
-            System.out.println("Não necessita de sala");
+//            System.out.println("Não necessita de sala");
             return null;
         }
         List<Sala> salas_to_return = new ArrayList<>();
@@ -62,7 +62,7 @@ public class MetodosParaAulas {
     }
 
     public List<Sala> menor_distancia_entre_salas(Aula aula, Slot slot, Main main){
-        System.out.println("Aulas menor distancia");
+//        System.out.println("Aulas menor distancia");
         List<Slot> slots = main.getSlots();
         List<Sala> salas_return = new ArrayList<>();
         for(Slot slotes: slots) {
@@ -79,7 +79,7 @@ public class MetodosParaAulas {
                             if(slot.salas_livres.contains(sala_anterior)){
                                 if(aula_anterior.caracteristica.equals(aula.caracteristica)) {
                                     salas_return.add(sala_anterior);
-                                    System.out.println("Sala "+salas_return.get(0));
+//                                    System.out.println("Sala "+salas_return.get(0));
                                     return salas_return;
                                 }
                             }
@@ -104,7 +104,7 @@ public class MetodosParaAulas {
             //System.out.println("n há salas");
             return slot.salas_livres;
         }
-        System.out.println("Sala "+salas_return.get(0));
+//        System.out.println("Sala "+salas_return.get(0));
         return salas_return;
     }
 

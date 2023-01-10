@@ -24,6 +24,7 @@ public class Aula extends Evento{
 		this.caracteristica = line[11];
 		this.curso = line[0];
 		this.turno = line[3];
+		this.unidade_de_execucao = unidade;
 	}
 
 

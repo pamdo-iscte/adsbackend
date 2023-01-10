@@ -37,10 +37,11 @@ public class Convert_Aula_CSV_to_JSON implements Serializable {
         this.dia_da_semana = dia_da_semana;
         this.hora_inicio = hora_inicio;
         this.hora_fim = hora_fim;
-        if (!data.equals("")) {
-            String[] data_fields = data.split("/");
-            this.data = data_fields[2] + "/" + data_fields[1] + "/" + data_fields[0];
-        } else this.data=data;
+//        if (!data.equals("")) {
+//            String[] data_fields = data.split("/");
+//            this.data = data_fields[2] + "/" + data_fields[1] + "/" + data_fields[0];
+//        } else this.data=data;
+        this.data = data;
         this.sala = sala;
         this.dias = dias;
     }

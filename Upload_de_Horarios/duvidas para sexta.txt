@@ -1,0 +1,19 @@
+No caso da UC SRSI há 2 turnos para a turma MEI-A1. Um para a primeira metade do semestre e outro para
+a segunda metade. Deixamos assim ou é suposto fazer algo? Mantem-se como está.
+
+Deve ser possível editar o horario do aluno apos ele ter criado?
+
+Do frontend envia o link do excel e no backend faz o download do file a partir do link.
+Senao der para fazer o upload diretamente para o backend.
+
+Acrescentar uma coluna que funciona como Verde, Amarelo, Vermelho dependendo da gravidade da
+falta da informação da aula/avaliação. 
+
+Fazer case de Seg, seg, segunda, Segunda, ...
+
+Os serviços têm de escolher métodos hard e soft.
+
+Para cada horário gerado aparecer a opção "Exportar".
+
+Caso exista 3 heurísticas deve haver a opção de gerar a combinação apenas ou se gera 4 horários
+(combinação e 1 para cada heurística).

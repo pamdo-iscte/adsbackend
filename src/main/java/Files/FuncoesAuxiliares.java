@@ -1,17 +1,25 @@
 package Files;
 
 import com.opencsv.CSVReader;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.IntStream;
 
+
 public class FuncoesAuxiliares {
 //    private final String file_horarios_1_sem = "ADS - Horários 1º sem 2022-23.csv";
 
 
     public List<Convert_Aula_CSV_to_JSON> get_Dias_da_semana(List<Convert_Aula_CSV_to_JSON> aulas) {
+        System.out.println(aulas.size());
         List<Integer> aulas_para_remover = new ArrayList<>();
         List<Integer> aulas_para_percorrer = new ArrayList<>(IntStream.iterate(0, i -> i + 1).limit(aulas.size()).boxed().toList());
 
@@ -64,37 +72,83 @@ public class FuncoesAuxiliares {
     }
 
     public List<Convert_Aula_CSV_to_JSON> getAulas(String filename) {
-        List<Convert_Aula_CSV_to_JSON> all_aulas = new ArrayList<>();
+        List<Convert_Aula_CSV_to_JSON> aulas = new ArrayList<>();
         try {
-            FileReader filereader = new FileReader(filename);
-
-            CSVReader csvReader = new CSVReader(filereader);
-            String[] nextRecord;
-
-            boolean first_line = true;
-
-            while ((nextRecord = csvReader.readNext()) != null) {
-                if (first_line) first_line = false;
-                else {
-                    String temp = nextRecord[0].replace("'",",");
-                    String[] line = temp.split(";");
-                    String turno = line[2];
-                    String sala = "";
-                    String data ="";
-                    if (line.length >=13) sala = line[12];
-                    if (line.length >= 11) data = line[10];
-                    Convert_Aula_CSV_to_JSON convert = new Convert_Aula_CSV_to_JSON(line[0],line[1],turno,line[3],line[7],
-                            line[8],line[9],data,sala,"");
-
-                    all_aulas.add(convert);
+            File file = new File(filename);   //creating a new file instance
+            FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file
+            //creating Workbook instance that refers to .xlsx file
+            XSSFWorkbook wb = new XSSFWorkbook(fis);
+            XSSFSheet sheet = wb.getSheetAt(0);     //creating a Sheet object to retrieve object
+            //iterating over excel file
+            for (Row row : sheet) {
+                Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column
+                if (row.getRowNum() < 1) {
+                    continue;
                 }
+                String[] row_fields = new String[15];
+                while (cellIterator.hasNext()) {
+                    Cell cell_row = cellIterator.next();
+
+                    String field;
+                    if (cell_row.getCellType() == CellType.STRING)
+                        field = cell_row.getStringCellValue();
+                    else if (cell_row.getCellType() == CellType.BOOLEAN)
+                        field = String.valueOf(cell_row.getBooleanCellValue());
+                    else if (DateUtil.isCellDateFormatted(cell_row)) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(cell_row.getDateCellValue());
+                        field = calendar.get(Calendar.YEAR) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DAY_OF_MONTH);
+                    } else
+                        field = String.valueOf((int) cell_row.getNumericCellValue());
+
+                    row_fields[cell_row.getColumnIndex()] = field;
+                }
+                Convert_Aula_CSV_to_JSON convert = new Convert_Aula_CSV_to_JSON(row_fields[0], row_fields[1], row_fields[2], row_fields[3], row_fields[7],
+                        row_fields[8], row_fields[9], row_fields[10], row_fields[12], "");
+                if (convert.getTurno() == null && convert.getCurso() == null && convert.getUnidade_de_execucao() == null) break;
+                aulas.add(convert);
             }
         }
-        catch (Exception e) {
+        catch(Exception e) {
             e.printStackTrace();
         }
-        return all_aulas;
+        System.out.println("Final do test: "+aulas.size());
+        return aulas;
     }
+
+
+//    public List<Convert_Aula_CSV_to_JSON> test(String filename) {
+//        List<Convert_Aula_CSV_to_JSON> all_aulas = new ArrayList<>();
+//        try {
+//            FileReader filereader = new FileReader(filename);
+//
+//            CSVReader csvReader = new CSVReader(filereader);
+//            String[] nextRecord;
+//
+//            boolean first_line = true;
+//
+//            while ((nextRecord = csvReader.readNext()) != null) {
+//                if (first_line) first_line = false;
+//                else {
+//                    String temp = nextRecord[0].replace("'",",");
+//                    String[] line = temp.split(";");
+//                    String turno = line[2];
+//                    String sala = "";
+//                    String data ="";
+//                    if (line.length >=13) sala = line[12];
+//                    if (line.length >= 11) data = line[10];
+//                    Convert_Aula_CSV_to_JSON convert = new Convert_Aula_CSV_to_JSON(line[0],line[1],turno,line[3],line[7],
+//                            line[8],line[9],data,sala,"");
+//
+//                    all_aulas.add(convert);
+//                }
+//            }
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return all_aulas;
+//    }
 
     public List<Convert_Aula_CSV_to_JSON> remover_aulas(List<Convert_Aula_CSV_to_JSON> aulas, List<Integer> remover) {
         remover.sort(Collections.reverseOrder());
@@ -149,6 +203,7 @@ public class FuncoesAuxiliares {
 
     public List<Integer> get_number_of_weeks_of_slot(List<String> datas, List<String> horas_repetidas, Calendar primeiro_dia_de_aulas_cal,
                                                      String dia_da_sem, String horarios_das_aulas) {
+        System.out.println("GET Number");
         List<Integer> number_of_weeks = new ArrayList<>();
         int sem_primeiro_dia_de_aulas = primeiro_dia_de_aulas_cal.get(Calendar.WEEK_OF_YEAR);
 //        System.out.println("PRMIERO     "+primeiro_dia_de_aulas_cal.getTime());
@@ -239,6 +294,7 @@ public class FuncoesAuxiliares {
 
                 for (int i=0; i<datas.size(); i++) {
                     String[] data_fields = datas.get(i).split("/");
+//                    System.out.println(datas.get(i));
                     String[] inicio_fim = horas.get(i).split(";");
 
 //                    calendar = setCalendar(calendar,data_fields);
@@ -246,7 +302,9 @@ public class FuncoesAuxiliares {
                     String id = slot.getTurno() + slot.getDia_da_semana() + inicio_fim[0]+inicio_fim[1];
                     String text = obter_sigla_da_uc(slot.getUnidade_de_execucao()) + "      Sala: "+slot.getSala();
 
+                    System.out.println("Antes PRINT "+Arrays.toString(data_fields));
                     confirmar_formato_da_data(data_fields);
+                    System.out.println("PRINT "+Arrays.toString(data_fields));
                     String data_da_aula = data_fields[0]+"-"+data_fields[1]+"-"+data_fields[2];
                     String start = data_da_aula+"T"+inicio_fim[0];
                     String end = data_da_aula+"T"+inicio_fim[1];
@@ -281,7 +339,7 @@ public class FuncoesAuxiliares {
         int OTHER_YEAR_SIZE = 2;
 
         if(int_day<10 && data_fields[2].length() < 2) data_fields[2]="0"+data_fields[2];
-        if (int_month<10 && data_fields[1].length() < 2) data_fields[1] = "O"+data_fields[1];
+        if (int_month<10 && data_fields[1].length() < 2) data_fields[1] = "0"+data_fields[1];
         if (data_fields[0].length() == OTHER_YEAR_SIZE) data_fields[0] = "20"+data_fields[0];
 
     }
@@ -297,9 +355,16 @@ public class FuncoesAuxiliares {
                 if (slot != null) {
                     slots.add(slot);
                     String data = slot.getStart().split("T")[0];
+//                    System.out.println("Read file "+data);
                     Calendar calendar = Calendar.getInstance();
-                    slot.setCal(setCalendar(calendar,data.split("-")));
-                    System.out.println(slot.getCalendar().getTime() + " "+slot.getStart());
+                    String[] data_fields = data.split("-");
+//                    System.out.println("Length: "+data_fields[1].length() + " Char: "+data_fields[1].charAt(0));
+//                    System.out.println(data_fields[1].charAt(0) == '0');
+                    if (data_fields[1].length() > 1 && data_fields[1].charAt(0) == '0') data_fields[1] = String.valueOf(data_fields[1].charAt(1));
+                    if (data_fields[2].length() > 1 && data_fields[2].charAt(0) == '0') data_fields[2] = String.valueOf(data_fields[2].charAt(1));
+//                    System.out.println("Read file: "+Arrays.toString(data_fields));
+                    slot.setCal(setCalendar(calendar,data_fields));
+//                    System.out.println(slot.getCalendar().getTime() + " "+slot.getStart());
                 }
                 else break;
             }

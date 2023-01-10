@@ -3,8 +3,12 @@ package com.backendads.backendads.controller;
 import Files.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,10 +58,12 @@ public class HelloController {
     }
 
     @GetMapping("/get_aluno_professor")
-    public String aulas() throws IOException {
+    public String aulas()  {
+        String dir = "horario_sem_aulas_repetidas.json";
         index_of_colors = 0;
-        String str_file = Files.readString(Path.of("horario_sem_aulas_repetidas.json"));
-        if (str_file.equals("")) {
+        File tempFile = new File(dir);
+        if (!tempFile.exists()) {
+//            List<Convert_Aula_CSV_to_JSON> lista_de_aulas_com_aulas_unicas = aux.get_Dias_da_semana(aux.getAulas(file_das_aulas_a_ser_usado));
             List<Convert_Aula_CSV_to_JSON> lista_de_aulas_com_aulas_unicas = aux.get_Dias_da_semana(aux.getAulas(file_das_aulas_a_ser_usado));
             System.out.println("Size: "+lista_de_aulas_com_aulas_unicas.size());
             String str_list = new Gson().toJson(lista_de_aulas_com_aulas_unicas);
@@ -71,7 +77,13 @@ public class HelloController {
             }
             return str_list;
         }
-        else return str_file;
+        else {
+            try {
+                return Files.readString(Path.of(dir));
+            } catch (IOException e) {
+                return "Ocorreu um erro";
+            }
+        }
     }
 
     @PostMapping("/obter_metodos_selecionados")
@@ -97,6 +109,7 @@ public class HelloController {
         String[] horarios_das_aulas = aux.split_list_elements(uc.getHoras());
         String[] dias_de_semana = aux.split_list_elements(uc.getDias());
         List<String> datas = uc.getDatas();
+        System.out.println(datas.toString());
         List<String> horas_repetidas = uc.getHoras_repetidas();
 
         String color= aux.setColor_evento(colors,index_of_colors);
@@ -130,13 +143,6 @@ public class HelloController {
         return new Gson().toJson(slots);
     }
 
-    @PostMapping("/upload")
-    public String upload_horario(@RequestParam("file") MultipartFile file) {
-        String result =  aux.upload_file(file,dir_upload_horarios);
-        if (result.equals("")) return "Erro no upload";
-        main.setFile_horario_1sem(result);
-        return "Upload concluído com sucesso";
-    }
 
 
     @PostMapping("/guardar_horario")
@@ -247,6 +253,17 @@ public class HelloController {
         String filename_json = json.get("filename").asText();
         return new File(dir_upload_horarios + "\\"+filename_json);
     }
+//    @RequestMapping("/download")
+//    public ResponseEntity downloadFile1(@RequestParam String fileName) throws IOException {
+//
+//        File file = new File(fileName);
+//        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+//
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName())
+//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                .contentLength(file.length());
+//
 
     @PostMapping("/deleteschedule")
     public void delete_schedule(@RequestBody JsonNode json) throws IOException {
@@ -279,6 +296,16 @@ public class HelloController {
         String result =  aux.upload_file(file,dir_upload_avaliacoes);
         if (result.equals("")) return "Erro no upload";
         main.setFile_avaliacoes_1sem(result);
+        main.readFile_slotsAvaliacao();
+        return "Upload concluído com sucesso";
+    }
+
+    @PostMapping("/upload")
+    public String upload_horario(@RequestParam("file") MultipartFile file) {
+        String result =  aux.upload_file(file,dir_upload_horarios);
+        if (result.equals("")) return "Erro no upload";
+        main.setFile_horario_1sem(result);
+        main.readFile_slotsAula();
         return "Upload concluído com sucesso";
     }
 
