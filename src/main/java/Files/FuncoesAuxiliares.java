@@ -302,9 +302,9 @@ public class FuncoesAuxiliares {
                     String id = slot.getTurno() + slot.getDia_da_semana() + inicio_fim[0]+inicio_fim[1];
                     String text = obter_sigla_da_uc(slot.getUnidade_de_execucao()) + "      Sala: "+slot.getSala();
 
-                    System.out.println("Antes PRINT "+Arrays.toString(data_fields));
+//                    System.out.println("Antes PRINT "+Arrays.toString(data_fields));
                     confirmar_formato_da_data(data_fields);
-                    System.out.println("PRINT "+Arrays.toString(data_fields));
+//                    System.out.println("PRINT "+Arrays.toString(data_fields));
                     String data_da_aula = data_fields[0]+"-"+data_fields[1]+"-"+data_fields[2];
                     String start = data_da_aula+"T"+inicio_fim[0];
                     String end = data_da_aula+"T"+inicio_fim[1];
