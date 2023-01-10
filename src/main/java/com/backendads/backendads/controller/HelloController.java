@@ -3,13 +3,12 @@ package com.backendads.backendads.controller;
 import Files.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.Resource;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.*;
@@ -71,7 +70,7 @@ public class HelloController {
     }
 
     @PostMapping("/obter_metodos_selecionados")
-    public String obter_metodos_selecionados(@RequestBody MetodosSelecionados json_metodos) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+    public String obter_metodos_selecionados(@RequestBody MetodosSelecionados json_metodos) {
         List<String> aulas = json_metodos.getAulas();
         System.out.println("Aulas antes do replace: "+aulas);
         List<String> avaliacoes = json_metodos.getAvaliacoes();
@@ -128,22 +127,24 @@ public class HelloController {
 
     @PostMapping("/upload")
     public String upload_horario(@RequestParam("file") MultipartFile file) {
-        String fileName = file.getOriginalFilename();
         try {
-            File excel_file = file.getResource().getFile();
-            File new_file = new File("Upload_de_Horarios"+ "\\" +fileName);
-            if (excel_file.renameTo(new_file))
-                return "Upload com sucesso";
+            String filename = file.getResource().getFilename();
+            if (filename == null) return "Erro ao enviar o ficheiro";
+            File convFile = new File("Upload_de_Horarios"+ "\\" +filename);
+            if (convFile.createNewFile()) {
+                FileOutputStream fos = new FileOutputStream(convFile);
+                fos.write(file.getBytes());
+                fos.close();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return "Erro ao dar upload do ficheiro "+fileName;
+        return "Upload concluído com sucesso";
     }
 
 
     @PostMapping("/guardar_horario")
     public String guardar_horario(@RequestBody ReceiveClasses slots)  {
-        //enviar as duas listas Convert_Aula_CSV_to_JSON e Slot_horario_Semestral
         try {
             FileOutputStream fo = new FileOutputStream(dir_horariosCriados + "\\" + slots.getNum() + ".txt");
             ObjectOutputStream oo = new ObjectOutputStream(fo);
@@ -166,15 +167,6 @@ public class HelloController {
         }
     }
 
-//    @PostMapping("/ler_horario_semestral_guardado")
-//    public String ler_horario_semestral_guardado(@RequestBody JsonNode json) {
-//        List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCriados,json.get("num").asText());
-//
-//        for (Slot_horario_semestral s: slots) {
-//            System.out.println(s.toString());
-//        }
-//        return "OLA";
-//    }
     @PostMapping("/fileexists")
     public String FileExists(@RequestBody JsonNode json) {
         String file = json.get("file").asText();
@@ -199,6 +191,7 @@ public class HelloController {
         List<Slot_horario_semestral> horario_da_semana = new ArrayList<>();
 
         List<String> turnos_UCs = new ArrayList<>();
+        List<String> cores_da_semana = this.colors;
 
         for (Slot_horario_semestral slot :slots) {
             System.out.println(slot.getCalendar().getTime());
@@ -210,16 +203,19 @@ public class HelloController {
         }
 
         for (Slot_horario_semestral aula: horario_da_semana) {
+            String color ="";
             for (int i=0; i<turnos_UCs.size();i++) {
-                String color ="";
-                if (i == colors.size()) {
-                    Random random = new Random();
-                    int nextInt = random.nextInt(0xffffff + 1);
-                    color = String.format("#%06x", nextInt);
+                if (turnos_UCs.get(i).equals(aula.getTurno())) {
+                    if (i == cores_da_semana.size()) {
+                        Random random = new Random();
+                        int nextInt = random.nextInt(0xffffff + 1);
+                        cores_da_semana.add(String.format("#%06x", nextInt));
+                    }
+                    color = cores_da_semana.get(i);
+                    break;
                 }
-                else if (turnos_UCs.get(i).equals(aula.getTurno())) color = colors.get(i);
-                aula.setBackColor(color);
             }
+            aula.setBackColor(color);
         }
 
         return new Gson().toJson(horario_da_semana);

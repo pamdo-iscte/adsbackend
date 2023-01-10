@@ -207,7 +207,7 @@ public class FuncoesAuxiliares {
     }
 
     public String obter_sigla_da_uc(String uc) {
-        List<String> palavras_para_ignorar = Arrays.asList("de","e","dos");
+        List<String> palavras_para_ignorar = Arrays.asList("de","e","dos","a","do","em","à");
         List<String> chars_para_ignorar = Arrays.asList("(",")","[","]");
         String[] fields = uc.split(" ");
         String sigla = "";
