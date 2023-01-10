@@ -1,4 +1,7 @@
-package org.example;
+package Files;
+
+import Files.Evento;
+import Files.Sala;
 
 import java.util.Date;
 import java.util.List;

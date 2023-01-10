@@ -2,8 +2,7 @@ package Files;
 
 import com.opencsv.CSVReader;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.text.ParseException;
@@ -14,9 +13,9 @@ import java.util.*;
 import java.lang.Math;
 
 public class Main {
-	private String file_caracterizacao_das_salas = "ADS - Caracterizacao das salas.csv";
-	private String file_horario_1sem = "2- ADS - Horários 1º sem 2022-23.csv";
-	private String file_avaliacoes_1sem = "ADS - Avaliações 1º semestre 2022-23.csv";
+	private String file_caracterizacao_das_salas = "Caracterizacao_das_Salas/ADS - Caracterizacao das salas.csv";
+	private String file_horario_1sem = "Upload_de_Horarios/2- ADS - Horários 1º sem 2022-23.csv";
+	private String file_avaliacoes_1sem = "Upload_de_Avaliacoes/ADS - Avaliações 1º semestre 2022-23.csv";
 
 	private List<Slot> slots = new ArrayList<>();
 	private String[] columns = null;
@@ -214,7 +213,9 @@ public class Main {
 	}
 
 	public List<Sala> nearest_room_for_evaluation(List<Sala> salas, int numero_alunos, List<Sala> sala_to_return) {
-
+		if(salas.isEmpty()){
+			return null;
+		}
 		int distance = salas.get(0).getCapacidade_exame() - numero_alunos;
 		int index=0;
 
@@ -241,7 +242,7 @@ public class Main {
 		return sala_to_return;
 	}
 
-	public List<Sala> dividirAlunos(List<Sala> salas_livres, int dividir, Avaliacao aval) {
+	public List<Sala> dividirAlunos(List<Sala> salas_livres, int dividir,Avaliacao aval) {
 		int num = aval.getNumero_de_alunos()/dividir;
 		List<Sala> conjunto_salas = new ArrayList<>();
 
@@ -573,7 +574,7 @@ public class Main {
     	String minuto = "30";
     	String segundo = "00";
     	String data_inicio = "01-09-"+ano;
-    	String data_final = "31-08-"+Integer.toString(Integer.parseInt(ano));
+    	String data_final = "31-08-"+Integer.toString(Integer.parseInt(ano)+1);
     	boolean i = false;
     	List<Evento> eventos = new ArrayList<>();
 		List<Sala> salas = readFile_caracterizacaoDasSalas();
@@ -644,7 +645,7 @@ public class Main {
 		try {
 			
 			FileReader filereader = new FileReader(file_horario_1sem);
-
+			System.out.println("LI o FICHEIro");
 			try (CSVReader csvReader = new CSVReader(filereader)) {
 				String[] nextRecord;
 
@@ -674,7 +675,6 @@ public class Main {
 				
 						evento = new Aula(date, date, Integer.parseInt(line[4]), cursos, unidade_de_execucao,
 								hora_inicial, hora_final, line);
-					
 						fillSlot(evento, line[10], hora_inicial, hora_final);
 					}
 				}
@@ -795,11 +795,14 @@ public class Main {
 		                    while (scanner.hasNextLine()) {
 		                        String line = scanner.nextLine();
 		                        lineNum++;
-		                        if(line.equals(linha)) { 
+		                        if(line.equals(linha)) {
 		                            return;
 		                        }
+								else {
+									System.out.println(lineNum);
+								}
 		                    }
-		                } catch(FileNotFoundException et) { 
+		                } catch(FileNotFoundException et) {
 		                    //handle this
 		                }
 		                

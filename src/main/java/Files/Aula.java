@@ -1,8 +1,11 @@
-package org.example;
+package Files;
+
+import Files.Evento;
+import Files.Sala;
 
 import java.util.Date;
 
-public class Aula extends Evento{
+public class Aula extends Evento {
 
 
 	String turno;
@@ -19,6 +22,7 @@ public class Aula extends Evento{
 	String turnoCapacidadeSuperior;
 	
 	String caracteristica;
+	String professor;
 
 
 	public Aula(Date data, Date data_final, int numero_de_alunos, String[] cursos, String unidade, String hora_inicio, String hora_fim, String[] line) {

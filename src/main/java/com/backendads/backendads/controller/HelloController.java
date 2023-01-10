@@ -278,9 +278,9 @@ public class HelloController {
         if (dir.isDirectory()) {
             File[] files = Objects.requireNonNull(dir.listFiles());
             if (files.length != 0)
-                return files[0].getName();
+                return new Gson().toJson(files[0].getName());
         }
-        return "";
+        return new Gson().toJson("");
     }
 
     @PostMapping("/upload_caracterizacao_salas")
@@ -305,6 +305,38 @@ public class HelloController {
         if (result.equals("")) return "Erro no upload";
         main.setFile_horario_1sem(result);
         return "Upload concluído com sucesso";
+    }
+
+    @GetMapping("/start_main")
+    public void start_main() {
+        main = new Main();
+    }
+    @PostMapping("/csv")
+    public String csv() {
+        String delimiter = ",";
+        List<List<String>> z= new ArrayList<>();
+        try {
+            File file = new File("hora.txt");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line = "";
+            String[] tempArr;
+            while((line = br.readLine()) != null) {
+                List<String> linha=new ArrayList<>();
+                tempArr = line.split(delimiter);
+                for(String tempStr : tempArr) {
+                    linha.add(tempStr);
+                }
+                System.out.println(linha);
+                z.add(linha);
+                System.out.println();
+            }
+            System.out.println(z);
+            br.close();
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+        return new Gson().toJson(z);
     }
 
 
