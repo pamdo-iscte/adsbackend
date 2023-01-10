@@ -20,8 +20,7 @@ public class Main {
 	private List<Slot> slots = new ArrayList<>();
 	private String[] columns = null;
 
-	private List<List<Sala>> salas_para_aulas = new ArrayList<>();
-	private List<Aula> aulas_faltam = new ArrayList<>();
+	public String ano = "22";
 
 	public void setFile_caracterizacao_das_salas(String file_caracterizacao_das_salas) {
 		this.file_caracterizacao_das_salas = file_caracterizacao_das_salas;
@@ -58,30 +57,96 @@ public class Main {
 
 	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes) {
 
+		initialSlots();
 		readFile_slotsAula();
-		System.out.println(" Slots list size: "+slots.size());
-//		readFile_slotsAvaliacao();
-    	
-    	/*List<String> metodos = new ArrayList<String>();
-    	metodos.add("caracteristica");
-    	metodos.add("evitar sobrelotaçao");
-*/
-//		Slot s = slots.get(1);
-//		Evento e = s.eventos.get(7); // slot 1, evento 7 é o q tem bues pessoas
-//		List<Sala> sala_to_return = new ArrayList<>();
-//		for (Slot s : slots) {
-//			for (Evento e : s.eventos) {
-////		System.out.println("\n novo evento");
-////		menorNumSalas(s.salas_livres, (Avaliacao) e, s);
-//				//nearest_room_for_evaluation(s.salas_livres, e.getNumero_de_alunos(), sala_to_return);
-//				if (e instanceof Aula) {
-//					Sala nova_sala = doMethods(s.salas_livres, (Aula) e, s, metodos_aulas);
-//					((Aula) e).setSala(nova_sala);
-//				}
-////				else if (e instanceof Avaliacao)
-////					doMethodsAvals(s.salas_livres, (Avaliacao) e,s,metodos_avaliacoes);
-//			}
-//		}
+		readFile_slotsAvaliacao();
+
+		List<Sala> sala_to_return = new ArrayList<>();
+		Sala sala = null;
+
+		for (Slot s : slots) {
+			System.out.println("\nslot " + i + " " + s.data + " " + s.hora_inicio + " " + s.hora_final);
+			j = 0;
+			for (Evento e : s.eventos) {
+
+				System.out.println("\nnovo evento " + j);
+				System.out.println(e);
+				j++;
+				if (e instanceof Avaliacao) {
+					System.out.println("avaliacao");
+					if (((Avaliacao) e).getSalas() != null) {
+						if (((Avaliacao) e).getSalas().size() != 0) {
+							System.out.println("\nsalas:");
+							System.out.println(((Avaliacao) e).getSalas());
+
+							continue;
+						}
+					}
+				}
+				if (e instanceof Aula) {
+					System.out.println("aula");
+					if (((Aula) e).getSala() != null) {
+
+						System.out.println(((Aula) e).getSala());
+
+						continue;
+					}
+				}
+
+				// System.out.println(e);
+				String aux = s.hora_final;
+				if (e instanceof Avaliacao) {
+					doMethodsAvals(null, (Avaliacao) e, s, metodos_avaliacoes);
+				}
+				if (e instanceof Aula) {
+					doMethodsAulas(null, (Aula) e, s,  metodos_aulas);
+				}
+
+				if (!e.getHora_fim().equals(s.hora_final)) {
+					for (Slot sl : slots) {
+						for (Evento ev : sl.eventos) {
+							if (e.equals(ev) && !sl.hora_inicio.equals(s.hora_inicio)) {
+
+								aux = sl.hora_final;
+								if (e instanceof Avaliacao) {
+
+									List<Sala> listsala = ((Avaliacao) e).getSalas();
+									if (listsala != null) {
+										for (Sala hi : ((Avaliacao) e).getSalas()) {
+												for (Sala asd : sl.salas_livres) {
+												if (asd.getNome().equals(hi.getNome())) {
+													sl.salas_livres.remove(asd);
+													break;
+												}
+											}
+										}
+										
+									}
+								}
+								if (e instanceof Aula) {
+									sala = ((Aula) e).getSala();
+									if (sala != null) {
+										for (Sala asd : sl.salas_livres) {
+											if (asd.getNome().equals(sala.getNome())) {
+												sl.salas_livres.remove(asd);
+												break;
+											}
+										}
+									}
+								}
+
+							}
+						}
+					}
+				}
+				if (e instanceof Avaliacao) 
+					System.out.println(((Avaliacao)e).getSalas());
+				if (e instanceof Aula)  System.out.println(((Aula)e).getSala());
+			}
+
+			i++;
+		}
+
 	}
 
 	private List<Sala> readFile_caracterizacaoDasSalas() {
@@ -310,9 +375,13 @@ public class Main {
 		}
 		if (salas_possiveis.size()== 0) {
 			salas_possiveis = sala_apos_metodo;
-			if (sala_apos_metodo.size()==0) {
+			if (sala_apos_metodo==null) {
 				//se houver salas disponiveis para colocar tds os alunos, o menorNumSalas dá
 				salas_possiveis = m.menor_numero_de_salas(help.salas_livres, a, help,this);
+				if(salas_possiveis==null) {
+					System.out.println("não há salas possíveis 1");
+					return null;
+				}
 				if (salas_possiveis.size()== 0) {
 					// se não, é impossivel, diz-se q houve um erro?
 					System.out.println("Não existem salas disponiveis para alocar");
@@ -331,9 +400,12 @@ public class Main {
 
 			List<Sala> salas_escolhida = salas_possiveis.get(index);
 
-			for(Sala s: salas_escolhida) {
-				System.out.println("salas escolhidas " + s);
-			}
+			//for(Sala s: salas_escolhida) {
+			//	System.out.println("salas escolhidas " + s);
+			//}
+			
+			a.setSalas(salas_escolhida);
+			
 			if(salas_escolhida.size() == help.salas_livres.size()) help.salas_livres.clear();
 			else {
 				for(Sala s: salas_escolhida) {
@@ -344,7 +416,8 @@ public class Main {
 		}
 	}
 
-	private Sala doMethods(List<Sala> sala_apos_metodo, Aula a, Slot help, List<String> list_methods) {
+	//antes estave só doMethods
+	private Sala doMethodsAulas(List<Sala> sala_apos_metodo, Aula a, Slot help, List<String> list_methods) {
 		System.out.println(a.caracteristica + a.inscritos + a.unidade_de_execucao);
 		if (sala_apos_metodo == null) {
 			sala_apos_metodo = help.salas_livres;
@@ -375,9 +448,11 @@ public class Main {
 			e.printStackTrace();
 		}
 
-		salas_possiveis = sala_apos_metodo;
-		if (sala_apos_metodo.size()==0) {
-			salas_possiveis = resolver_conflito(a,help);
+		if (salas_possiveis.size()== 0) {
+			salas_possiveis = sala_apos_metodo;
+			if (sala_apos_metodo.size()==0) {
+				salas_possiveis = resolver_conflito(a,help);
+			}
 		}
 
 		if (list_methods.size()>1) {
@@ -393,10 +468,7 @@ public class Main {
 			int index = 0;
 			if(salas_possiveis.size() > 1) {
 				index = rand.nextInt(salas_possiveis.size() - 1);
-				aulas_faltam.add(a);
-				salas_para_aulas.add(salas_possiveis);
-				//tentar ter tds as listas de salas possiveis para atribuir primeiro aquelas q só têm uma opção??
-			}
+				}
 
 			//System.out.println("salas possiveis:");
 
@@ -405,9 +477,10 @@ public class Main {
 			//}
 
 			Sala sala_escolhida = salas_possiveis.get(index);
+			a.setSala(sala_escolhida);
 			help.salas_livres.remove(sala_escolhida);
 
-			System.out.println("sala escolhida "+sala_escolhida);
+			//System.out.println("sala escolhida "+sala_escolhida);
 			return sala_escolhida;
 		}
 	}
@@ -486,146 +559,192 @@ public class Main {
 
 
 
-
-	private void fillSlot(Evento evento, String data, String hora_inicio, String hora_final) {
-		List<Evento> eventos = new ArrayList<>();
-		eventos.add(evento);
+    
+    
+    private void initialSlots() {
+    	int hora_inicio = 7;
+    	int hora_final = 0;
+    	String minuto = "30";
+    	String segundo = "00";
+    	String data_inicio = "01-09-"+ano;
+    	String data_final = "31-08-"+Integer.toString(Integer.parseInt(ano));
+    	boolean i = false;
+    	List<Evento> eventos = new ArrayList<>();
 		List<Sala> salas = readFile_caracterizacaoDasSalas();
-		Slot new_slot = new Slot(data, hora_inicio, hora_final, eventos, salas);
-		boolean duplicate = false;
-
+    	
+    	String string_hora_inicio = "";
+    	String string_hora_final = "";
+    	
+    	
+    	
+    	while(!data_inicio.equals(data_final)) {
+    		
+    	while(hora_inicio < 24) { //ou hora_final n sei
+    		if(Integer.toString(hora_inicio).length()==1) {
+    			string_hora_inicio = "0"+Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
+    		}
+    		else string_hora_inicio = Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
+    		//hora_inicio++; assim é de 1h30 em 1h30, mas n sei se faz mt sentido
+    		if(i==false) {
+    			hora_inicio++; //assim é de 30 em 30 mins
+    			minuto = "00";
+    			i = true;
+    		}
+    		else {
+    			minuto = "30";
+    			i = false;
+    		}
+    		if(Integer.toString(hora_inicio).length()==1) {
+    			string_hora_final = "0"+Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
+    		}
+    		else string_hora_final = Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
+    		Slot new_slot = new Slot(data_inicio, string_hora_inicio, string_hora_final, null, null);
+    		slots.add(new_slot);
+    		
+    	}
+    	hora_inicio = 7;
+    	
+    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy");
+    	Calendar c = Calendar.getInstance();
+    	try {
+			c.setTime(sdf.parse(data_inicio));
+		} catch (ParseException e) {
+		}
+    	c.add(Calendar.DATE, 1);  
+    	data_inicio = sdf.format(c.getTime());  
+    	}
+    }
+    
+    
+    
+    private void fillSlot(Evento evento, String data, String hora_inicio, String hora_final) {
+		
 		for (Slot s : slots) {
-			if (s.data.equals(new_slot.data) && s.hora_inicio.equals(new_slot.hora_inicio)
-					&& s.hora_final.equals(new_slot.hora_final)) {
+			if(s.eventos == null) {
+				s.eventos =new ArrayList<>();
+	    	}
+			if(s.salas_livres == null) {
+				s.salas_livres = readFile_caracterizacaoDasSalas();
+	    	}
+			if (s.data.equals(data) && s.hora_inicio.compareTo(hora_inicio)>=0 && s.hora_inicio.compareTo(hora_final) < 0) {
 				s.eventos.add(evento);
-				duplicate = true;
-			}
-		}
-
-		if (!duplicate) {
-			slots.add(new_slot);
-		}
+		}}
 	}
-
-
-
-	private void readFile_slotsAula() {
-		System.out.println("readFile_slotsAula");
-		Instant time = Instant.now();
+    
+	
+	
+    private void readFile_slotsAula() {
 
 		try {
-
+			
 			FileReader filereader = new FileReader(file_horario_1sem);
 
 			try (CSVReader csvReader = new CSVReader(filereader)) {
 				String[] nextRecord;
 
-
+				
 				boolean first_line = true;
 				while ((nextRecord = csvReader.readNext()) != null) {
 					if (first_line) {
 						first_line = false;
-
+						
 					} else {
 						String[] line = nextRecord;
 						if(line[0].isEmpty()) {
 							break;
 						}
-
+						
 						String unidade_de_execucao = line[1];
-						String[] cursos = line[0].split(",");
-						Evento evento;
-
-
+						String[] cursos = line[0].split(","); 
+						Evento evento = null;
+						
+						
 						String hora_inicial = line[8];
 						String hora_final = line[9];
 
 						Date date = null;
 						if(!line[10].isEmpty()) {
-							date = new SimpleDateFormat("dd-MM-yyyy").parse(line[10]);}
-
-						if (unidade_de_execucao == null || unidade_de_execucao.equals("")) System.out.println("Entrie");
-
+						date = new SimpleDateFormat("dd-MM-yyyy").parse(line[10]);}
+				
 						evento = new Aula(date, date, Integer.parseInt(line[4]), cursos, unidade_de_execucao,
 								hora_inicial, hora_final, line);
-
-						fillSlot(evento, line[10], line[8], line[9]);
+					
+						fillSlot(evento, line[10], hora_inicial, hora_final);
 					}
 				}
 			}
 			//for (Slot s: slots) {
-			//System.out.println(s.toString());
+				//System.out.println(s.toString());
 			//}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("		Time: "+ Duration.between(time,Instant.now()));
 	}
-
-
-
-
-
-
-	private void readFile_slotsAvaliacao() {
+    
+    
+    
+    
+    
+    
+    private void readFile_slotsAvaliacao() {
 
 		try {
-
+			
 			FileReader filereader = new FileReader(file_avaliacoes_1sem);
 
 			try (CSVReader csvReader = new CSVReader(filereader)) {
 				String[] nextRecord;
 
-
+				
 				boolean first_line = true;
 				while ((nextRecord = csvReader.readNext()) != null) {
 					if (first_line) {
 						first_line = false;
-
+						
 					} else {
 						String[] line = nextRecord;
 						if(line[0].isEmpty()) {
 							break;
 						}
-
+						
 						String unidade_de_execucao = line[1];
-						String[] cursos = line[0].split(",");
+						String[] cursos = line[0].split(","); 
 						Evento evento = null;
-
-						String[] data = line[8].split(" ");
-
-						String hora_inicial = data[1];
-						String hora_final = null;
-						Date data_inicial = null;
-						Date data_final = null;
-						data_inicial = new SimpleDateFormat("yyyy/MM/dd").parse(data[0]);
-
-
-
-						if(data.length==5) {
+						
+							String[] data = line[8].split(" ");
+							
+							String hora_inicial = data[1];
+							String hora_final = null;
+							Date data_inicial = null;
+							Date data_final = null;
+							data_inicial = new SimpleDateFormat("yyyy/MM/dd").parse(data[0]);
+							
+							if(data.length==5) {
 							hora_final = data[4];
 							data_final = new SimpleDateFormat("yyyy/MM/dd").parse(data[3]);
-						}
-						else {
-							hora_final = data[3];
-							data_final = data_inicial;
-						}
-
-
-						evento = new Avaliacao(data_inicial, data_final, Integer.parseInt(line[12]), cursos, unidade_de_execucao,
-								hora_inicial, hora_final, line);
-
-
-
-						fillSlot(evento, data[0], hora_inicial, hora_final);
+							}
+							else {
+								hora_final = data[3];
+								data_final = data_inicial;
+							}
+							
+							
+							evento = new Avaliacao(data_inicial, data_final, Integer.parseInt(line[12]), cursos, unidade_de_execucao,
+									hora_inicial, hora_final, line);
+						
+							String[] aux = data[0].split("/");
+							String[] ano = aux[0].split("");
+							String data_to_give = aux[2]+"-"+aux[1]+"-"+ano[2]+ano[3];
+						
+							fillSlot(evento, data_to_give, hora_inicial, hora_final);
 					}
 				}
 			}
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 
 }
