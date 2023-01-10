@@ -296,7 +296,6 @@ public class HelloController {
         String result =  aux.upload_file(file,dir_upload_avaliacoes);
         if (result.equals("")) return "Erro no upload";
         main.setFile_avaliacoes_1sem(result);
-        main.readFile_slotsAvaliacao();
         return "Upload concluído com sucesso";
     }
 
@@ -305,7 +304,6 @@ public class HelloController {
         String result =  aux.upload_file(file,dir_upload_horarios);
         if (result.equals("")) return "Erro no upload";
         main.setFile_horario_1sem(result);
-        main.readFile_slotsAula();
         return "Upload concluído com sucesso";
     }
 
