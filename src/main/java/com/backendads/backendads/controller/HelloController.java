@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.*;
 import java.nio.file.Files;
-
+import java.util.stream.Stream;
 
 
 @RestController
@@ -27,6 +27,11 @@ public class HelloController {
 
     private final String dir_horariosCriados="HorariosCriados";
     private final String dir_horariosCompletos="HorariosCompletos";
+    private final String dir_upload_horarios="Upload_de_Horarios";
+    private final String dir_upload_avaliacoes="Upload_de_Avaliacoes";
+    private final String dir_caracterizacao_das_salas="Caracterizacao_das_Salas";
+    private String file_das_aulas_a_ser_usado = "";
+    private String file_das_avaliacoes_a_ser_usado = "";
     private Main main;
 
     @GetMapping("/get_metodos")
@@ -53,7 +58,7 @@ public class HelloController {
         index_of_colors = 0;
         String str_file = Files.readString(Path.of("horario_sem_aulas_repetidas.json"));
         if (str_file.equals("")) {
-            List<Convert_Aula_CSV_to_JSON> lista_de_aulas_com_aulas_unicas = aux.get_Dias_da_semana(aux.getAulas());
+            List<Convert_Aula_CSV_to_JSON> lista_de_aulas_com_aulas_unicas = aux.get_Dias_da_semana(aux.getAulas(file_das_aulas_a_ser_usado));
             System.out.println("Size: "+lista_de_aulas_com_aulas_unicas.size());
             String str_list = new Gson().toJson(lista_de_aulas_com_aulas_unicas);
             try {
@@ -119,7 +124,7 @@ public class HelloController {
             String start = data_ajustada + "T" + hora_inicio_fim[0];
             String end = data_ajustada + "T" + hora_inicio_fim[1];
 
-            slots.add(new Slot_horario_semestral(id, text, start, end, color,informacao_detalhada,uc.getTurno()));
+            slots.add(new Slot_horario_semestral(id, text, start, end, color,informacao_detalhada,uc.getTurno(),dia_de_sem));
         }
 //        System.out.println(new Gson().toJson(slots));
         return new Gson().toJson(slots);
@@ -127,18 +132,9 @@ public class HelloController {
 
     @PostMapping("/upload")
     public String upload_horario(@RequestParam("file") MultipartFile file) {
-        try {
-            String filename = file.getResource().getFilename();
-            if (filename == null) return "Erro ao enviar o ficheiro";
-            File convFile = new File("Upload_de_Horarios"+ "\\" +filename);
-            if (convFile.createNewFile()) {
-                FileOutputStream fos = new FileOutputStream(convFile);
-                fos.write(file.getBytes());
-                fos.close();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        String result =  aux.upload_file(file,dir_upload_horarios);
+        if (result.equals("")) return "Erro no upload";
+        main.setFile_horario_1sem(result);
         return "Upload concluído com sucesso";
     }
 
@@ -182,20 +178,20 @@ public class HelloController {
         String data = json.get("data").asText().split("T")[0];
         String num = json.get("num").asText();
 
-        System.out.println(data + " "+num);
+//        System.out.println(data + " "+num);
         Calendar calendar = Calendar.getInstance();
         calendar = aux.setCalendar(calendar,data.split("-"));
 
         List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCompletos,num);
-        System.out.println("        Size: "+slots.size());
+//        System.out.println("        Size: "+slots.size());
         List<Slot_horario_semestral> horario_da_semana = new ArrayList<>();
 
         List<String> turnos_UCs = new ArrayList<>();
         List<String> cores_da_semana = this.colors;
 
         for (Slot_horario_semestral slot :slots) {
-            System.out.println(slot.getCalendar().getTime());
-            System.out.println(calendar.getTime());
+//            System.out.println(slot.getCalendar().getTime());
+//            System.out.println(calendar.getTime());
             if (calendar.get(Calendar.WEEK_OF_YEAR) == slot.getCalendar().get(Calendar.WEEK_OF_YEAR)) {
                 horario_da_semana.add(slot);
                 if (!turnos_UCs.contains(slot.getTurno())) turnos_UCs.add(slot.getTurno());
@@ -229,15 +225,61 @@ public class HelloController {
         List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCriados,num);
 
         List<String> turnos = new ArrayList<>();
-        if (slots.isEmpty()) return null;
+        if (slots.isEmpty()) return "[]";
 
         for (Slot_horario_semestral slot: slots) {
+            String new_date = aux.ajustar_data_horario_sem(slot.getDia_da_sem());
+            String[] split_start = slot.getStart().split("T");
+            String[] split_end = slot.getEnd().split("T");
+            slot.setStart(new_date+"T"+split_start[1]);
+            slot.setEnd(new_date+"T"+split_end[1]);
+            slot.setCal(null);
             if (!turnos.contains(slot.getTurno())) turnos.add(slot.getTurno());
         }
         String slots_json = new Gson().toJson(slots);
         String turnos_json = new Gson().toJson(turnos);
 
         return "["+slots_json+","+turnos_json+"]";
+    }
+
+    @GetMapping("/download_horario")
+    public File download_horario(@RequestBody JsonNode json) {
+        String filename_json = json.get("filename").asText();
+        return new File(dir_upload_horarios + "\\"+filename_json);
+    }
+
+    @PostMapping("/deleteschedule")
+    public void delete_schedule(@RequestBody JsonNode json) throws IOException {
+        String num = json.get("num").asText();
+        new FileWriter(dir_horariosCriados + "\\" + num + ".txt", false).close();
+
+    }
+
+    @GetMapping("/check_se_existe_caracterizacao_das_salas")
+    public String check_se_existe_caracterizacao_das_salas() {
+        File dir = new File(dir_caracterizacao_das_salas);
+        if (dir.isDirectory()) {
+            File[] files = Objects.requireNonNull(dir.listFiles());
+            if (files.length != 0)
+                return files[0].getName();
+        }
+        return "";
+    }
+
+    @PostMapping("/upload_caracterizacao_salas")
+    public String upload_caracterizacao_salas(@RequestParam("file") MultipartFile file) {
+        String result =  aux.upload_file(file,dir_caracterizacao_das_salas);
+        if (result.equals("")) return "Erro no upload";
+        main.setFile_caracterizacao_das_salas(result);
+        return "Upload concluído com sucesso";
+    }
+
+    @PostMapping("/upload_avaliacoes")
+    public String upload_avaliacoes(@RequestParam("file") MultipartFile file) {
+        String result =  aux.upload_file(file,dir_upload_avaliacoes);
+        if (result.equals("")) return "Erro no upload";
+        main.setFile_avaliacoes_1sem(result);
+        return "Upload concluído com sucesso";
     }
 
 

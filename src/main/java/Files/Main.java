@@ -7,18 +7,15 @@ import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
 import java.lang.Math;
-import java.util.Random;
 
 public class Main {
-	private final String file_caracterizacao_das_salas = "ADS - Caracterizacao das salas.csv";
-	private final String file_horario_1sem = "2- ADS - Horários 1º sem 2022-23.csv";
-	private final String file_avaliacoes_1sem = "ADS - Avaliações 1º semestre 2022-23.csv";
+	private String file_caracterizacao_das_salas = "ADS - Caracterizacao das salas.csv";
+	private String file_horario_1sem = "2- ADS - Horários 1º sem 2022-23.csv";
+	private String file_avaliacoes_1sem = "ADS - Avaliações 1º semestre 2022-23.csv";
 
 	private List<Slot> slots = new ArrayList<>();
 	private String[] columns = null;
@@ -26,6 +23,17 @@ public class Main {
 	private List<List<Sala>> salas_para_aulas = new ArrayList<>();
 	private List<Aula> aulas_faltam = new ArrayList<>();
 
+	public void setFile_caracterizacao_das_salas(String file_caracterizacao_das_salas) {
+		this.file_caracterizacao_das_salas = file_caracterizacao_das_salas;
+	}
+
+	public void setFile_horario_1sem(String file_horario_1sem) {
+		this.file_horario_1sem = file_horario_1sem;
+	}
+
+	public void setFile_avaliacoes_1sem(String file_avaliacoes_1sem) {
+		this.file_avaliacoes_1sem = file_avaliacoes_1sem;
+	}
 
 
 	//private List<Slot help
@@ -50,24 +58,30 @@ public class Main {
 
 	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes) {
 
-		//readFile_slotsAula();
-		readFile_slotsAvaliacao();
+		readFile_slotsAula();
+		System.out.println(" Slots list size: "+slots.size());
+//		readFile_slotsAvaliacao();
     	
     	/*List<String> metodos = new ArrayList<String>();
     	metodos.add("caracteristica");
     	metodos.add("evitar sobrelotaçao");
 */
-		Slot s = slots.get(1);
-		Evento e = s.eventos.get(7); // slot 1, evento 7 é o q tem bues pessoas
+//		Slot s = slots.get(1);
+//		Evento e = s.eventos.get(7); // slot 1, evento 7 é o q tem bues pessoas
 //		List<Sala> sala_to_return = new ArrayList<>();
-		//for (Slot s : slots) {
-		//for (Evento e : s.eventos) {
-//		System.out.println("\n novo evento");
-//		menorNumSalas(s.salas_livres, (Avaliacao) e, s);
-		//nearest_room_for_evaluation(s.salas_livres, e.getNumero_de_alunos(), sala_to_return);
-//		doMethods(s.salas_livres, (Aula) e, s, metodos_aulas);
-		//}
-		//}
+//		for (Slot s : slots) {
+//			for (Evento e : s.eventos) {
+////		System.out.println("\n novo evento");
+////		menorNumSalas(s.salas_livres, (Avaliacao) e, s);
+//				//nearest_room_for_evaluation(s.salas_livres, e.getNumero_de_alunos(), sala_to_return);
+//				if (e instanceof Aula) {
+//					Sala nova_sala = doMethods(s.salas_livres, (Aula) e, s, metodos_aulas);
+//					((Aula) e).setSala(nova_sala);
+//				}
+////				else if (e instanceof Avaliacao)
+////					doMethodsAvals(s.salas_livres, (Avaliacao) e,s,metodos_avaliacoes);
+//			}
+//		}
 	}
 
 	private List<Sala> readFile_caracterizacaoDasSalas() {
@@ -245,50 +259,50 @@ public class Main {
 	public String[] getColumns() {
 		return columns;
 	}
-	
+
 	private List<Sala> doMethodsAvals(List<List<Sala>> sala_apos_metodo, Avaliacao a, Slot help, List<String> list_methods) {
-		
-    	System.out.println("salas livres " + help.salas_livres.size());
-    	if(help.salas_livres.size()==0) {
-    		System.out.println("n há mais salas");
-    	}
-		
+
+		System.out.println("salas livres " + help.salas_livres.size());
+		if(help.salas_livres.size()==0) {
+			System.out.println("n há mais salas");
+		}
+
 		//perguntar ao stor se existe algumas avaliações q n precisam de sala e cm vê-las
 		if(a.getNumero_de_alunos() == 0){
 			System.out.println("0 alunos inscritos");
 			return null;
 		}
-		
-		
+
+
 		Random rand = new Random();
 		List<List<Sala>> salas_possiveis = new ArrayList<>();
 		MetodosdeAvaliacao m = new MetodosdeAvaliacao();
-		
-		if (list_methods.get(0).equals("menorNumSalas")) { 
-			if(sala_apos_metodo != null) { 
+
+		if (list_methods.get(0).equals("menorNumSalas")) {
+			if(sala_apos_metodo != null) {
 				salas_possiveis.add(sala_apos_metodo.get(0));
 			}
 			else {
 				sala_apos_metodo = new ArrayList<>();
 				sala_apos_metodo.add(help.salas_livres);
-			for(List<Sala> ls: sala_apos_metodo) {
-				salas_possiveis =  m.menor_numero_de_salas(ls, a, help,this);
+				for(List<Sala> ls: sala_apos_metodo) {
+					salas_possiveis =  m.menor_numero_de_salas(ls, a, help,this);
+				}
 			}
-			}
-			
+
 		}
-		if (list_methods.get(0).equals("igualForma")) { 
-			if(sala_apos_metodo != null) { 
+		if (list_methods.get(0).equals("igualForma")) {
+			if(sala_apos_metodo != null) {
 				salas_possiveis = sala_apos_metodo;
-			//	System.out.println("Não é possível realizar o método igualForma pq vem a seguir ao menorNumSalas"); //nem sei se isto vale a pena dizer honestly
+				//	System.out.println("Não é possível realizar o método igualForma pq vem a seguir ao menorNumSalas"); //nem sei se isto vale a pena dizer honestly
 			}
 			else {
 				sala_apos_metodo = new ArrayList<>();
 				sala_apos_metodo.add(help.salas_livres);
-			for(List<Sala> ls: sala_apos_metodo) {
+				for(List<Sala> ls: sala_apos_metodo) {
 
-				salas_possiveis = m.igual_numero_de_alunos_por_sala(ls, a, help,this);
-			}
+					salas_possiveis = m.igual_numero_de_alunos_por_sala(ls, a, help,this);
+				}
 			}
 		}
 		if(salas_possiveis==null) {
@@ -300,12 +314,12 @@ public class Main {
 				//se houver salas disponiveis para colocar tds os alunos, o menorNumSalas dá
 				salas_possiveis = m.menor_numero_de_salas(help.salas_livres, a, help,this);
 				if (salas_possiveis.size()== 0) {
-				// se não, é impossivel, diz-se q houve um erro?
-				System.out.println("Não existem salas disponiveis para alocar");
-				return null;
-			}}
+					// se não, é impossivel, diz-se q houve um erro?
+					System.out.println("Não existem salas disponiveis para alocar");
+					return null;
+				}}
 		}
-		
+
 		if (list_methods.size()>1) {
 			doMethodsAvals(salas_possiveis, a, help, list_methods.subList(1, list_methods.size()));
 			return null;
@@ -314,18 +328,18 @@ public class Main {
 			if(salas_possiveis.size() > 1) {
 				index = rand.nextInt(salas_possiveis.size() - 1);
 			}
-			
+
 			List<Sala> salas_escolhida = salas_possiveis.get(index);
-			
+
 			for(Sala s: salas_escolhida) {
 				System.out.println("salas escolhidas " + s);
 			}
 			if(salas_escolhida.size() == help.salas_livres.size()) help.salas_livres.clear();
 			else {
 				for(Sala s: salas_escolhida) {
-				help.salas_livres.remove(s);
-			}}
-			
+					help.salas_livres.remove(s);
+				}}
+
 			return salas_escolhida;
 		}
 	}
@@ -340,9 +354,7 @@ public class Main {
 			return null;
 		}
 		Random rand = new Random();
-		List<Sala> salas_possiveis = new ArrayList<>();
-
-		// ver se há alguma maneira mais eficiente de ir buscar o nome dos metodos
+		List<Sala> salas_possiveis;
 
 		Class<MetodosParaAulas> class_metodos_aulas = MetodosParaAulas.class;
 		try {
@@ -498,6 +510,8 @@ public class Main {
 
 
 	private void readFile_slotsAula() {
+		System.out.println("readFile_slotsAula");
+		Instant time = Instant.now();
 
 		try {
 
@@ -520,7 +534,7 @@ public class Main {
 
 						String unidade_de_execucao = line[1];
 						String[] cursos = line[0].split(",");
-						Evento evento = null;
+						Evento evento;
 
 
 						String hora_inicial = line[8];
@@ -529,6 +543,8 @@ public class Main {
 						Date date = null;
 						if(!line[10].isEmpty()) {
 							date = new SimpleDateFormat("dd-MM-yyyy").parse(line[10]);}
+
+						if (unidade_de_execucao == null || unidade_de_execucao.equals("")) System.out.println("Entrie");
 
 						evento = new Aula(date, date, Integer.parseInt(line[4]), cursos, unidade_de_execucao,
 								hora_inicial, hora_final, line);
@@ -543,6 +559,7 @@ public class Main {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("		Time: "+ Duration.between(time,Instant.now()));
 	}
 
 

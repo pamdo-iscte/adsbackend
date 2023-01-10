@@ -1,13 +1,14 @@
 package Files;
 
 import com.opencsv.CSVReader;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.IntStream;
 
 public class FuncoesAuxiliares {
-    private final String file_horarios_1_sem = "ADS - Horários 1º sem 2022-23.csv";
+//    private final String file_horarios_1_sem = "ADS - Horários 1º sem 2022-23.csv";
 
 
     public List<Convert_Aula_CSV_to_JSON> get_Dias_da_semana(List<Convert_Aula_CSV_to_JSON> aulas) {
@@ -62,10 +63,10 @@ public class FuncoesAuxiliares {
         return false;
     }
 
-    public List<Convert_Aula_CSV_to_JSON> getAulas() {
+    public List<Convert_Aula_CSV_to_JSON> getAulas(String filename) {
         List<Convert_Aula_CSV_to_JSON> all_aulas = new ArrayList<>();
         try {
-            FileReader filereader = new FileReader(file_horarios_1_sem);
+            FileReader filereader = new FileReader(filename);
 
             CSVReader csvReader = new CSVReader(filereader);
             String[] nextRecord;
@@ -252,7 +253,7 @@ public class FuncoesAuxiliares {
 
                     String informacao_detalhada = slot.getUnidade_de_execucao() +" | Curso(s): "+slot.getCurso() +" | Sala: "+slot.getSala();
 
-                    Slot_horario_semestral new_slot = new Slot_horario_semestral(id,text,start,end,null,informacao_detalhada,slot.getTurno());
+                    Slot_horario_semestral new_slot = new Slot_horario_semestral(id,text,start,end,null,informacao_detalhada,slot.getTurno(), slot.getDia_da_semana());
 //                    new_slot.setCal(calendar);
 
 //                    System.out.println(new_slot.getCalendar().getTime() + " "+new_slot.getStart());
@@ -312,6 +313,22 @@ public class FuncoesAuxiliares {
             System.err.println("ClassNotFoundException");
         }
         return slots;
+    }
+
+    public String upload_file(MultipartFile file, String dir) {
+        String filename = file.getResource().getFilename();
+        try {
+            File convFile = new File(dir+ "\\" +filename);
+            if (convFile.createNewFile()) {
+                FileOutputStream fos = new FileOutputStream(convFile);
+                fos.write(file.getBytes());
+                fos.close();
+                return dir+ "\\" +filename;
+            }
+        } catch (IOException e) {
+//            throw new RuntimeException(e);
+        }
+        return "";
     }
 }
 
