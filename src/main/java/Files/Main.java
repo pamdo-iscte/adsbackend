@@ -148,7 +148,11 @@ public class Main {
 
 			i++;
 		}
-
+		for(Slot s: slots) {
+			for(Evento e: s.eventos) {
+				ficheiroAtualizado(e);
+			}
+		}
 	}
 
 	private List<Sala> readFile_caracterizacaoDasSalas() {
@@ -746,6 +750,141 @@ public class Main {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void ficheiroAtualizado(Evento e) {
+		String delimeter = ";";
+		String namefile = "";
+		String linha = "";
+		if(e instanceof Aula) {
+			namefile = "Aulas.txt";
+		
+		
+			 try {
+		            File file = new File(namefile);
+		            BufferedWriter myWriter = new BufferedWriter(new FileWriter(namefile, true));
+		            if (file.length()==0) {
+		            	linha = "Curso"+delimeter+"Unidade de execução"+delimeter+"Turno"+delimeter+"Turma"+delimeter+"Inscritos no turno"+delimeter+""
+		            			+ "Turnos com capacidade superior à capacidade das características das salas"+delimeter+"Turno com inscrições superiores à capacidade das salas"+delimeter+"Dia da Semana"+delimeter+""
+		            			+ "Início"+delimeter+"Fim"+delimeter+"Dia"+delimeter+"Características da sala pedida para a aula"+delimeter+"Sala da aula"+delimeter+"Lotação"+delimeter+"Características reais da sala";
+		            	myWriter.write(linha);
+		            	System.out.println("created");
+		            	
+		              } 
+		               
+		            String sala = "";
+		            String capacidade = "";
+		            String caracteristica = "Não necessita de sala";
+		                if(!((Aula)e).caracteristica.equals("Não necessita de sala")) {
+		                	sala=((Aula)e).sala.getNome();
+		                	capacidade = String.valueOf(((Aula)e).sala.getCapacidade_normal());
+		                	caracteristica = ((Aula)e).sala.getCaracteristicas().toString();
+		                }
+
+		                	
+		                linha = ((Aula)e).curso + delimeter +((Aula)e).unidade_de_execucao + delimeter +((Aula)e).turno + delimeter +((Aula)e).turma + delimeter +((Aula)e).inscritos + delimeter +
+		                		((Aula)e).turnoCapacidadeSuperior + delimeter +((Aula)e).turnoInscricoesSuperior + delimeter +((Aula)e).dia_semana + delimeter +((Aula)e).hora_inicial + delimeter +((Aula)e).hora_final + delimeter +
+		                		((Aula)e).dia + delimeter +((Aula)e).caracteristica + delimeter +sala + delimeter + capacidade + delimeter +caracteristica;
+		               
+		                
+		                try {
+		                    Scanner scanner = new Scanner(file);
+
+		                    //now read the file line by line...
+		                    int lineNum = 0;
+		                    while (scanner.hasNextLine()) {
+		                        String line = scanner.nextLine();
+		                        lineNum++;
+		                        if(line.equals(linha)) { 
+		                            return;
+		                        }
+		                    }
+		                } catch(FileNotFoundException et) { 
+		                    //handle this
+		                }
+		                
+		                
+		                
+		                
+		                myWriter.append("\n");
+		                myWriter.append(linha);
+		                
+		               myWriter.close();
+		                
+		              } catch (IOException et) {
+		                System.out.println("An error occurred.");
+		                et.printStackTrace();
+		              }
+		            
+		}
+			
+			
+		
+		if(e instanceof Avaliacao) {
+			namefile = "Avaliacao.txt";
+			
+			
+			 try {
+		            File file = new File(namefile);
+		            BufferedWriter myWriter = new BufferedWriter(new FileWriter(namefile, true));
+		            if (file.length()==0) {
+		            	linha = "Curso"+delimeter+"Unidade de execução"+delimeter+"Turno"+delimeter+"Turma"+delimeter+"Inscritos no turno"+delimeter+""
+		            			+ "Turnos com capacidade superior à capacidade das características das salas"+delimeter+"Turno com inscrições superiores à capacidade das salas"+delimeter+"Dia da Semana"+delimeter+""
+		            			+ "Início"+delimeter+"Fim"+delimeter+"Dia"+delimeter+"Características da sala pedida para a aula"+delimeter+"Sala da aula"+delimeter+"Lotação"+delimeter+"Características reais da sala";
+		            	myWriter.write(linha);
+		            	System.out.println("created");
+		            	
+		              } 
+		               
+		            String salas = "";
+		            String estado = "";
+		            int capacidade_aux =0;
+		            String lugares = "";
+		                if(((Avaliacao)e).salas!=null) {
+		                	for(Sala s: ((Avaliacao)e).salas) {
+		                	salas+= s.getNome();
+		                	capacidade_aux += s.getCapacidade_exame();
+		                	lugares = "";//n sei bem o q por aqui
+		                	}
+		                }
+		                String capacidade = String.valueOf(capacidade_aux);
+		               
+		                linha = ((Avaliacao)e).codigo + delimeter +((Avaliacao)e).unidade + delimeter +((Avaliacao)e).curso + delimeter +((Avaliacao)e).tipo + delimeter +((Avaliacao)e).epoca + delimeter +
+		                		((Avaliacao)e).nome + delimeter +((Avaliacao)e).requer_inscricao_previa + delimeter +((Avaliacao)e).periodo_inscricao + delimeter +((Avaliacao)e).getData() + delimeter +salas + delimeter +
+		                		estado + delimeter +capacidade + delimeter +String.valueOf(((Avaliacao)e).getNumero_de_alunos()) + delimeter + lugares;
+		                
+		                try {
+		                    Scanner scanner = new Scanner(file);
+
+		                    //now read the file line by line...
+		                    int lineNum = 0;
+		                    while (scanner.hasNextLine()) {
+		                        String line = scanner.nextLine();
+		                        lineNum++;
+		                        if(line.equals(linha)) { 
+		                            return;
+		                        }
+		                    }
+		                } catch(FileNotFoundException et) { 
+		                    //handle this
+		                }
+		                
+		                
+		                
+		                
+		                
+		                myWriter.append("\n");
+		                myWriter.append(linha);
+		                
+		               myWriter.close();
+		                
+		              } catch (IOException et) {
+		                System.out.println("An error occurred.");
+		                et.printStackTrace();
+		              }
+		}
+		
+		
 	}
 	
 
