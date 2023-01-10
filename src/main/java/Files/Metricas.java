@@ -23,7 +23,7 @@ public class Metricas {
 			            quantidade_alocacao_automatica_falhada((Aula) e);
 			            quantidade_aulas_sobrelotacao((Aula)e);
 			            quantidade_caracteristicas_mal_atribuidas((Aula) e, slot);
-			          //  mudanca_sala((Aula) e, slots);
+			           	mudanca_sala((Aula) e, slots);
 		            }
 		            if (e instanceof Avaliacao) {
 		            	quantidade_avaliacoes_sobrelotacao((Avaliacao) e);
@@ -52,6 +52,8 @@ public class Metricas {
 	int aulas_sobrelotadas = 0;
 	List<Integer> quantidade_alunos_sobrelotados_por_aulas = new ArrayList<Integer>();
 	List<Integer> quantidade_alunos_desperdicados_por_aulas = new ArrayList<Integer>();
+	List<Integer> quantidade_alunos_sobrelotados_por_aulas_percentagem = new ArrayList<Integer>();
+	List<Integer> quantidade_alunos_desperdicados_por_aulas_percentagem = new ArrayList<Integer>();
 	
 	public void quantidade_aulas_sobrelotacao(Aula aula) {
 		Sala sala = aula.getSala();
@@ -60,10 +62,16 @@ public class Metricas {
 	            if(aula.getNumero_de_alunos() > sala.getCapacidade_normal()) {
 		            //System.out.print("A sala " +sala.getNome()+ "numero de alunos inscritos = "+ aula.getNumero_de_alunos()+ " capacidade da sala"+ sala.getCapacidade_normal()+"\n");
 		            aulas_sobrelotadas++;
-		            quantidade_alunos_sobrelotados_por_aulas.add((aula.getNumero_de_alunos() - sala.getCapacidade_normal()));
+					int alunos_a_mais = aula.getNumero_de_alunos() - sala.getCapacidade_normal();
+		            quantidade_alunos_sobrelotados_por_aulas.add(alunos_a_mais);
+					//int percentagem_a_mais = (alunos_a_mais / sala.getCapacidade_normal()) * 100;
+					//quantidade_alunos_sobrelotados_por_aulas_percentagem.add(percentagem_a_mais);
 	            }
 	            else {
-		            quantidade_alunos_desperdicados_por_aulas.add((sala.getCapacidade_normal() - aula.getNumero_de_alunos()));
+					int alunos_a_menos = sala.getCapacidade_normal() - aula.getNumero_de_alunos();
+		            quantidade_alunos_desperdicados_por_aulas.add(alunos_a_menos);
+					//int percentagem_a_menos = (alunos_a_menos / sala.getCapacidade_normal()) * 100;
+					//quantidade_alunos_desperdicados_por_aulas_percentagem.add(percentagem_a_menos);
 	            }
 	        }
 	    }
@@ -73,10 +81,23 @@ public class Metricas {
 	public int quantidade_alunos_sobrelotacao_aulas(){
 		return quantidade_alunos_sobrelotados_por_aulas.stream().mapToInt(Integer::intValue).sum();
 	}
-	
+
+	//Percentagem de alunos em sobrelotação, quando existe sobrelotação
+	public int quantidade_percentagem_alunos_sobrelotacao_aulas(){
+		int total_alunos_sobrelotacao = quantidade_alunos_sobrelotados_por_aulas.stream().mapToInt(Integer::intValue).sum();
+		return total_alunos_sobrelotacao / quantidade_alunos_sobrelotados_por_aulas.size();
+	}
+
+
 	//quantidade_alunos_desperdicados_aulas, lugares vazios nas aulas
 	public int quantidade_alunos_desperdicados_aulas(){
 		return quantidade_alunos_desperdicados_por_aulas.stream().mapToInt(Integer::intValue).sum();
+	}
+
+	//Percentagem_alunos_desperdicados_aulas, lugares vazios nas aulas, quando não existe sobrelotação
+	public int quantidade_percentagem_alunos_desperdicados_aulas(){
+		int total_alunos_desperdicados = quantidade_alunos_desperdicados_por_aulas.stream().mapToInt(Integer::intValue).sum();
+		return total_alunos_desperdicados / quantidade_alunos_desperdicados_por_aulas.size();
 	}
 	
 	//Retorna a quantidade de avaliações com possibilidade de sobrelotacao de salas e duas listas:
@@ -207,8 +228,7 @@ public class Metricas {
 	}
 
 	
-	//Isto vai ver as mudanças de sala e de edificio de uma determinada turma para ver todas as turmas basta meter isto a percorrer a lista de todas as turmas.
-	//mudar as aulas numa aula de 3 horas da mesma disciplina
+	//Isto vai ver as mudanças de sala e de edificio numa aula de 3 horas da mesma disciplina
 	int mudanca_edificio = 0;
 	int mudanca_sala = 0;
 	
@@ -234,6 +254,30 @@ public class Metricas {
 			    	}
 		    	}
 		    }
+		}
+	}
+	public void mudanca_sala2(Aula aula_anterior, List<Slot> slots) { //( não testado )
+		for (Slot slot : slots) {
+			List<Evento> eventos_slot = slot.eventos;
+			for (Evento e : eventos_slot) {
+				if (e instanceof Aula) {
+					Aula aula_seguinte = (Aula) e;
+					if(aula_anterior.getData().equals(aula_seguinte.getData())) {
+						if(aula_seguinte.getHora_inicial().equals(aula_anterior.getHora_final())) {
+							Sala sala_anterior = aula_seguinte.getSala();
+							Sala sala_seguinte = aula_anterior.getSala();
+							if(aula_seguinte.getTurno().equals(aula_anterior.getTurno())) {
+								if(!(sala_anterior.getEdificio().equals(sala_seguinte.getEdificio()))) {
+									mudanca_edificio++;
+								}
+								if(!(sala_anterior.getNome().equals(sala_seguinte.getNome()))) {
+									mudanca_sala++;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	
