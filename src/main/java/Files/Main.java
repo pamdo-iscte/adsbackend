@@ -2,8 +2,7 @@ package Files;
 
 import com.opencsv.CSVReader;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.text.ParseException;
@@ -14,9 +13,9 @@ import java.util.*;
 import java.lang.Math;
 
 public class Main {
-	private String file_caracterizacao_das_salas = "ADS - Caracterizacao das salas.csv";
-	private String file_horario_1sem = "2- ADS - Horários 1º sem 2022-23.csv";
-	private String file_avaliacoes_1sem = "ADS - Avaliações 1º semestre 2022-23.csv";
+	private String file_caracterizacao_das_salas = "Caracterizacao_das_Salas/ADS - Caracterizacao das salas.csv";
+	private String file_horario_1sem = "Upload_de_Horarios/2- ADS - Horários 1º sem 2022-23.csv";
+	private String file_avaliacoes_1sem = "Upload_de_Avaliacoes/ADS - Avaliações 1º semestre 2022-23.csv";
 
 	private List<Slot> slots = new ArrayList<>();
 	private String[] columns = null;
@@ -148,7 +147,11 @@ public class Main {
 
 			i++;
 		}
-
+		for(Slot s: slots) {
+			for(Evento e: s.eventos) {
+				ficheiroAtualizado(e);
+			}
+		}
 	}
 
 	private List<Sala> readFile_caracterizacaoDasSalas() {
@@ -210,7 +213,9 @@ public class Main {
 	}
 
 	public List<Sala> nearest_room_for_evaluation(List<Sala> salas, int numero_alunos, List<Sala> sala_to_return) {
-
+		if(salas.isEmpty()){
+			return null;
+		}
 		int distance = salas.get(0).getCapacidade_exame() - numero_alunos;
 		int index=0;
 
@@ -237,7 +242,7 @@ public class Main {
 		return sala_to_return;
 	}
 
-	public List<Sala> dividirAlunos(List<Sala> salas_livres, int dividir, Avaliacao aval) {
+	public List<Sala> dividirAlunos(List<Sala> salas_livres, int dividir,Avaliacao aval) {
 		int num = aval.getNumero_de_alunos()/dividir;
 		List<Sala> conjunto_salas = new ArrayList<>();
 
@@ -569,7 +574,7 @@ public class Main {
     	String minuto = "30";
     	String segundo = "00";
     	String data_inicio = "01-09-"+ano;
-    	String data_final = "31-08-"+Integer.toString(Integer.parseInt(ano));
+    	String data_final = "31-08-"+Integer.toString(Integer.parseInt(ano)+1);
     	boolean i = false;
     	List<Evento> eventos = new ArrayList<>();
 		List<Sala> salas = readFile_caracterizacaoDasSalas();
@@ -640,7 +645,7 @@ public class Main {
 		try {
 			
 			FileReader filereader = new FileReader(file_horario_1sem);
-
+			System.out.println("LI o FICHEIro");
 			try (CSVReader csvReader = new CSVReader(filereader)) {
 				String[] nextRecord;
 
@@ -670,7 +675,6 @@ public class Main {
 				
 						evento = new Aula(date, date, Integer.parseInt(line[4]), cursos, unidade_de_execucao,
 								hora_inicial, hora_final, line);
-					
 						fillSlot(evento, line[10], hora_inicial, hora_final);
 					}
 				}
@@ -746,6 +750,144 @@ public class Main {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void ficheiroAtualizado(Evento e) {
+		String delimeter = ";";
+		String namefile = "";
+		String linha = "";
+		if(e instanceof Aula) {
+			namefile = "Aulas.txt";
+		
+		
+			 try {
+		            File file = new File(namefile);
+		            BufferedWriter myWriter = new BufferedWriter(new FileWriter(namefile, true));
+		            if (file.length()==0) {
+		            	linha = "Curso"+delimeter+"Unidade de execução"+delimeter+"Turno"+delimeter+"Turma"+delimeter+"Inscritos no turno"+delimeter+""
+		            			+ "Turnos com capacidade superior à capacidade das características das salas"+delimeter+"Turno com inscrições superiores à capacidade das salas"+delimeter+"Dia da Semana"+delimeter+""
+		            			+ "Início"+delimeter+"Fim"+delimeter+"Dia"+delimeter+"Características da sala pedida para a aula"+delimeter+"Sala da aula"+delimeter+"Lotação"+delimeter+"Características reais da sala";
+		            	myWriter.write(linha);
+		            	System.out.println("created");
+		            	
+		              } 
+		               
+		            String sala = "";
+		            String capacidade = "";
+		            String caracteristica = "Não necessita de sala";
+		                if(!((Aula)e).caracteristica.equals("Não necessita de sala")) {
+		                	sala=((Aula)e).sala.getNome();
+		                	capacidade = String.valueOf(((Aula)e).sala.getCapacidade_normal());
+		                	caracteristica = ((Aula)e).sala.getCaracteristicas().toString();
+		                }
+
+		                	
+		                linha = ((Aula)e).curso + delimeter +((Aula)e).unidade_de_execucao + delimeter +((Aula)e).turno + delimeter +((Aula)e).turma + delimeter +((Aula)e).inscritos + delimeter +
+		                		((Aula)e).turnoCapacidadeSuperior + delimeter +((Aula)e).turnoInscricoesSuperior + delimeter +((Aula)e).dia_semana + delimeter +((Aula)e).hora_inicial + delimeter +((Aula)e).hora_final + delimeter +
+		                		((Aula)e).dia + delimeter +((Aula)e).caracteristica + delimeter +sala + delimeter + capacidade + delimeter +caracteristica;
+		               
+		                
+		                try {
+		                    Scanner scanner = new Scanner(file);
+
+		                    //now read the file line by line...
+		                    int lineNum = 0;
+		                    while (scanner.hasNextLine()) {
+		                        String line = scanner.nextLine();
+		                        lineNum++;
+		                        if(line.equals(linha)) {
+		                            return;
+		                        }
+								else {
+									System.out.println(lineNum);
+								}
+		                    }
+		                } catch(FileNotFoundException et) {
+		                    //handle this
+		                }
+		                
+		                
+		                
+		                
+		                myWriter.append("\n");
+		                myWriter.append(linha);
+		                
+		               myWriter.close();
+		                
+		              } catch (IOException et) {
+		                System.out.println("An error occurred.");
+		                et.printStackTrace();
+		              }
+		            
+		}
+			
+			
+		
+		if(e instanceof Avaliacao) {
+			namefile = "Avaliacao.txt";
+			
+			
+			 try {
+		            File file = new File(namefile);
+		            BufferedWriter myWriter = new BufferedWriter(new FileWriter(namefile, true));
+		            if (file.length()==0) {
+		            	linha = "Curso"+delimeter+"Unidade de execução"+delimeter+"Turno"+delimeter+"Turma"+delimeter+"Inscritos no turno"+delimeter+""
+		            			+ "Turnos com capacidade superior à capacidade das características das salas"+delimeter+"Turno com inscrições superiores à capacidade das salas"+delimeter+"Dia da Semana"+delimeter+""
+		            			+ "Início"+delimeter+"Fim"+delimeter+"Dia"+delimeter+"Características da sala pedida para a aula"+delimeter+"Sala da aula"+delimeter+"Lotação"+delimeter+"Características reais da sala";
+		            	myWriter.write(linha);
+		            	System.out.println("created");
+		            	
+		              } 
+		               
+		            String salas = "";
+		            String estado = "";
+		            int capacidade_aux =0;
+		            String lugares = "";
+		                if(((Avaliacao)e).salas!=null) {
+		                	for(Sala s: ((Avaliacao)e).salas) {
+		                	salas+= s.getNome();
+		                	capacidade_aux += s.getCapacidade_exame();
+		                	lugares = "";//n sei bem o q por aqui
+		                	}
+		                }
+		                String capacidade = String.valueOf(capacidade_aux);
+		               
+		                linha = ((Avaliacao)e).codigo + delimeter +((Avaliacao)e).unidade + delimeter +((Avaliacao)e).curso + delimeter +((Avaliacao)e).tipo + delimeter +((Avaliacao)e).epoca + delimeter +
+		                		((Avaliacao)e).nome + delimeter +((Avaliacao)e).requer_inscricao_previa + delimeter +((Avaliacao)e).periodo_inscricao + delimeter +((Avaliacao)e).getData() + delimeter +salas + delimeter +
+		                		estado + delimeter +capacidade + delimeter +String.valueOf(((Avaliacao)e).getNumero_de_alunos()) + delimeter + lugares;
+		                
+		                try {
+		                    Scanner scanner = new Scanner(file);
+
+		                    //now read the file line by line...
+		                    int lineNum = 0;
+		                    while (scanner.hasNextLine()) {
+		                        String line = scanner.nextLine();
+		                        lineNum++;
+		                        if(line.equals(linha)) { 
+		                            return;
+		                        }
+		                    }
+		                } catch(FileNotFoundException et) { 
+		                    //handle this
+		                }
+		                
+		                
+		                
+		                
+		                
+		                myWriter.append("\n");
+		                myWriter.append(linha);
+		                
+		               myWriter.close();
+		                
+		              } catch (IOException et) {
+		                System.out.println("An error occurred.");
+		                et.printStackTrace();
+		              }
+		}
+		
+		
 	}
 	
 
