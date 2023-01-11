@@ -70,7 +70,7 @@ public class Metricas {
 		if(sala != null){
 			if(!aula.getCaracteristica().equals("Não necessita de sala")) {
 				if(aula.getNumero_de_alunos() > sala.getCapacidade_normal()) {
-					//System.out.print("A sala " +sala.getNome()+ "numero de alunos inscritos = "+ aula.getNumero_de_alunos()+ " capacidade da sala"+ sala.getCapacidade_normal()+"\n");
+					System.out.print("A sala " +sala.getNome()+ "numero de alunos inscritos = "+ aula.getNumero_de_alunos()+ " capacidade da sala"+ sala.getCapacidade_normal()+"\n");
 					aulas_sobrelotadas++;
 					int alunos_a_mais = aula.getNumero_de_alunos() - sala.getCapacidade_normal();
 					quantidade_alunos_sobrelotados_por_aulas.add(alunos_a_mais);
@@ -178,7 +178,7 @@ public class Metricas {
 
 				for(String caracteristica : caracteristicas_list) { // se não for igual a outra sala e a caracteristica necessaria for normal faz break
 					caracteristica=caracteristica=caracteristica.replace("_"," ");
-					System.out.println(tt + ",Atribuida = " + caracteristica + " Suposto ser atribuido "+ caracteristica_aula );
+					//System.out.println(tt + ",Atribuida = " + caracteristica + " Suposto ser atribuido "+ caracteristica_aula );
 				}
 				tt++;
 				aula_mal_atribuida++;
