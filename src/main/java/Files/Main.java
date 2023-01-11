@@ -57,7 +57,7 @@ public class Main {
 
 	}
 
-	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes) {
+	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes,boolean checkbox) {
 
 		initialSlots();
 		readFile_slotsAula();
@@ -109,7 +109,7 @@ public class Main {
 					for (Slot sl : slots) {
 						for (Evento ev : sl.eventos) {
 							
-							if(e instanceof Aula && menorDist == true) {
+							if(e instanceof Aula && checkbox) {
 							if(ev.getData().equals(e.getData()) && ev.getHora_inicio().equals(e.getHora_fim()) 
 									&& ((Aula)e).getTurno().equals( ((Aula)ev).getTurno()) && ((Aula)ev).getSala()==null) {
 								 ((Aula)ev).setSala(((Aula)e).getSala());

@@ -24,7 +24,6 @@ public class Aula extends Evento {
 	String caracteristica;
 	String professor;
 
-	String professor;
 
 
 	public Aula(Date data, Date data_final, int numero_de_alunos, String[] cursos, String unidade, String hora_inicio, String hora_fim, String[] line) {

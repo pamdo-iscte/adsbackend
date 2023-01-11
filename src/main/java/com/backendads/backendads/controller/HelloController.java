@@ -97,7 +97,7 @@ public class HelloController {
 
         System.out.println("Metodos Aulas: "+aulas);
         System.out.println("Metodos Aulas: "+avaliacoes);
-        main.start(aulas,avaliacoes);
+        main.start(aulas,avaliacoes,json_metodos.isCheckbox());
         //objetivo é dar return ao filename do horario criado
         return "";
     }
