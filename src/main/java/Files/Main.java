@@ -50,6 +50,14 @@ public class Main {
 		readFile_slotsAula();
 		readFile_slotsAvaliacao();
 
+		int count1 = 0;
+		for(Slot s: slots) {
+			for(Evento e: s.eventos) {
+				count1++;
+			}
+		}
+		System.out.println("			Numero de eventos Inicial "+count1);
+
 		List<Sala> sala_to_return = new ArrayList<>();
 		Sala sala = null;
 		int i = 0;
@@ -158,6 +166,14 @@ public class Main {
 		List<String> lista = new ArrayList<>();
 		boolean st = true;
 		boolean sst = true;
+		int count = 0;
+		for(Slot s: slots) {
+			for(Evento e: s.eventos) {
+				count++;
+			}
+		}
+		System.out.println("numero de eventos"+count);
+
 
 		for(Slot s: slots) {
 			for(Evento e: s.eventos) {
@@ -174,6 +190,15 @@ public class Main {
 
 			}
 		}
+
+		count = 0;
+		for(Slot s: slots) {
+			for(Evento e: s.eventos) {
+				count++;
+			}
+		}
+		System.out.println("numero de eventos"+count);
+		new Metricas(slots);
 
 	}
 
@@ -684,117 +709,117 @@ public class Main {
 
 
 
-//	private void readFile_slotsAula() {
-//
-//		try {
-//
-//			FileReader filereader = new FileReader(file_horario_1sem);
-//			try (CSVReader csvReader = new CSVReader(filereader)) {
-//				String[] nextRecord;
-//
-//
-//				boolean first_line = true;
-//				while ((nextRecord = csvReader.readNext()) != null) {
-//					if (first_line) {
-//						first_line = false;
-//
-//					} else {
-//						String[] line = nextRecord;
-//						if(line[0].isEmpty()) {
-//							break;
-//						}
-//
-//						String unidade_de_execucao = line[1];
-//						String[] cursos = line[0].split(",");
-//						Evento evento = null;
-//
-//
-//						String hora_inicial = line[8];
-//						String hora_final = line[9];
-//
-//						Date date = null;
-//						if(!line[10].isEmpty()) {
-//							date = new SimpleDateFormat("dd-MM-yyyy").parse(line[10]);
-//						}
-//
-//						evento = new Aula(date, date, Integer.parseInt(line[4]), cursos, unidade_de_execucao,
-//								hora_inicial, hora_final, line);
-//						fillSlot(evento, line[10], hora_inicial, hora_final);
-//					}
-//				}
-//			}
-//			//for (Slot s: slots) {
-//			//System.out.println(s.toString());
-//			//}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 	private void readFile_slotsAula() {
+
 		try {
 
-			File file = new File(file_horario_1sem);   //creating a new file instance
-			FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file
-			//creating Workbook instance that refers to .xlsx file
-			XSSFWorkbook wb = new XSSFWorkbook(fis);
-			XSSFSheet sheet = wb.getSheetAt(0);     //creating a Sheet object to retrieve object
-			//iterating over excel file
-			for (Row row : sheet) {
-				Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column
-				if (row.getRowNum() < 1) {
-					continue;
+			FileReader filereader = new FileReader("2- ADS - Horários 1º sem 2022-23.csv");
+			try (CSVReader csvReader = new CSVReader(filereader)) {
+				String[] nextRecord;
+
+
+				boolean first_line = true;
+				while ((nextRecord = csvReader.readNext()) != null) {
+					if (first_line) {
+						first_line = false;
+
+					} else {
+						String[] line = nextRecord;
+						if(line[0].isEmpty()) {
+							break;
+						}
+
+						String unidade_de_execucao = line[1];
+						String[] cursos = line[0].split(",");
+						Evento evento = null;
+
+
+						String hora_inicial = line[8];
+						String hora_final = line[9];
+
+						Date date = null;
+						if(!line[10].isEmpty()) {
+							date = new SimpleDateFormat("dd-MM-yyyy").parse(line[10]);
+						}
+
+						evento = new Aula(date, date, Integer.parseInt(line[4]), cursos, unidade_de_execucao,
+								hora_inicial, hora_final, line);
+						fillSlot(evento, line[10], hora_inicial, hora_final);
+					}
 				}
-
-				String[] row_fields = new String[15];
-				while (cellIterator.hasNext()) {
-					Cell cell_row = cellIterator.next();
-					String field;
-					if (cell_row.getCellType() == CellType.STRING)
-						field = cell_row.getStringCellValue();
-					else if (cell_row.getCellType() == CellType.BOOLEAN)
-						field = String.valueOf(cell_row.getBooleanCellValue());
-					else if (DateUtil.isCellDateFormatted(cell_row)) {
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(cell_row.getDateCellValue());
-						String dia = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
-						String mes = String.valueOf((calendar.get(Calendar.MONTH)+1));
-						if (calendar.get(Calendar.DAY_OF_MONTH) < 10) dia = "0"+dia;
-						if (calendar.get(Calendar.MONTH) < 10) mes = "0"+mes;
-						field = dia + "-" + mes + "-" + calendar.get(Calendar.YEAR);
-					} else
-						field = String.valueOf((int) cell_row.getNumericCellValue());
-
-					row_fields[cell_row.getColumnIndex()] = field;
-				}
-				if (row_fields[1].equals("")) break;
-
-				String unidade_de_execucao = row_fields[1];
-				String[] cursos = row_fields[0].split(",");
-				Evento evento = null;
-
-
-				String hora_inicial = row_fields[8];
-				String hora_final = row_fields[9];
-
-				Date date = null;
-				if(!row_fields[10].isEmpty()) {
-					date = new SimpleDateFormat("dd-MM-yyyy").parse(row_fields[10]);
-				}
-
-				evento = new Aula(date, date, Integer.parseInt(row_fields[4]), cursos, unidade_de_execucao,
-						hora_inicial, hora_final, row_fields);
-				fillSlot(evento, row_fields[10], hora_inicial, hora_final);
 			}
-
-		}
-		//for (Slot s: slots) {
-		//System.out.println(s.toString());
-		//}
-		catch (Exception e) {
+			//for (Slot s: slots) {
+			//System.out.println(s.toString());
+			//}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+//	private void readFile_slotsAula() {
+//		try {
+//
+//			File file = new File(file_horario_1sem);   //creating a new file instance
+//			FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file
+//			//creating Workbook instance that refers to .xlsx file
+//			XSSFWorkbook wb = new XSSFWorkbook(fis);
+//			XSSFSheet sheet = wb.getSheetAt(0);     //creating a Sheet object to retrieve object
+//			//iterating over excel file
+//			for (Row row : sheet) {
+//				Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column
+//				if (row.getRowNum() < 1) {
+//					continue;
+//				}
+//
+//				String[] row_fields = new String[15];
+//				while (cellIterator.hasNext()) {
+//					Cell cell_row = cellIterator.next();
+//					String field;
+//					if (cell_row.getCellType() == CellType.STRING)
+//						field = cell_row.getStringCellValue();
+//					else if (cell_row.getCellType() == CellType.BOOLEAN)
+//						field = String.valueOf(cell_row.getBooleanCellValue());
+//					else if (DateUtil.isCellDateFormatted(cell_row)) {
+//						Calendar calendar = Calendar.getInstance();
+//						calendar.setTime(cell_row.getDateCellValue());
+//						String dia = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+//						String mes = String.valueOf((calendar.get(Calendar.MONTH)+1));
+//						if (calendar.get(Calendar.DAY_OF_MONTH) < 10) dia = "0"+dia;
+//						if (calendar.get(Calendar.MONTH) < 10) mes = "0"+mes;
+//						field = dia + "-" + mes + "-" + calendar.get(Calendar.YEAR);
+//					} else
+//						field = String.valueOf((int) cell_row.getNumericCellValue());
+//
+//					row_fields[cell_row.getColumnIndex()] = field;
+//				}
+//				if (row_fields[1].equals("")) break;
+//
+//				String unidade_de_execucao = row_fields[1];
+//				String[] cursos = row_fields[0].split(",");
+//				Evento evento = null;
+//
+//
+//				String hora_inicial = row_fields[8];
+//				String hora_final = row_fields[9];
+//
+//				Date date = null;
+//				if(!row_fields[10].isEmpty()) {
+//					date = new SimpleDateFormat("dd-MM-yyyy").parse(row_fields[10]);
+//				}
+//
+//				evento = new Aula(date, date, Integer.parseInt(row_fields[4]), cursos, unidade_de_execucao,
+//						hora_inicial, hora_final, row_fields);
+//				fillSlot(evento, row_fields[10], hora_inicial, hora_final);
+//			}
+//
+//		}
+//		//for (Slot s: slots) {
+//		//System.out.println(s.toString());
+//		//}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 
 

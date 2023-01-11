@@ -1,7 +1,7 @@
 Código;Unidade Curricular;Cursos;Tipo;Época;Nome;Requer inscrição prévia;	Período de Inscrição;Data;Salas;	Estado de pedido de sala	;Capacidade Salas;Nº alunos previsto	;Lugares
 03986;Liderança e Gestão de Equipas para Executivos;0339 - MGA;Teste;Época Normal;Individual Work;Não;-;2022/09/05 12:00 - 2022/10/02 23:59;;;0;22;0
 03986;Liderança e Gestão de Equipas para Executivos;0339 - MGA;Projecto;Época Normal;Work Group;Não;-;2022/09/05 18:30 - 2022/10/02 23:59;;;0;22;0
-M8479;Comunicação;B42 - MGI;Exame;1.ª Época;Exame - 1.ª Época;Não;-;2022/09/16 18:30 - 20:00;Auditório_C1.03;;44;44;0
+M8479;Comunicação;B42 - MGI;Exame;1.ª Época;Exame - 1.ª Época;Não;-;2022/09/16 18:30 - 20:00;Auditório_C1.04;;44;44;0
 03902;Gestão de Carteiras;0332 - MRF;Projecto;Época Normal;Trabalho;Não;-;2022/09/19 18:30 - 2022/10/10 22:30;;;0;21;0
 01286;Enquadramento do Controlo de Gestão;BPG001 - PGCGP;Projecto;Época Normal;Trabalho de Grupo;Não;-;2022/09/20 18:30 - 2022/10/11 21:00;;;0;12;0
 00440;Laboratório de Ética e Profissão em Serviço Social;8014 - LSS-PL;Avaliação Contínua;Época Normal;Ficha de Trabalho 2;Sim;21/09/2022 10:19 - 22/09/2022 20:59;2022/09/21 10:17 - 2022/09/22 20:59;;;0;19;0
@@ -9,4 +9,4 @@ L5239;Psicometria;9219 - LP;Avaliação Contínua;Época Normal;Trabalho de grup
 M9211;Estratégia e Controlo de Gestão;BPG001 - PGCGP;Projecto;Época Normal;Trabalho de Grupo;Não;-;2022/09/27 18:30 - 2022/10/18 19:00;;;0;12;0
 01290;Controlo de Gestão e Qualidade;BPG001 - PGCGP;Projecto;Época Normal;Trabalho de grupo;Não;-;2022/09/27 18:30 - 2022/12/06 19:00;;;0;12;0
 03983;Contabilidade para Executivos;0339 - MGA;Projecto;Época Normal;Group Work (SIT);Não;-;2022/09/28 12:00 - 2022/10/24 19:00;;;0;19;0
-00440;Laboratório de Ética e Profissão em Serviço Social;8014 - LSS-PL;Avaliação Contínua;Época Normal;Ficha de Trabalho 3;Sim;29/09/2022 19:37 - 29/09/2022 23:59;2022/09/29 19:34 - 23:59;Auditório_Afonso_de_Barros;;39;15;24
+00440;Laboratório de Ética e Profissão em Serviço Social;8014 - LSS-PL;Avaliação Contínua;Época Normal;Ficha de Trabalho 3;Sim;29/09/2022 19:37 - 29/09/2022 23:59;2022/09/29 19:34 - 23:59;AA2.24;;16;15;1
