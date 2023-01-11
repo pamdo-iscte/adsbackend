@@ -19,6 +19,8 @@ public class Main {
 
 	private List<Slot> slots = new ArrayList<>();
 	private String[] columns = null;
+	
+	private boolean menorDist = true; //isto seria uma checkbox no front-end
 
 	public String ano = "22";
 
@@ -106,6 +108,28 @@ public class Main {
 				if (!e.getHora_fim().equals(s.hora_final)) {
 					for (Slot sl : slots) {
 						for (Evento ev : sl.eventos) {
+							
+							if(e instanceof Aula && menorDist == true) {
+							if(ev.getData().equals(e.getData()) && ev.getHora_inicio().equals(e.getHora_fim()) 
+									&& ((Aula)e).getTurno().equals( ((Aula)ev).getTurno()) && ((Aula)ev).getSala()==null) {
+								 ((Aula)ev).setSala(((Aula)e).getSala());
+//								 System.out.println(" menorDist");
+//								 System.out.println(e);
+//								 System.out.println(ev);
+//								 System.out.println(((Aula)e).getSala() + " " + ((Aula)ev).getSala());
+								 sala = ((Aula) e).getSala();
+									if (sala != null) {
+										for (Sala asd : sl.salas_livres) {
+											if (asd.getNome().equals(sala.getNome())) {
+												sl.salas_livres.remove(asd);
+												break;
+											}
+										}
+									}
+									
+							}}
+							
+							
 							if (e.equals(ev) && !sl.hora_inicio.equals(s.hora_inicio)) {
 
 								aux = sl.hora_final;
