@@ -38,4 +38,11 @@ public class Slot {
 		return data;
 	}
 
+	public String getHora_inicio() {
+		return hora_inicio;
+	}
+
+	public String getHora_final() {
+		return hora_final;
+	}
 }
