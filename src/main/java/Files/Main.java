@@ -19,7 +19,7 @@ import java.lang.Math;
 
 public class Main {
 	private String file_caracterizacao_das_salas = "Caracterizacao_das_Salas/ADS - Caracterizacao das salas.csv";
-	private String file_horario_1sem = "Upload_de_Horarios/ADS - Horários 1º sem 2022-23.xlsx";
+	private String file_horario_1sem = "Upload_de_Horarios/2- ADS - Horários 1º sem 2022-23.csv";
 	private String file_avaliacoes_1sem = "Upload_de_Avaliacoes/ADS - Avaliações 1º semestre 2022-23.csv";
 
 	private List<Slot> slots = new ArrayList<>();
@@ -43,26 +43,26 @@ public class Main {
 
 
 
-	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes, boolean checkbox, int num) {
+	public String start(List<String> metodos_aulas, List<String> metodos_avaliacoes, boolean checkbox, int num) {
 
 		difference = num;
 
 		initialSlots();
 		readFile_slotsAula();
 		readFile_slotsAvaliacao();
+//		int count1 = 0;
+//		for (Slot s : slots) {
+//			for (Evento e : s.eventos) {
+//				count1++;
+//			}
+//		}
+//		System.out.println("			Numero de eventos Inicial " + count1);
 
 		List<String> metodosAulas = new ArrayList<String>();
-		for(String as: metodos_aulas){
+		for (String as : metodos_aulas) {
 			metodosAulas.add(as);
 		}
 
-		int count1 = 0;
-		for(Slot s: slots) {
-			for(Evento e: s.eventos) {
-				count1++;
-			}
-		}
-		System.out.println("			Numero de eventos Inicial "+count1);
 
 		List<Sala> sala_to_return = new ArrayList<>();
 		Sala sala = null;
@@ -128,11 +128,11 @@ public class Main {
 						for (Slot sl : slots) {
 							for (Evento ev : sl.eventos) {
 
-								if(e instanceof Aula && checkbox) {
-									if(ev.getData().equals(e.getData()) && ev.getHora_inicio().equals(e.getHora_fim())
-											&& ((Aula)e).getTurno().equals( ((Aula)ev).getTurno()) && ((Aula)ev).getSala()==null) {
+								if (e instanceof Aula && checkbox) {
+									if (ev.getData().equals(e.getData()) && ev.getHora_inicio().equals(e.getHora_fim())
+											&& ((Aula) e).getTurno().equals(((Aula) ev).getTurno()) && ((Aula) ev).getSala() == null) {
 
-										((Aula)ev).setSala(((Aula)e).getSala());
+										((Aula) ev).setSala(((Aula) e).getSala());
 										sala = ((Aula) e).getSala();
 										if (sala != null) {
 											for (Sala asd : sl.salas_livres) {
@@ -143,7 +143,8 @@ public class Main {
 											}
 										}
 
-									}}
+									}
+								}
 
 
 								if (e.equals(ev) && !sl.hora_inicio.equals(s.hora_inicio)) {
@@ -181,8 +182,8 @@ public class Main {
 						}
 					}
 					if (e instanceof Avaliacao)
-						System.out.println(((Avaliacao)e).getSalas());
-					if (e instanceof Aula)  System.out.println(((Aula)e).getSala());
+						System.out.println(((Avaliacao) e).getSalas());
+					if (e instanceof Aula) System.out.println(((Aula) e).getSala());
 
 				}
 
@@ -193,15 +194,15 @@ public class Main {
 			boolean st = true;
 			boolean sst = true;
 
-			for(Slot s: slots) {
-				for(Evento e: s.eventos) {
-					if(e instanceof Aula) {
-						aux = ficheiroAtualizado(e,lista, st,name_aulas);
+			for (Slot s : slots) {
+				for (Evento e : s.eventos) {
+					if (e instanceof Aula) {
+						aux = ficheiroAtualizado(e, lista, st, name_aulas);
 						lista = aux;
 						st = false;
 					}
-					if(e instanceof Avaliacao) {
-						aux = ficheiroAtualizado(e,lista, sst,name_avaliacoes);
+					if (e instanceof Avaliacao) {
+						aux = ficheiroAtualizado(e, lista, sst, name_avaliacoes);
 						lista = aux;
 						sst = false;
 					}
@@ -209,17 +210,15 @@ public class Main {
 				}
 			}
 
-			count = 0;
-			for(Slot s: slots) {
-				for(Evento e: s.eventos) {
-					count++;
-				}
-			}
-			System.out.println("numero de eventos"+count);
-			new Metricas(slots);
-
 		}
+		Metricas metricas = new Metricas(slots);
+		Convert_metrica_JSON metrica_json1 = metricas.convert_metrica_JSON();
+		List<Convert_metrica_JSON> lista_convert_metrica = new ArrayList<>();
+		lista_convert_metrica.add(metrica_json1);
+		//escrever_ficheiro(lista_convert_metrica);
+		return new Gson().toJson(lista_convert_metrica);
 	}
+
 	public void escrever_ficheiro(List<Convert_metrica_JSON> lista){
 
 		try (FileWriter writer = new FileWriter("metricas.txt")) {
@@ -727,9 +726,6 @@ public class Main {
 			data_inicio = sdf.format(c.getTime());
 		}
 	}
-
-
-
 	private void fillSlot(Evento evento, String data, String hora_inicio, String hora_final) {
 
 		for (Slot s : slots) {
@@ -741,16 +737,16 @@ public class Main {
 			}
 			if (s.data.equals(data) && s.hora_inicio.compareTo(hora_inicio)>=0 && s.hora_inicio.compareTo(hora_final) < 0) {
 				s.eventos.add(evento);
-			}}
+			}
+		}
 	}
-
 
 
 	private void readFile_slotsAula() {
 
 		try {
 
-			FileReader filereader = new FileReader("2- ADS - Horários 1º sem 2022-23.csv");
+			FileReader filereader = new FileReader(file_horario_1sem);
 			try (CSVReader csvReader = new CSVReader(filereader)) {
 				String[] nextRecord;
 
@@ -792,76 +788,6 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-
-	private void readFile_slotsAula_XLSX() {
-		try {
-
-			File file = new File(file_horario_1sem);   //creating a new file instance
-			FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file
-			//creating Workbook instance that refers to .xlsx file
-			XSSFWorkbook wb = new XSSFWorkbook(fis);
-			XSSFSheet sheet = wb.getSheetAt(0);     //creating a Sheet object to retrieve object
-			//iterating over excel file
-			for (Row row : sheet) {
-				Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column
-				if (row.getRowNum() < 1) {
-					continue;
-				}
-
-				String[] row_fields = new String[15];
-				while (cellIterator.hasNext()) {
-					Cell cell_row = cellIterator.next();
-					String field;
-					if (cell_row.getCellType() == CellType.STRING)
-						field = cell_row.getStringCellValue();
-					else if (cell_row.getCellType() == CellType.BOOLEAN)
-						field = String.valueOf(cell_row.getBooleanCellValue());
-					else if (DateUtil.isCellDateFormatted(cell_row)) {
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(cell_row.getDateCellValue());
-						String dia = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
-						String mes = String.valueOf((calendar.get(Calendar.MONTH)+1));
-						if (calendar.get(Calendar.DAY_OF_MONTH) < 10) dia = "0"+dia;
-						if (calendar.get(Calendar.MONTH) < 10) mes = "0"+mes;
-						field = dia + "-" + mes + "-" + calendar.get(Calendar.YEAR);
-					} else
-						field = String.valueOf((int) cell_row.getNumericCellValue());
-
-					row_fields[cell_row.getColumnIndex()] = field;
-				}
-				if (row_fields[1].equals("")) break;
-
-				String unidade_de_execucao = row_fields[1];
-				String[] cursos = row_fields[0].split(",");
-				Evento evento = null;
-
-
-				String hora_inicial = row_fields[8];
-				String hora_final = row_fields[9];
-
-				Date date = null;
-				if(!row_fields[10].isEmpty()) {
-					date = new SimpleDateFormat("dd-MM-yyyy").parse(row_fields[10]);
-				}
-
-				evento = new Aula(date, date, Integer.parseInt(row_fields[4]), cursos, unidade_de_execucao,
-						hora_inicial, hora_final, row_fields);
-				fillSlot(evento, row_fields[10], hora_inicial, hora_final);
-			}
-
-		}
-		//for (Slot s: slots) {
-		//System.out.println(s.toString());
-		//}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
-
-
-
 
 
 	private void readFile_slotsAvaliacao() {

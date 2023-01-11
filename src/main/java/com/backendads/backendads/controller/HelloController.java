@@ -88,9 +88,7 @@ public class HelloController {
 
         System.out.println("Metodos Aulas: "+aulas);
         System.out.println("Metodos Aulas: "+avaliacoes);
-        main.start(aulas,avaliacoes,json_metodos.isCheckbox(),json_metodos.getNum());
-        //objetivo é dar return ao filename do horario criado
-        return "";
+        return main.start(aulas,avaliacoes,json_metodos.isCheckbox(),json_metodos.getNum());
     }
 
     @PostMapping("/obter_aulas_da_UC_escolhida")
