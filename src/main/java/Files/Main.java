@@ -391,7 +391,7 @@ public class Main {
 		
 		Random rand = new Random();
 		List<List<Sala>> salas_possiveis = new ArrayList<>();
-		
+		MetodosdeAvaliacao m = new MetodosdeAvaliacao();
 		
 		if (list_methods.get(0).equals("menorNumSalas")) { 
 			if(sala_apos_metodo != null) { 
@@ -401,7 +401,7 @@ public class Main {
 				sala_apos_metodo = new ArrayList<>();
 				sala_apos_metodo.add(help.salas_livres);
 			for(List<Sala> ls: sala_apos_metodo) {
-				salas_possiveis = menorNumSalas(ls, a, help);
+				salas_possiveis = m.menorNumSalas(ls, a, help, this);
 			}
 			}
 			
@@ -415,7 +415,7 @@ public class Main {
 				sala_apos_metodo = new ArrayList<>();
 				sala_apos_metodo.add(help.salas_livres);
 			for(List<Sala> ls: sala_apos_metodo) {
-				salas_possiveis = igualForma(ls, a, help);
+				salas_possiveis = m.igualForma(ls, a, help,this);
 			}
 			}
 		}
@@ -427,7 +427,7 @@ public class Main {
 			salas_possiveis = sala_apos_metodo;
 			if (sala_apos_metodo==null) {
 				//se houver salas disponiveis para colocar tds os alunos, o menorNumSalas dá
-				salas_possiveis = menorNumSalas(help.salas_livres, a, help);
+				salas_possiveis = m.menorNumSalas(help.salas_livres, a, help,this);
 				if(salas_possiveis==null) {
 					System.out.println("não há salas possíveis 1");
 					return null;
@@ -481,18 +481,23 @@ public class Main {
 		Random rand = new Random();
 		List<Sala> salas_possiveis = new ArrayList<>();
 		
-		// ver se há alguma maneira mais eficiente de ir buscar o nome dos metodos
-		if (list_methods.get(0).equals("caracteristica")) { // aqui o nome dps logo se vê
-			
-			salas_possiveis = keepCaracteristic(sala_apos_metodo, a, help);
-		}
+		Class<MetodosParaAulas> class_metodos_aulas = MetodosParaAulas.class;
+		try {
+			Object t = class_metodos_aulas.getDeclaredConstructor().newInstance();
+			Method[] metodos = class_metodos_aulas.getDeclaredMethods();
+			for (Method m: metodos) {
+				if (m.getName().equals(list_methods.get(0))) {
+					Parameter[] parameters = m.getParameters();
+					if (parameters.length == 4)
+						salas_possiveis = m.invoke(t,sala_apos_metodo,a,help,this);
+					else {
+						salas_possiveis = m.invoke(t,a,help,this);
+					}
+				}
+			}
 
-		if (list_methods.get(0).equals("evitar sobrelotaçao")) { // aqui o nome dps logo se vê
-			System.out.println("evitar");
-			salas_possiveis = evitarSobrelotacao(sala_apos_metodo, a, help);
-		}
-		if (list_methods.get(0).equals("menor distancia")) { // aqui o nome dps logo se vê
-			salas_possiveis = sala_menor_distancia(a, help);
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 
 		if(salas_possiveis == null) {
