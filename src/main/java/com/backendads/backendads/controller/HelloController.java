@@ -36,7 +36,7 @@ public class HelloController {
     private final String file_avaliacoes="Upload_de_Avaliacoes/ADS - Avaliações 1º semestre 2022-23.csv";
     private final String dir_caracterizacao_das_salas="Caracterizacao_das_Salas";
     private String file_das_aulas_a_ser_usado = "ADS - Horários 1º sem 2022-23.xlsx";
-    private String file_das_avaliacoes_a_ser_usado = "";
+
     private Main main;
 
     @GetMapping("/get_metodos")
@@ -291,6 +291,26 @@ public class HelloController {
     @GetMapping("/check_se_existe_caracterizacao_das_salas")
     public String check_se_existe_caracterizacao_das_salas() {
         File dir = new File(dir_caracterizacao_das_salas);
+        if (dir.isDirectory()) {
+            File[] files = Objects.requireNonNull(dir.listFiles());
+            if (files.length != 0)
+                return new Gson().toJson(files[0].getName());
+        }
+        return new Gson().toJson("");
+    }
+    @GetMapping("/check_se_existe_horario")
+    public String check_se_existe_horario() {
+        File dir = new File(dir_upload_horarios);
+        if (dir.isDirectory()) {
+            File[] files = Objects.requireNonNull(dir.listFiles());
+            if (files.length != 0)
+                return new Gson().toJson(files[0].getName());
+        }
+        return new Gson().toJson("");
+    }
+    @GetMapping("/check_se_existe_avaliacao")
+    public String check_se_existe_avaliacao() {
+        File dir = new File(dir_upload_avaliacoes);
         if (dir.isDirectory()) {
             File[] files = Objects.requireNonNull(dir.listFiles());
             if (files.length != 0)
