@@ -19,7 +19,6 @@ public class Slot_horario_semestral implements Serializable {
 
     private String dia_da_sem;
 
-
     public Slot_horario_semestral(String id, String text, String start, String end, String backColor, String informacao_detalhada, String turno, String dia_da_sem) {
         this.id = id;
         this.text = text;
