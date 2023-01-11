@@ -35,13 +35,12 @@ public class HelloController {
     private final String dir_upload_avaliacoes="Upload_de_Avaliacoes";
     private final String file_avaliacoes="Upload_de_Avaliacoes/ADS - Avaliações 1º semestre 2022-23.csv";
     private final String dir_caracterizacao_das_salas="Caracterizacao_das_Salas";
-    private String file_das_aulas_a_ser_usado = "";
+    private String file_das_aulas_a_ser_usado = "ADS - Horários 1º sem 2022-23.xlsx";
     private String file_das_avaliacoes_a_ser_usado = "";
     private Main main;
 
     @GetMapping("/get_metodos")
     public String get_metodos() {
-        main = new Main();
         List<List<String>> metodos = new ArrayList<>();
         List<String> nomes_metodos_aulas = new ArrayList<>();
         List<String> nomes_metodos_avaliacoes = new ArrayList<>();
@@ -80,9 +79,9 @@ public class HelloController {
         }
         else {
             try {
-                return Files.readString(Path.of(dir));
+                return new Gson().toJson(Files.readString(Path.of(dir)));
             } catch (IOException e) {
-                return "Ocorreu um erro";
+                return new Gson().toJson("Ocorreu um erro");
             }
         }
     }
@@ -164,11 +163,11 @@ public class HelloController {
             fo.close();
 
             aux.guardar_horario_completo(slots.getAulas(), Integer.parseInt(slots.getNum()),dir_horariosCompletos,file_avaliacoes);
-            return "Horário guardado";
+            return new Gson().toJson("Horário guardado");
         } catch (IOException e) {
             String mensagem_de_erro = "Ocorreu um erro ao guardar o horário do aluno/docente número "+slots.getNum();
             System.err.println(mensagem_de_erro);
-            return mensagem_de_erro;
+            return new Gson().toJson(mensagem_de_erro);
         }
     }
 
@@ -213,6 +212,7 @@ public class HelloController {
             }
             else if (calendar.get(Calendar.WEEK_OF_YEAR) == slot.getCalendar().get(Calendar.WEEK_OF_YEAR)) {
                 horario_da_semana.add(slot);
+                System.out.println(slot);
                 if (!turnos_UCs.contains(slot.getTurno())) turnos_UCs.add(slot.getTurno());
             }
         }
@@ -304,7 +304,7 @@ public class HelloController {
         String result =  aux.upload_file(file,dir_caracterizacao_das_salas);
         if (result.equals("")) return "Erro no upload";
         main.setFile_caracterizacao_das_salas(result);
-        return "Upload concluído com sucesso";
+        return new Gson().toJson("Upload concluído com sucesso");
     }
 
     @PostMapping("/upload_avaliacoes")
@@ -312,7 +312,7 @@ public class HelloController {
         String result =  aux.upload_file(file,dir_upload_avaliacoes);
         if (result.equals("")) return "Erro no upload";
         main.setFile_avaliacoes_1sem(result);
-        return "Upload concluído com sucesso";
+        return new Gson().toJson("Upload concluído com sucesso");
     }
 
     @PostMapping("/upload")
@@ -320,7 +320,7 @@ public class HelloController {
         String result =  aux.upload_file(file,dir_upload_horarios);
         if (result.equals("")) return "Erro no upload";
         main.setFile_horario_1sem(result);
-        return "Upload concluído com sucesso";
+        return new Gson().toJson("Upload concluído com sucesso");
     }
 
     @GetMapping("/start_main")
