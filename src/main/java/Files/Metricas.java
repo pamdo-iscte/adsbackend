@@ -14,21 +14,28 @@ public class Metricas {
 	List<Integer> salas_livres = new ArrayList<>();
 
 	//é preciso meter as salas das aulas a null se nao for feito de forma automatica!
+	List<Evento> eventos_vistos;
+
+	//é preciso meter as salas das aulas a null se nao for feito de forma automatica!
 	public Metricas(List<Slot> slots) {
+		eventos_vistos=new ArrayList<>();
 		for (Slot slot : slots) {
 			List<Evento> eventos_slot = slot.eventos;
 			salas_livres.add(slot.getSalas_livres().size());
 			//aulas_livres_slot(slot);
 			for (Evento e : eventos_slot) {
-				if (e instanceof Aula) {
-					quantidade_alocacao_automatica_falhada((Aula) e);
-					quantidade_aulas_sobrelotacao((Aula)e);
-					quantidade_caracteristicas_mal_atribuidas((Aula) e, slot);
-					sala_menor_distancia((Aula) e, slot, slots);
-				}
-				if (e instanceof Avaliacao) {
-					quantidade_avaliacoes_sobrelotacao((Avaliacao) e);
-					//quantidade_caracteristicas_desperdicadas((Aula) e);
+				if(!eventos_vistos.contains(e)) {
+					eventos_vistos.add(e);
+					if (e instanceof Aula) {
+						quantidade_alocacao_automatica_falhada((Aula) e);
+						quantidade_aulas_sobrelotacao((Aula)e);
+						quantidade_caracteristicas_mal_atribuidas((Aula) e, slot);
+						sala_menor_distancia((Aula) e, slot, slots);
+					}
+					if (e instanceof Avaliacao) {
+						quantidade_avaliacoes_sobrelotacao((Avaliacao) e);
+						//quantidade_caracteristicas_desperdicadas((Aula) e);
+					}
 				}
 			}
 		}
@@ -161,15 +168,16 @@ public class Metricas {
 			String caracteristica_aula = aula.getCaracteristica();
 			boolean mal_atribuida = true;
 			for(String caracteristica : caracteristicas_list) { // se não for igual a outra sala e a caracteristica necessaria for normal faz break
-				caracteristica.replace("_"," ");
-				String firstFourChars = caracteristica_aula.substring(0, 4);
-				if((caracteristica.contains(caracteristica_aula)) || (((firstFourChars.equals("Sala") ||(firstFourChars.equals("Anfi"))) && caracteristica.equals("Sala/anfiteatro aulas")))) {
+				caracteristica=caracteristica.replace("_"," ");
+				String firstFourChars = caracteristica.substring(0, 4);
+				if((caracteristica.equals(caracteristica_aula))|| (((firstFourChars.equals("Sala") ||(firstFourChars.equals("Anfi"))) && caracteristica_aula.equals("Sala/anfiteatro aulas")))) {
 					mal_atribuida = false;
 				}
 			}
 			if(mal_atribuida) {
 
 				for(String caracteristica : caracteristicas_list) { // se não for igual a outra sala e a caracteristica necessaria for normal faz break
+					caracteristica=caracteristica=caracteristica.replace("_"," ");
 					System.out.println(tt + ",Atribuida = " + caracteristica + " Suposto ser atribuido "+ caracteristica_aula );
 				}
 				tt++;

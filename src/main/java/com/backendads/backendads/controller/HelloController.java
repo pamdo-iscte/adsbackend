@@ -313,10 +313,10 @@ public class HelloController {
     }
     @PostMapping("/csv")
     public String csv() {
-        String delimiter = ",";
+        String delimiter = ";";
         List<List<String>> z= new ArrayList<>();
         try {
-            File file = new File("hora.txt");
+            File file = new File("Aulas.txt");
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String line = "";

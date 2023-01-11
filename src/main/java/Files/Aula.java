@@ -22,6 +22,7 @@ public class Aula extends Evento {
 	String turnoCapacidadeSuperior;
 	
 	String caracteristica;
+	String professor;
 
 
 	public Aula(Date data, Date data_final, int numero_de_alunos, String[] cursos, String unidade, String hora_inicio, String hora_fim, String[] line) {
@@ -37,6 +38,21 @@ public class Aula extends Evento {
 		this.unidade_de_execucao  =line[1];
 		this.dia_semana = line[7];
 		
+	}
+	public Aula(Date data, Date data_final, int numero_de_alunos, String[] cursos, String unidade, String hora_inicio, String hora_fim, String[] line,Sala sala) {
+		super(data, data_final, numero_de_alunos, cursos, unidade, hora_inicio, hora_fim);
+		this.turma = line[3];
+		this.inscritos = Integer.parseInt(line[4]);
+		this.caracteristica = line[11];
+		this.curso = line[0];
+		this.turno = line[2];
+		this.dia = line[10];
+		this.turnoCapacidadeSuperior = line[5];
+		this.turnoInscricoesSuperior = line[6];
+		this.unidade_de_execucao  =line[1];
+		this.dia_semana = line[7];
+		this.sala=sala;
+
 	}
 
 

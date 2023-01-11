@@ -191,6 +191,7 @@ public class Main {
 				
 			}
 		}
+		Metricas metricas= new Metricas(slots);
 		
 		
 		
@@ -616,7 +617,7 @@ public class Main {
     	String minuto = "30";
     	String segundo = "00";
     	String data_inicio = "01-09-"+ano;
-    	String data_final = "31-08-"+Integer.toString(Integer.parseInt(ano)+1);
+    	String data_final = "30-09-"+Integer.toString(Integer.parseInt(ano));
     	boolean i = false;
     	List<Evento> eventos = new ArrayList<>();
 		List<Sala> salas = readFile_caracterizacaoDasSalas();
@@ -687,7 +688,6 @@ public class Main {
 		try {
 			
 			FileReader filereader = new FileReader(file_horario_1sem);
-			System.out.println("LI o FICHEIro");
 			try (CSVReader csvReader = new CSVReader(filereader)) {
 				String[] nextRecord;
 
