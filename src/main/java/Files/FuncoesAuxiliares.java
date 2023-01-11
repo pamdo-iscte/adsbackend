@@ -430,17 +430,20 @@ public class FuncoesAuxiliares {
         String[] data_start = start.split("T")[0].split("-");
         String[] data_end = end.split("T")[0].split("-");
 
-        Calendar start_calendar = Calendar.getInstance();
+        Calendar slot_start = Calendar.getInstance();
         data_start = check_data_fields_to_calendar(data_start);
-        start_calendar = setCalendar(start_calendar,data_start);
+        slot_start = setCalendar(slot_start,data_start);
 
-        Calendar end_calendar = Calendar.getInstance();
+        Calendar slot_end = Calendar.getInstance();
         data_end = check_data_fields_to_calendar(data_end);
-        end_calendar = setCalendar(end_calendar,data_end);
+        slot_end = setCalendar(slot_end,data_end);
 
-        if (start_calendar.compareTo(calendar) < 0 && end_calendar.compareTo(end_of_week_calendar) > 0) return true;
-        else if (start_calendar.compareTo(calendar) >= 0 && start_calendar.compareTo(end_of_week_calendar) <= 0) return true;
-        else if (end_calendar.compareTo(calendar) >= 0 && end_calendar.compareTo(end_of_week_calendar) <= 0) return true;
+//        System.out.println("Week: "+calendar.getTime() + " End of week: "+end_of_week_calendar.getTime());
+//        System.out.println("Start: "+slot_start.getTime()+" End: "+slot_end.getTime());
+//        System.out.println("slot_start.compareTo(calendar) = "+slot_start.compareTo(calendar)+" slot_start.compareTo(end_of_week_calendar) = "+slot_start.compareTo(end_of_week_calendar));
+        if (slot_start.compareTo(calendar) > 0 && slot_end.compareTo(end_of_week_calendar) < 0) return true;
+        else if (slot_start.compareTo(calendar) <= 0 && slot_start.compareTo(end_of_week_calendar) >= 0) return true;
+        else if (slot_end.compareTo(calendar) <= 0 && slot_end.compareTo(end_of_week_calendar) >= 0) return true;
         else return false;
     }
 

@@ -139,7 +139,6 @@ public class HelloController {
             String end = data_ajustada + "T" + hora_inicio_fim[1];
 
             Slot_horario_semestral new_slot =new Slot_horario_semestral(id, text, start, end, color,informacao_detalhada,uc.getTurno(),dia_de_sem);
-            new_slot.setCursos(uc.getCurso());
             slots.add(new_slot);
 
         }
@@ -205,7 +204,11 @@ public class HelloController {
         for (Slot_horario_semestral slot :slots) {
 //            System.out.println(slot.getCalendar().getTime());
 //            System.out.println(calendar.getTime());
-            if (slot.getStart().split("T")[0].equals(slot.getEnd().split("T")[0]) && !aux.check_se_avaliacao_esta_entre_datas(calendar,slot.getStart(),slot.getEnd())) {
+//            if (slot.getTurno() == null) {
+//                System.out.println("\n"+slot.getStart() + " "+slot.getEnd()+" "+!slot.getStart().split("T")[0].equals(slot.getEnd().split("T")[0]));
+//                System.out.println(!aux.check_se_avaliacao_esta_entre_datas(calendar,slot.getStart(),slot.getEnd()));
+//            }
+            if (!slot.getStart().split("T")[0].equals(slot.getEnd().split("T")[0]) && !aux.check_se_avaliacao_esta_entre_datas(calendar,slot.getStart(),slot.getEnd())) {
                 avaliacoes_grandes.add(slot);
             }
             else if (calendar.get(Calendar.WEEK_OF_YEAR) == slot.getCalendar().get(Calendar.WEEK_OF_YEAR)) {
@@ -229,11 +232,11 @@ public class HelloController {
                     }
                 }
             }
-           else if (cores_das_avaliacoes.size() > index_cores_das_avaliacoes) {
-               color = cores_das_avaliacoes.get(index_cores_das_avaliacoes);
-               index_cores_das_avaliacoes++;
-           }
-           else {
+            else if (cores_das_avaliacoes.size() > index_cores_das_avaliacoes) {
+                color = cores_das_avaliacoes.get(index_cores_das_avaliacoes);
+                index_cores_das_avaliacoes++;
+            }
+            else {
                 Random random = new Random();
                 int nextInt = random.nextInt(0xffffff + 1);
                 color = String.format("#%06x", nextInt);
