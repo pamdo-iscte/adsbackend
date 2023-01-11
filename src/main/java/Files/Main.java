@@ -13,8 +13,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.lang.Math;
 
@@ -63,7 +61,7 @@ public class Main {
 
 	}
 
-	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes,boolean checkbox) {
+	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes, boolean checkbox, int num) {
 
 		initialSlots();
 		readFile_slotsAula();
@@ -197,7 +195,15 @@ public class Main {
 				
 			}
 		}
+		int count = 0;
+		for(Slot s: slots) {
+			for(Evento e: s.eventos) {
+				count++;
+			}
+		}
+		System.out.println("numero de eventos"+count);
 		Metricas metricas= new Metricas(slots);
+
 		
 		
 		

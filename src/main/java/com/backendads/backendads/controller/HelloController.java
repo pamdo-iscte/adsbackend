@@ -88,7 +88,7 @@ public class HelloController {
 
         System.out.println("Metodos Aulas: "+aulas);
         System.out.println("Metodos Aulas: "+avaliacoes);
-        main.start(aulas,avaliacoes,json_metodos.isCheckbox());
+        main.start(aulas,avaliacoes,json_metodos.isCheckbox(),json_metodos.getNum());
         //objetivo é dar return ao filename do horario criado
         return "";
     }
@@ -282,6 +282,41 @@ public class HelloController {
 
     }
 
+    @GetMapping("/check_se_existe_horario")
+    public String check_se_existe_horario() {
+        File dir = new File(dir_upload_horarios);
+        if (dir.isDirectory()) {
+            File[] files = Objects.requireNonNull(dir.listFiles());
+            if (files.length != 0)
+                return new Gson().toJson(files[0].getName());
+        }
+        return new Gson().toJson("");
+    }
+
+    @GetMapping("/check_if_all_files_exist")
+    public String check_if_all_files_exist() {
+        File dir = new File(dir_upload_horarios);
+        File dir1 = new File(dir_upload_avaliacoes);
+        File dir2 = new File(dir_caracterizacao_das_salas);
+        if (dir.isDirectory() && dir1.isDirectory() && dir2.isDirectory()) {
+            File[] files = Objects.requireNonNull(dir.listFiles());
+            File[] files1 = Objects.requireNonNull(dir1.listFiles());
+            File[] files2 = Objects.requireNonNull(dir2.listFiles());
+            if (files.length != 0 && files1.length!=0 && files2.length!=0)
+                return new Gson().toJson(true);
+        }
+        return new Gson().toJson(false);
+    }
+    @GetMapping("/check_se_existe_avaliacao")
+    public String check_se_existe_avaliacao() {
+        File dir = new File(dir_upload_avaliacoes);
+        if (dir.isDirectory()) {
+            File[] files = Objects.requireNonNull(dir.listFiles());
+            if (files.length != 0)
+                return new Gson().toJson(files[0].getName());
+        }
+        return new Gson().toJson("");
+    }
     @GetMapping("/check_se_existe_caracterizacao_das_salas")
     public String check_se_existe_caracterizacao_das_salas() {
         File dir = new File(dir_caracterizacao_das_salas);
