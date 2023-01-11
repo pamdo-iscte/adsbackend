@@ -17,6 +17,12 @@ public class MetodosSelecionados {
     @JsonProperty("avaliacoes")
     private List<String> avaliacoes;
 
+    @JsonProperty("checkbox")
+    private boolean checkbox;
+
+    public boolean isCheckbox() {
+        return checkbox;
+    }
 
     public List<String> getAulas() {
         return aulas;

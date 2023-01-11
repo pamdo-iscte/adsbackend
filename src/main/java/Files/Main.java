@@ -25,7 +25,7 @@ public class Main {
 
 	private List<Slot> slots = new ArrayList<>();
 	private String[] columns = null;
-
+	
 	private boolean menorDist = true; //isto seria uma checkbox no front-end
 
 	public String ano = "22";
@@ -63,7 +63,7 @@ public class Main {
 
 	}
 
-	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes) {
+	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes,boolean checkbox) {
 
 		initialSlots();
 		readFile_slotsAula();
@@ -114,16 +114,16 @@ public class Main {
 				if (!e.getHora_fim().equals(s.hora_final)) {
 					for (Slot sl : slots) {
 						for (Evento ev : sl.eventos) {
-
-							if(e instanceof Aula && menorDist == true) {
-								if(ev.getData().equals(e.getData()) && ev.getHora_inicio().equals(e.getHora_fim())
-										&& ((Aula)e).getTurno().equals( ((Aula)ev).getTurno()) && ((Aula)ev).getSala()==null) {
-									((Aula)ev).setSala(((Aula)e).getSala());
+							
+							if(e instanceof Aula && checkbox) {
+							if(ev.getData().equals(e.getData()) && ev.getHora_inicio().equals(e.getHora_fim()) 
+									&& ((Aula)e).getTurno().equals( ((Aula)ev).getTurno()) && ((Aula)ev).getSala()==null) {
+								 ((Aula)ev).setSala(((Aula)e).getSala());
 //								 System.out.println(" menorDist");
 //								 System.out.println(e);
 //								 System.out.println(ev);
 //								 System.out.println(((Aula)e).getSala() + " " + ((Aula)ev).getSala());
-									sala = ((Aula) e).getSala();
+								 sala = ((Aula) e).getSala();
 									if (sala != null) {
 										for (Sala asd : sl.salas_livres) {
 											if (asd.getNome().equals(sala.getNome())) {
@@ -132,10 +132,10 @@ public class Main {
 											}
 										}
 									}
-
-								}}
-
-
+									
+							}}
+							
+							
 							if (e.equals(ev) && !sl.hora_inicio.equals(s.hora_inicio)) {
 
 								aux = sl.hora_final;
@@ -144,14 +144,14 @@ public class Main {
 									List<Sala> listsala = ((Avaliacao) e).getSalas();
 									if (listsala != null) {
 										for (Sala hi : ((Avaliacao) e).getSalas()) {
-											for (Sala asd : sl.salas_livres) {
+												for (Sala asd : sl.salas_livres) {
 												if (asd.getNome().equals(hi.getNome())) {
 													sl.salas_livres.remove(asd);
 													break;
 												}
 											}
 										}
-
+										
 									}
 								}
 								if (e instanceof Aula) {
@@ -170,7 +170,7 @@ public class Main {
 						}
 					}
 				}
-				if (e instanceof Avaliacao)
+				if (e instanceof Avaliacao) 
 					System.out.println(((Avaliacao)e).getSalas());
 				if (e instanceof Aula)  System.out.println(((Aula)e).getSala());
 			}
@@ -181,7 +181,7 @@ public class Main {
 		List<String> lista = new ArrayList<>();
 		boolean st = true;
 		boolean sst = true;
-
+		
 		for(Slot s: slots) {
 			for(Evento e: s.eventos) {
 				if(e instanceof Aula) {
@@ -194,13 +194,13 @@ public class Main {
 					lista = aux;
 					sst = false;
 				}
-
+				
 			}
 		}
 		Metricas metricas= new Metricas(slots);
-
-
-
+		
+		
+		
 	}
 
 	private List<Sala> readFile_caracterizacaoDasSalas() {
@@ -459,9 +459,9 @@ public class Main {
 			//for(Sala s: salas_escolhida) {
 			//	System.out.println("salas escolhidas " + s);
 			//}
-
+			
 			a.setSalas(salas_escolhida);
-
+			
 			if(salas_escolhida.size() == help.salas_livres.size()) help.salas_livres.clear();
 			else {
 				for(Sala s: salas_escolhida) {
@@ -524,7 +524,7 @@ public class Main {
 			int index = 0;
 			if(salas_possiveis.size() > 1) {
 				index = rand.nextInt(salas_possiveis.size() - 1);
-			}
+				}
 
 			//System.out.println("salas possiveis:");
 
@@ -615,75 +615,76 @@ public class Main {
 
 
 
-
-
-	private void initialSlots() {
-		int hora_inicio = 7;
-		int hora_final = 0;
-		String minuto = "30";
-		String segundo = "00";
-		String data_inicio = "01-09-"+ano;
-		String data_final = "30-09-"+Integer.toString(Integer.parseInt(ano));
-		boolean i = false;
-		List<Evento> eventos = new ArrayList<>();
+    
+    
+    private void initialSlots() {
+    	int hora_inicio = 7;
+    	int hora_final = 0;
+    	String minuto = "30";
+    	String segundo = "00";
+    	String data_inicio = "01-09-"+ano;
+    	String data_final = "30-09-"+Integer.toString(Integer.parseInt(ano));
+    	boolean i = false;
+    	List<Evento> eventos = new ArrayList<>();
 		List<Sala> salas = readFile_caracterizacaoDasSalas();
-
-		String string_hora_inicio = "";
-		String string_hora_final = "";
-
-
-
-		while(!data_inicio.equals(data_final)) {
-
-			while(hora_inicio < 24) { //ou hora_final n sei
-				if(Integer.toString(hora_inicio).length()==1) {
-					string_hora_inicio = "0"+Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
-				}
-				else string_hora_inicio = Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
-				//hora_inicio++; assim é de 1h30 em 1h30, mas n sei se faz mt sentido
-				if(i==false) {
-					hora_inicio++; //assim é de 30 em 30 mins
-					minuto = "00";
-					i = true;
-				}
-				else {
-					minuto = "30";
-					i = false;
-				}
-				if(Integer.toString(hora_inicio).length()==1) {
-					string_hora_final = "0"+Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
-				}
-				else string_hora_final = Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
-				Slot new_slot = new Slot(data_inicio, string_hora_inicio, string_hora_final, null, null);
-				slots.add(new_slot);
-
-			}
-			hora_inicio = 7;
-
-			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy");
-			Calendar c = Calendar.getInstance();
-			try {
-				c.setTime(sdf.parse(data_inicio));
-			} catch (ParseException e) {
-			}
-			c.add(Calendar.DATE, 1);
-			data_inicio = sdf.format(c.getTime());
+    	
+    	String string_hora_inicio = "";
+    	String string_hora_final = "";
+    	
+    	
+    	
+    	while(!data_inicio.equals(data_final)) {
+    		
+    	while(hora_inicio < 24) { //ou hora_final n sei
+    		if(Integer.toString(hora_inicio).length()==1) {
+    			string_hora_inicio = "0"+Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
+    		}
+    		else string_hora_inicio = Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
+    		//hora_inicio++; assim é de 1h30 em 1h30, mas n sei se faz mt sentido
+    		if(i==false) {
+    			hora_inicio++; //assim é de 30 em 30 mins
+    			minuto = "00";
+    			i = true;
+    		}
+    		else {
+    			minuto = "30";
+    			i = false;
+    		}
+    		if(Integer.toString(hora_inicio).length()==1) {
+    			string_hora_final = "0"+Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
+    		}
+    		else string_hora_final = Integer.toString(hora_inicio) + ":" + minuto + ":" + segundo;
+    		Slot new_slot = new Slot(data_inicio, string_hora_inicio, string_hora_final, null, null);
+    		slots.add(new_slot);
+    		
+    	}
+    	hora_inicio = 7;
+    	
+    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy");
+    	Calendar c = Calendar.getInstance();
+    	try {
+			c.setTime(sdf.parse(data_inicio));
+		} catch (ParseException e) {
 		}
-	}
-
-
-
-	private void fillSlot(Evento evento, String data, String hora_inicio, String hora_final) {
+    	c.add(Calendar.DATE, 1);  
+    	data_inicio = sdf.format(c.getTime());  
+    	}
+    }
+    
+    
+    
+    private void fillSlot(Evento evento, String data, String hora_inicio, String hora_final) {
+		
 		for (Slot s : slots) {
 			if(s.eventos == null) {
 				s.eventos =new ArrayList<>();
-			}
+	    	}
 			if(s.salas_livres == null) {
 				s.salas_livres = readFile_caracterizacaoDasSalas();
-			}
+	    	}
 			if (s.data.equals(data) && s.hora_inicio.compareTo(hora_inicio)>=0 && s.hora_inicio.compareTo(hora_final) < 0) {
 				s.eventos.add(evento);
-			}}
+		}}
 	}
 
 
@@ -735,259 +736,261 @@ public class Main {
 //		}
 //	}
 
-	private void readFile_slotsAula() {
-		try {
+		private void readFile_slotsAula() {
+			try {
 
-			File file = new File(file_horario_1sem);   //creating a new file instance
-			FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file
-			//creating Workbook instance that refers to .xlsx file
-			XSSFWorkbook wb = new XSSFWorkbook(fis);
-			XSSFSheet sheet = wb.getSheetAt(0);     //creating a Sheet object to retrieve object
-			//iterating over excel file
-			for (Row row : sheet) {
-				Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column
-				if (row.getRowNum() < 1) {
-					continue;
+				File file = new File(file_horario_1sem);   //creating a new file instance
+				FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file
+				//creating Workbook instance that refers to .xlsx file
+				XSSFWorkbook wb = new XSSFWorkbook(fis);
+				XSSFSheet sheet = wb.getSheetAt(0);     //creating a Sheet object to retrieve object
+				//iterating over excel file
+				for (Row row : sheet) {
+					Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column
+					if (row.getRowNum() < 1) {
+						continue;
+					}
+
+					String[] row_fields = new String[15];
+					while (cellIterator.hasNext()) {
+						Cell cell_row = cellIterator.next();
+						String field;
+						if (cell_row.getCellType() == CellType.STRING)
+							field = cell_row.getStringCellValue();
+						else if (cell_row.getCellType() == CellType.BOOLEAN)
+							field = String.valueOf(cell_row.getBooleanCellValue());
+						else if (DateUtil.isCellDateFormatted(cell_row)) {
+							Calendar calendar = Calendar.getInstance();
+							calendar.setTime(cell_row.getDateCellValue());
+							String dia = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+							String mes = String.valueOf((calendar.get(Calendar.MONTH)+1));
+							if (calendar.get(Calendar.DAY_OF_MONTH) < 10) dia = "0"+dia;
+							if (calendar.get(Calendar.MONTH) < 10) mes = "0"+mes;
+							field = dia + "-" + mes + "-" + calendar.get(Calendar.YEAR);
+						} else
+							field = String.valueOf((int) cell_row.getNumericCellValue());
+
+						row_fields[cell_row.getColumnIndex()] = field;
+					}
+					if (row_fields[1].equals("")) break;
+
+					String unidade_de_execucao = row_fields[1];
+					String[] cursos = row_fields[0].split(",");
+					Evento evento = null;
+
+
+					String hora_inicial = row_fields[8];
+					String hora_final = row_fields[9];
+
+					Date date = null;
+					if(!row_fields[10].isEmpty()) {
+						date = new SimpleDateFormat("dd-MM-yyyy").parse(row_fields[10]);
+					}
+
+					evento = new Aula(date, date, Integer.parseInt(row_fields[4]), cursos, unidade_de_execucao,
+							hora_inicial, hora_final, row_fields);
+					fillSlot(evento, row_fields[10], hora_inicial, hora_final);
 				}
 
-				String[] row_fields = new String[15];
-				while (cellIterator.hasNext()) {
-					Cell cell_row = cellIterator.next();
-					String field;
-					if (cell_row.getCellType() == CellType.STRING)
-						field = cell_row.getStringCellValue();
-					else if (cell_row.getCellType() == CellType.BOOLEAN)
-						field = String.valueOf(cell_row.getBooleanCellValue());
-					else if (DateUtil.isCellDateFormatted(cell_row)) {
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(cell_row.getDateCellValue());
-						String dia = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
-						String mes = String.valueOf((calendar.get(Calendar.MONTH)+1));
-						if (calendar.get(Calendar.DAY_OF_MONTH) < 10) dia = "0"+dia;
-						if (calendar.get(Calendar.MONTH) < 10) mes = "0"+mes;
-						field = dia + "-" + mes + "-" + calendar.get(Calendar.YEAR);
-					} else
-						field = String.valueOf((int) cell_row.getNumericCellValue());
-
-					row_fields[cell_row.getColumnIndex()] = field;
-				}
-				if (row_fields[1].equals("")) break;
-
-				String unidade_de_execucao = row_fields[1];
-				String[] cursos = row_fields[0].split(",");
-				Evento evento = null;
-
-
-				String hora_inicial = row_fields[8];
-				String hora_final = row_fields[9];
-
-				Date date = null;
-				if(!row_fields[10].isEmpty()) {
-					date = new SimpleDateFormat("dd-MM-yyyy").parse(row_fields[10]);
-				}
-
-				evento = new Aula(date, date, Integer.parseInt(row_fields[4]), cursos, unidade_de_execucao,
-						hora_inicial, hora_final, row_fields);
-				fillSlot(evento, row_fields[10], hora_inicial, hora_final);
 			}
-
+			//for (Slot s: slots) {
+			//System.out.println(s.toString());
+			//}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		//for (Slot s: slots) {
-		//System.out.println(s.toString());
-		//}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 
 
 
 
-	private void readFile_slotsAvaliacao() {
+
+
+		private void readFile_slotsAvaliacao() {
 
 		try {
-
+			
 			FileReader filereader = new FileReader(file_avaliacoes_1sem);
 
 			try (CSVReader csvReader = new CSVReader(filereader)) {
 				String[] nextRecord;
 
-
+				
 				boolean first_line = true;
 				while ((nextRecord = csvReader.readNext()) != null) {
 					if (first_line) {
 						first_line = false;
-
+						
 					} else {
 						String[] line = nextRecord;
 						if(line[0].isEmpty()) {
 							break;
 						}
-
+						
 						String unidade_de_execucao = line[1];
-						String[] cursos = line[0].split(",");
+						String[] cursos = line[0].split(","); 
 						Evento evento = null;
-
-						String[] data = line[8].split(" ");
-
-						String hora_inicial = data[1];
-						String hora_final = null;
-						Date data_inicial = null;
-						Date data_final = null;
-						data_inicial = new SimpleDateFormat("yyyy/MM/dd").parse(data[0]);
-
-						if(data.length==5) {
+						
+							String[] data = line[8].split(" ");
+							
+							String hora_inicial = data[1];
+							String hora_final = null;
+							Date data_inicial = null;
+							Date data_final = null;
+							data_inicial = new SimpleDateFormat("yyyy/MM/dd").parse(data[0]);
+							
+							if(data.length==5) {
 							hora_final = data[4];
 							data_final = new SimpleDateFormat("yyyy/MM/dd").parse(data[3]);
-						}
-						else {
-							hora_final = data[3];
-							data_final = data_inicial;
-						}
-
-
-						evento = new Avaliacao(data_inicial, data_final, Integer.parseInt(line[12]), cursos, unidade_de_execucao,
-								hora_inicial, hora_final, line);
-
-						String[] aux = data[0].split("/");
-						String[] ano = aux[0].split("");
-						String data_to_give = aux[2]+"-"+aux[1]+"-"+ano[2]+ano[3];
-
-						fillSlot(evento, data_to_give, hora_inicial, hora_final);
+							}
+							else {
+								hora_final = data[3];
+								data_final = data_inicial;
+							}
+							
+							
+							evento = new Avaliacao(data_inicial, data_final, Integer.parseInt(line[12]), cursos, unidade_de_execucao,
+									hora_inicial, hora_final, line);
+						
+							String[] aux = data[0].split("/");
+							String[] ano = aux[0].split("");
+							String data_to_give = aux[2]+"-"+aux[1]+"-"+ano[2]+ano[3];
+						
+							fillSlot(evento, data_to_give, hora_inicial, hora_final);
 					}
 				}
 			}
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public List<String> ficheiroAtualizado(Evento e, List<String> list, boolean st) {
 		String delimeter = ";";
 		String namefile = "";
 		String linha = "";
 		if(e instanceof Aula) {
 			namefile = "Aulas.txt";
+		
+			 try {
+		            File file = new File(namefile);
+		            BufferedWriter myWriter = new BufferedWriter(new FileWriter(namefile, true));
+		            if(st == true) {
+		            	PrintWriter writer = new PrintWriter(namefile);
+		            	linha = "Curso"+delimeter+"Unidade de execução"+delimeter+"Turno"+delimeter+"Turma"+delimeter+"Inscritos no turno"+delimeter+""
+		            			+ "Turnos com capacidade superior à capacidade das características das salas"+delimeter+"Turno com inscrições superiores à capacidade das salas"+delimeter+"Dia da Semana"+delimeter+""
+		            			+ "Início"+delimeter+"Fim"+delimeter+"Dia"+delimeter+"Características da sala pedida para a aula"+delimeter+"Sala da aula"+delimeter+"Lotação"+delimeter+"Características reais da sala";
+		            	writer.print(linha);
+		            	System.out.println("created");
+		            	writer.close();
+		            }
+		               
+		            String sala = "";
+		            String capacidade = "";
+		            String caracteristica = "Não necessita de sala";
+		                if(!((Aula)e).caracteristica.equals("Não necessita de sala")) {
+		                	sala=((Aula)e).sala.getNome();
+		                	capacidade = String.valueOf(((Aula)e).sala.getCapacidade_normal());
+		                	caracteristica = ((Aula)e).sala.getCaracteristicas().toString();
+		                }
 
-			try {
-				File file = new File(namefile);
-				BufferedWriter myWriter = new BufferedWriter(new FileWriter(namefile, true));
-				if(st == true) {
-					PrintWriter writer = new PrintWriter(namefile);
-					linha = "Curso"+delimeter+"Unidade de execução"+delimeter+"Turno"+delimeter+"Turma"+delimeter+"Inscritos no turno"+delimeter+""
-							+ "Turnos com capacidade superior à capacidade das características das salas"+delimeter+"Turno com inscrições superiores à capacidade das salas"+delimeter+"Dia da Semana"+delimeter+""
-							+ "Início"+delimeter+"Fim"+delimeter+"Dia"+delimeter+"Características da sala pedida para a aula"+delimeter+"Sala da aula"+delimeter+"Lotação"+delimeter+"Características reais da sala";
-					writer.print(linha);
-					System.out.println("created");
-					writer.close();
-				}
-
-				String sala = "";
-				String capacidade = "";
-				String caracteristica = "Não necessita de sala";
-				if(!((Aula)e).caracteristica.equals("Não necessita de sala")) {
-					sala=((Aula)e).sala.getNome();
-					capacidade = String.valueOf(((Aula)e).sala.getCapacidade_normal());
-					caracteristica = ((Aula)e).sala.getCaracteristicas().toString();
-				}
-
-
-				linha = ((Aula)e).curso + delimeter +((Aula)e).unidade_de_execucao + delimeter +((Aula)e).turno + delimeter +((Aula)e).turma + delimeter +((Aula)e).inscritos + delimeter +
-						((Aula)e).turnoCapacidadeSuperior + delimeter +((Aula)e).turnoInscricoesSuperior + delimeter +((Aula)e).dia_semana + delimeter +e.getHora_inicio() + delimeter +e.getHora_fim() + delimeter +
-						((Aula)e).dia + delimeter +((Aula)e).caracteristica + delimeter +sala + delimeter + capacidade + delimeter +caracteristica;
-
-
-
-
-				boolean existe = false;
-
-				for(String s: list) {
-					if(s.equals(linha))
-						existe = true;
-				}
-
-				if(existe == false) {
-					myWriter.append("\n");
-					myWriter.append(linha);
-					list.add(linha);
-				}
-
-				myWriter.close();
-
-			} catch (IOException et) {
-				System.out.println("An error occurred.");
-				et.printStackTrace();
-			}
-
+		                	
+		                linha = ((Aula)e).curso + delimeter +((Aula)e).unidade_de_execucao + delimeter +((Aula)e).turno + delimeter +((Aula)e).turma + delimeter +((Aula)e).inscritos + delimeter +
+		                		((Aula)e).turnoCapacidadeSuperior + delimeter +((Aula)e).turnoInscricoesSuperior + delimeter +((Aula)e).dia_semana + delimeter +e.getHora_inicio() + delimeter +e.getHora_fim() + delimeter +
+		                		((Aula)e).dia + delimeter +((Aula)e).caracteristica + delimeter +sala + delimeter + capacidade + delimeter +caracteristica;
+		                
+		                
+		                
+		                
+		                        boolean existe = false;
+				                
+				                for(String s: list) {
+				                	if(s.equals(linha))
+				                		existe = true;
+				                }
+				                
+				                if(existe == false) {
+				                myWriter.append("\n");
+				                myWriter.append(linha);
+				                list.add(linha);
+				                }
+		                
+		               myWriter.close();
+		                
+		              } catch (IOException et) {
+		                System.out.println("An error occurred.");
+		                et.printStackTrace();
+		              }
+		            
 		}
-
-
-
+			
+			
+		
 		if(e instanceof Avaliacao) {
 			namefile = "Avaliacao.txt";
+			
+			
+			 try {
+		            File file = new File(namefile);
+		            BufferedWriter myWriter = new BufferedWriter(new FileWriter(namefile, true));
+		            if(st == true) {
+		            	PrintWriter writer = new PrintWriter(namefile);
+		            	linha = "Código"	+ delimeter + "Unidade Curricular"	+ delimeter + "Cursos"	+ delimeter + "Tipo"	+ delimeter 
+		            			+ "Época"+ delimeter + 	"Nome"+ delimeter + 	"Requer inscrição prévia"+ delimeter + "	Período de Inscrição"	+ delimeter 
+		            			+ "Data"	+ delimeter + "Salas"+ delimeter + "	Estado de pedido de sala	"+ delimeter + "Capacidade Salas"+ delimeter + 	"Nº alunos previsto	"+ delimeter 
+		            			+ "Lugares" ;
 
-
-			try {
-				File file = new File(namefile);
-				BufferedWriter myWriter = new BufferedWriter(new FileWriter(namefile, true));
-				if(st == true) {
-					PrintWriter writer = new PrintWriter(namefile);
-					linha = "Código"	+ delimeter + "Unidade Curricular"	+ delimeter + "Cursos"	+ delimeter + "Tipo"	+ delimeter
-							+ "Época"+ delimeter + 	"Nome"+ delimeter + 	"Requer inscrição prévia"+ delimeter + "	Período de Inscrição"	+ delimeter
-							+ "Data"	+ delimeter + "Salas"+ delimeter + "	Estado de pedido de sala	"+ delimeter + "Capacidade Salas"+ delimeter + 	"Nº alunos previsto	"+ delimeter
-							+ "Lugares" ;
-
-					writer.print(linha);
-					System.out.println("created");
-					writer.close();
-
-				}
-
-				String salas = "";
-				String estado = "";
-				int capacidade_aux =0;
-				int lugares_aux = 0;
-				if(((Avaliacao)e).salas!=null) {
-					for(Sala s: ((Avaliacao)e).salas) {
-						salas+= s.getNome();
-						capacidade_aux += s.getCapacidade_exame();
-
-					}
-					lugares_aux = capacidade_aux - ((Avaliacao)e).getNumero_de_alunos();
-				}
-				String capacidade = String.valueOf(capacidade_aux);
-				String lugares = String.valueOf(lugares_aux);
-
-				linha = ((Avaliacao)e).codigo + delimeter +((Avaliacao)e).unidade + delimeter +((Avaliacao)e).curso + delimeter +((Avaliacao)e).tipo + delimeter +((Avaliacao)e).epoca + delimeter +
-						((Avaliacao)e).nome + delimeter +((Avaliacao)e).requer_inscricao_previa + delimeter +((Avaliacao)e).periodo_inscricao + delimeter +((Avaliacao)e).data_hora + delimeter +salas + delimeter +
-						estado + delimeter +capacidade + delimeter +String.valueOf(((Avaliacao)e).getNumero_de_alunos()) + delimeter + lugares;
-
-
-				boolean existe = false;
-
-				for(String s: list) {
-					if(s.equals(linha))
-						existe = true;
-				}
-
-				if(existe == false) {
-					myWriter.append("\n");
-					myWriter.append(linha);
-					list.add(linha);
-				}
-
-				myWriter.close();
-
-			} catch (IOException et) {
-				System.out.println("An error occurred.");
-				et.printStackTrace();
-			}
+		            	writer.print(linha);
+		            	System.out.println("created");
+		            	writer.close();
+		            	
+		              } 
+		               
+		            String salas = "";
+		            String estado = "";
+		            int capacidade_aux =0;
+		            int lugares_aux = 0;
+		                if(((Avaliacao)e).salas!=null) {
+		                	for(Sala s: ((Avaliacao)e).salas) {
+		                	salas+= s.getNome();
+		                	capacidade_aux += s.getCapacidade_exame();
+		                	
+		                	}
+		                	lugares_aux = capacidade_aux - ((Avaliacao)e).getNumero_de_alunos();
+		                }
+		                String capacidade = String.valueOf(capacidade_aux);
+		                String lugares = String.valueOf(lugares_aux);
+		               
+		                linha = ((Avaliacao)e).codigo + delimeter +((Avaliacao)e).unidade + delimeter +((Avaliacao)e).curso + delimeter +((Avaliacao)e).tipo + delimeter +((Avaliacao)e).epoca + delimeter +
+		                		((Avaliacao)e).nome + delimeter +((Avaliacao)e).requer_inscricao_previa + delimeter +((Avaliacao)e).periodo_inscricao + delimeter +((Avaliacao)e).data_hora + delimeter +salas + delimeter +
+		                		estado + delimeter +capacidade + delimeter +String.valueOf(((Avaliacao)e).getNumero_de_alunos()) + delimeter + lugares;
+		                
+		                  
+		                boolean existe = false;
+		                
+		                for(String s: list) {
+		                	if(s.equals(linha))
+		                		existe = true;
+		                }
+		                
+		                if(existe == false) {
+		                myWriter.append("\n");
+		                myWriter.append(linha);
+		                list.add(linha);
+		                }
+		                
+		               myWriter.close();
+		                
+		              } catch (IOException et) {
+		                System.out.println("An error occurred.");
+		                et.printStackTrace();
+		              }
 		}
 		return list;
-
+		
 	}
-
+	
 
 }

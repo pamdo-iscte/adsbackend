@@ -61,52 +61,5 @@ public class MetodosParaAulas {
         return salas_to_return;
     }
 
-    public List<Sala> menor_distancia_entre_salas(Aula aula, Slot slot, Main main){
-//        System.out.println("Aulas menor distancia");
-        List<Slot> slots = main.getSlots();
-        List<Sala> salas_return = new ArrayList<>();
-        for(Slot slotes: slots) {
-            if(slot.data.equals(slotes.data) && slot.hora_inicio.equals(slotes.hora_final)) {
-                //System.out.println();
-                List<Evento> eventos = slotes.eventos;
-                for(Evento e: eventos) {
-                    //System.out.println("antes do if");
-                    if(e instanceof Aula) {
-                        //System.out.println("dentro do if");
-                        Aula aula_anterior = (Aula) e;
-                        if(aula.getTurno().equals(aula_anterior.getTurno())){
-                            Sala sala_anterior = aula_anterior.sala;
-                            if(slot.salas_livres.contains(sala_anterior)){
-                                if(aula_anterior.caracteristica.equals(aula.caracteristica)) {
-                                    salas_return.add(sala_anterior);
-//                                    System.out.println("Sala "+salas_return.get(0));
-                                    return salas_return;
-                                }
-                            }
-                            else {
-                                for(Sala sala: slot.salas_livres) {
-                                    if(sala.getCaracteristicas().equals(aula.getCaracteristica())) {
-                                        if(sala.getEdificio().equals(aula.getSala().getEdificio())) {
-                                            salas_return.add(sala);
-                                            System.out.println("caso especial");
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if(salas_return.size() < 1) {
-            //System.out.println("Sala "+salas_return.get(0));
-            //System.out.println("n há salas");
-            return slot.salas_livres;
-        }
-//        System.out.println("Sala "+salas_return.get(0));
-        return salas_return;
-    }
-
 
 }

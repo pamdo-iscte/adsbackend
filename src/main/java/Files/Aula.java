@@ -25,6 +25,7 @@ public class Aula extends Evento {
 	String professor;
 
 
+
 	public Aula(Date data, Date data_final, int numero_de_alunos, String[] cursos, String unidade, String hora_inicio, String hora_fim, String[] line) {
 		super(data, data_final, numero_de_alunos, cursos, unidade, hora_inicio, hora_fim);
 		this.turma = line[3];

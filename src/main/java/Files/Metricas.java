@@ -271,31 +271,7 @@ public class Metricas {
 	int mudanca_edificio = 0;
 	int mudanca_sala = 0;
 
-	public void mudanca_sala(Aula aula_seguinte, List<Slot> slots) { //( não testado )
-		for (Slot slot : slots) {
-			List<Evento> eventos_slot = slot.eventos;
-			for (Evento e : eventos_slot) {
-				if (e instanceof Aula) {
-					Aula aula_anterior = (Aula) e;
-					if(aula_seguinte.getData() != null && aula_anterior.getData() != null && aula_seguinte.getData().equals(aula_anterior.getData())) {
-						if((aula_anterior.getHora_final() != null) && (aula_seguinte.getHora_inicial()!= null) &&  aula_anterior.getHora_final().equals(aula_seguinte.getHora_inicial())) {
-							System.out.println("AKI ENTREI");
-							Sala sala_anterior = aula_anterior.getSala();
-							Sala sala_seguinte = aula_seguinte.getSala();
-							if(aula_anterior.getTurno().equals(aula_seguinte.getTurno())) {
-								if(!(sala_anterior.getEdificio().equals(sala_seguinte.getEdificio()))) {
-									mudanca_edificio++;
-								}
-								if(!(sala_anterior.getNome().equals(sala_seguinte.getNome()))) {
-									mudanca_sala++;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+
 	public void mudanca_sala2(Aula aula_anterior, List<Slot> slots) { //( não testado )
 		for (Slot slot : slots) {
 			if(slot.data != null && aula_anterior.getData() != null && aula_anterior.getData().equals(slot.data)) {
@@ -366,17 +342,21 @@ public class Metricas {
 
 		System.out.print("os estudantes afetados por esta sobrelotação de salas de aulas é de: " + quantidade_alunos_sobrelotacao_aulas()+"\n");
 
+		System.out.print("A percentagem de estudantes afetados por esta sobrelotação em média: " + quantidade_percentagem_alunos_sobrelotacao_aulas()+"\n");
+
 		System.out.print("O número de lugares desperdiçados nas aulas é de: " + quantidade_alunos_desperdicados_aulas() + "\n");
+
+		System.out.print("A percentagem de lugares vazios em média: " + quantidade_percentagem_alunos_desperdicados_aulas() +"\n");
 
 		System.out.print("O número de aulas mal atribuidas: " + aula_mal_atribuida + "\n");
 
 		aulas_mal_atribuidas();
 
-		System.out.print("O número de aulas que ficaram livres/disponiveis : " + todas_salas_livres() + "\n"); //(não testado)(não existe lista de salas livres)
+		System.out.print("O número de aulas que ficaram livres/disponiveis : " + todas_salas_livres() + "\n");
 
-		System.out.print("O número de aulas de três horas que tiveram mudanças de sala : " + mudanca_sala + "\n"); //(não testado) (falta nome das salas)
+		System.out.print("O número de aulas de três horas que tiveram mudanças de sala : " + mudanca_sala + "\n");
 
-		System.out.print("O número de aulas de três horas que tiveram mudanças de edificio : " + mudanca_edificio + "\n"); //(não testado)(falta edificio nas salas)
+		System.out.print("O número de aulas de três horas que tiveram mudanças de edificio : " + mudanca_edificio + "\n");
 
 		System.out.print("o numero de salas de exames sobrelotados é de: " + avaliacoes_sobrelotadas +"\n");
 
