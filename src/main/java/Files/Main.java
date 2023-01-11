@@ -489,7 +489,7 @@ public class Main {
 				if (m.getName().equals(list_methods.get(0))) {
 					Parameter[] parameters = m.getParameters();
 					if (parameters.length == 4)
-						salas_possiveis = m.invoke(t,sala_apos_metodo,a,help,this);
+						salas_possiveis = m.invoke(t,sala_apos_metodo,a,this,difference);
 					else {
 						salas_possiveis = m.invoke(t,a,help,this);
 					}
