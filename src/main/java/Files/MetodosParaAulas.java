@@ -4,23 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MetodosParaAulas {
-
-    public List<Sala> evitar_sobrelotacao(List<Sala> salas_livres, Aula aula, Slot slot, Main main) {
-        List<Sala> salas_to_return = new ArrayList<>();
-        int difference = 30;
-        for (Sala s: salas_livres) {
-            int temp_dif = s.getCapacidade_normal() - aula.inscritos;// aula.turno.inscritos
-            if (s.getCaracteristicas().size()!=1 && temp_dif >= 0 && temp_dif < difference) {
-                salas_to_return.add(s);
-            }
-        }
+	
+	//precisamos de ir buscar o difference somehow
+	private List<Sala> evitar_sobrelotacao(List<Sala> salas_livres, Aula aula, Main main, int difference) {
+    	List<Sala> salas_to_return = new ArrayList<>();
+    	
+    	//difference = 10; //para ser percentagem, ir buscar ao frontend em principio
+    	
+    	//isto
+    	if(aula.getNumero_de_alunos()==0) {
+    		System.out.println("numero de alunos é 0");
+    		return null;
+    	}
+    	
+		for (Sala s: salas_livres) {
+			int temp_dif = s.getCapacidade_normal() - aula.inscritos;// aula.turno.inscritos
+			if ((s.getCaracteristicas().size()!=1) && (temp_dif >= 0) && (temp_dif < ((difference/100)*aula.inscritos)))//((difference/100)*aula.inscritos)))
+			{
+				salas_to_return.add(s);		
+			}
+		}
 		/*for(Sala sa: salas_to_return) {
 			System.out.println(sa.getNome() + " com " + sa.getCapacidade_normal());
 		}*/
-        return salas_to_return;
+		
+		return salas_to_return;
     }
 
-    public List<Sala> manter_caracteristica(List<Sala> salas_livres, Aula aula, Slot slot, Main main) {
+    public List<Sala> manter_caracteristica(List<Sala> salas_livres, Aula aula, Main main) {
 //        System.out.println("Aulas manter caracteristica");
         String[] columns = main.getColumns();
         //List<Sala> salas_livres = slot.salas_livres;

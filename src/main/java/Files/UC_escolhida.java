@@ -26,6 +26,13 @@ public class UC_escolhida {
     @JsonProperty("unidade_de_execucao")
     private String unidade_de_execucao;
 
+    @JsonProperty("selecionados")
+    private List<Convert_Aula_CSV_to_JSON> selecionados;
+
+    public List<Convert_Aula_CSV_to_JSON> getSelecionados() {
+        return selecionados;
+    }
+
     public String getHoras() {
         return horas;
     }

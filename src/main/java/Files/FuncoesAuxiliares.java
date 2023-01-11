@@ -1,5 +1,6 @@
 package Files;
 
+import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -271,10 +272,10 @@ public class FuncoesAuxiliares {
         String[] fields = uc.split(" ");
         String sigla = "";
 
+
+
         for (String f: fields) {
             if (palavras_para_ignorar.contains(f)) continue;
-//            System.out.println(uc + " "+f+" "+f.length());
-            if (f.charAt(0) == '(') continue;
             String c = String.valueOf(Character.toUpperCase(f.charAt(0)));
             if (chars_para_ignorar.contains(c)) continue;
             sigla = sigla.concat(c);
@@ -497,10 +498,8 @@ public class FuncoesAuxiliares {
             oi.close();
             fi.close();
 
-        } catch (IOException  e) {
+        } catch (IOException | ClassNotFoundException e) {
             return slots;
-        } catch (ClassNotFoundException e) {
-            System.err.println("ClassNotFoundException");
         }
         return slots;
     }
@@ -519,6 +518,20 @@ public class FuncoesAuxiliares {
 //            throw new RuntimeException(e);
         }
         return "";
+    }
+
+    public String getFileofDirectory(String dir_file, MultipartFile file) {
+        File dir = new File(dir_file);
+        if (dir.isDirectory()) {
+            File[] files = Objects.requireNonNull(dir.listFiles());
+            if (files.length != 0) dir = files[0];
+        }
+        String result = upload_file(file,dir_file);
+        if (result.equals("") || dir.isDirectory()) return "";
+        if (dir.delete())
+            return result;
+        else
+            return "";
     }
 }
 

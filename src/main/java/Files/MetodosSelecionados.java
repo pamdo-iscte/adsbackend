@@ -20,6 +20,13 @@ public class MetodosSelecionados {
     @JsonProperty("checkbox")
     private boolean checkbox;
 
+
+    @JsonProperty("num")
+    private int num;
+
+    public int getNum() {
+        return num;
+    }
     public boolean isCheckbox() {
         return checkbox;
     }
