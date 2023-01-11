@@ -17,7 +17,8 @@ public class Avaliacao extends Evento {
     public String estado_pedido_sala;
     public String curso;
     public String unidade;
-
+    public String data_hora;
+    
     private int capacidade_salas;
 
 
@@ -34,6 +35,7 @@ public class Avaliacao extends Evento {
         this.periodo_inscricao = line[7];
         this.estado_pedido_sala = line[10];
         this.curso = line[2];
+        this.data_hora = line[8];
     }
 
 
@@ -58,3 +60,4 @@ public class Avaliacao extends Evento {
 		return salas;
 	}
 }
+
