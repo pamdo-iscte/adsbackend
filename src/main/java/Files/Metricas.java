@@ -161,6 +161,7 @@ public class Metricas {
 			String caracteristica_aula = aula.getCaracteristica();
 			boolean mal_atribuida = true;
 			for(String caracteristica : caracteristicas_list) { // se não for igual a outra sala e a caracteristica necessaria for normal faz break
+				caracteristica.replace("_"," ");
 				String firstFourChars = caracteristica_aula.substring(0, 4);
 				if((caracteristica.contains(caracteristica_aula)) || (((firstFourChars.equals("Sala") ||(firstFourChars.equals("Anfi"))) && caracteristica.equals("Sala/anfiteatro aulas")))) {
 					mal_atribuida = false;
