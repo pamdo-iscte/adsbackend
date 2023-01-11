@@ -6,7 +6,7 @@ import java.util.List;
 public class MetodosParaAulas {
 	
 	//precisamos de ir buscar o difference somehow
-	private List<Sala> evitar_sobrelotacao(List<Sala> salas_livres, Aula aula, Slot slot, Main main) {
+	private List<Sala> evitar_sobrelotacao(List<Sala> salas_livres, Aula aula, Main main, int difference) {
     	List<Sala> salas_to_return = new ArrayList<>();
     	
     	//difference = 10; //para ser percentagem, ir buscar ao frontend em principio
@@ -31,7 +31,7 @@ public class MetodosParaAulas {
 		return salas_to_return;
     }
 
-    public List<Sala> manter_caracteristica(List<Sala> salas_livres, Aula aula, Slot slot, Main main) {
+    public List<Sala> manter_caracteristica(List<Sala> salas_livres, Aula aula, Main main) {
 //        System.out.println("Aulas manter caracteristica");
         String[] columns = main.getColumns();
         //List<Sala> salas_livres = slot.salas_livres;
