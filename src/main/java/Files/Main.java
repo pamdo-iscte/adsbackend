@@ -50,6 +50,7 @@ public class Main {
 		initialSlots();
 		readFile_slotsAula();
 		readFile_slotsAvaliacao();
+		List<Convert_metrica_JSON> result = new ArrayList<>();
 //		int count1 = 0;
 //		for (Slot s : slots) {
 //			for (Evento e : s.eventos) {
@@ -209,14 +210,15 @@ public class Main {
 
 				}
 			}
+			Metricas metricas = new Metricas(slots);
+			Convert_metrica_JSON metrica_json1 = metricas.convert_metrica_JSON();
+			result.add(metrica_json1);
+
+			//escrever_ficheiro(lista_convert_metrica);
 
 		}
-		Metricas metricas = new Metricas(slots);
-		Convert_metrica_JSON metrica_json1 = metricas.convert_metrica_JSON();
-		List<Convert_metrica_JSON> lista_convert_metrica = new ArrayList<>();
-		lista_convert_metrica.add(metrica_json1);
-		//escrever_ficheiro(lista_convert_metrica);
-		return new Gson().toJson(lista_convert_metrica);
+
+		return new Gson().toJson(result);
 	}
 
 	public void escrever_ficheiro(List<Convert_metrica_JSON> lista){
