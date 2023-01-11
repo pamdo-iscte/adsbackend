@@ -271,10 +271,10 @@ public class FuncoesAuxiliares {
         String[] fields = uc.split(" ");
         String sigla = "";
 
+
+
         for (String f: fields) {
             if (palavras_para_ignorar.contains(f)) continue;
-//            System.out.println(uc + " "+f+" "+f.length());
-            if (f.charAt(0) == '(') continue;
             String c = String.valueOf(Character.toUpperCase(f.charAt(0)));
             if (chars_para_ignorar.contains(c)) continue;
             sigla = sigla.concat(c);
@@ -497,10 +497,8 @@ public class FuncoesAuxiliares {
             oi.close();
             fi.close();
 
-        } catch (IOException  e) {
+        } catch (IOException | ClassNotFoundException e) {
             return slots;
-        } catch (ClassNotFoundException e) {
-            System.err.println("ClassNotFoundException");
         }
         return slots;
     }

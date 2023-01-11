@@ -27,7 +27,6 @@ public class HelloController {
     private Calendar primeiro_dia_de_aulas_cal = aux.setCalendar(Calendar.getInstance(),primeiro_dia_de_aulas.split("/"));
 
     private final List<String> colors = Arrays.asList("#1cceb1", "#97fca3", "#5d8ce9","#6cda72","#a1f2e5","#9799fc","#fcf897");
-    private int index_of_colors = 0;
 
     private final String dir_horariosCriados="HorariosCriados";
     private final String dir_horariosCompletos="HorariosCompletos";
@@ -60,7 +59,6 @@ public class HelloController {
     @GetMapping("/get_aluno_professor")
     public String aulas()  {
         String dir = "horario_sem_aulas_repetidas.json";
-        index_of_colors = 0;
         File tempFile = new File(dir);
         if (!tempFile.exists()) {
 //            List<Convert_Aula_CSV_to_JSON> lista_de_aulas_com_aulas_unicas = aux.get_Dias_da_semana(aux.getAulas(file_das_aulas_a_ser_usado));
@@ -106,14 +104,17 @@ public class HelloController {
     public String obter_aulas_da_UC_escolhida(@RequestBody UC_escolhida uc) {
         List<Slot_horario_semestral> slots = new ArrayList<>();
 
+
         String[] horarios_das_aulas = aux.split_list_elements(uc.getHoras());
         String[] dias_de_semana = aux.split_list_elements(uc.getDias());
         List<String> datas = uc.getDatas();
-        System.out.println(datas.toString());
+//        System.out.println(datas.toString());
         List<String> horas_repetidas = uc.getHoras_repetidas();
 
+        int index_of_colors = 0;
+        if (uc.getSelecionados() != null) index_of_colors = uc.getSelecionados().size()-1;
+
         String color= aux.setColor_evento(colors,index_of_colors);
-        index_of_colors++;
         String sigla = aux.obter_sigla_da_uc(uc.getUnidade_de_execucao());
 
         for (int i = 0; i < horarios_das_aulas.length; i++) {
