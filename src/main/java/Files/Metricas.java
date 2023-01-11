@@ -1,6 +1,10 @@
 package Files;
 
 
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,8 +46,14 @@ public class Metricas {
 		System.err.println("Aulas livres por slot");
 		aulas_livres_slot_media(slots);
 		mostra();
+		//escrever_ficheiro();
+
 	}
 
+
+	public Convert_metrica_JSON convert_metrica_JSON(){
+		return new Convert_metrica_JSON(nao_foi_possivel_alocacao_automatica, aulas_sobrelotadas, quantidade_alunos_sobrelotacao_aulas(), quantidade_percentagem_alunos_sobrelotacao_aulas(), quantidade_percentagem_alunos_desperdicados_aulas(), aula_mal_atribuida, mudanca_sala, mudanca_edificio);
+	}
 
 	//quantidade de salas que não foram alocadas automáticamente
 	int nao_foi_possivel_alocacao_automatica = 0;
@@ -95,7 +105,10 @@ public class Metricas {
 	//Percentagem de alunos em sobrelotação, quando existe sobrelotação
 	public int quantidade_percentagem_alunos_sobrelotacao_aulas(){
 		int total_alunos_sobrelotacao = quantidade_alunos_sobrelotados_por_aulas.stream().mapToInt(Integer::intValue).sum();
-		return total_alunos_sobrelotacao / quantidade_alunos_sobrelotados_por_aulas.size();
+		if(quantidade_alunos_sobrelotados_por_aulas.size() != 0){
+			return total_alunos_sobrelotacao / quantidade_alunos_sobrelotados_por_aulas.size();
+		}
+		return 0;
 	}
 
 
@@ -107,7 +120,10 @@ public class Metricas {
 	//Percentagem_alunos_desperdicados_aulas, lugares vazios nas aulas, quando não existe sobrelotação
 	public int quantidade_percentagem_alunos_desperdicados_aulas(){
 		int total_alunos_desperdicados = quantidade_alunos_desperdicados_por_aulas.stream().mapToInt(Integer::intValue).sum();
-		return total_alunos_desperdicados / quantidade_alunos_desperdicados_por_aulas.size();
+		if(quantidade_alunos_desperdicados_por_aulas.size() != 0){
+			return total_alunos_desperdicados / quantidade_alunos_desperdicados_por_aulas.size();
+		}
+		return 0;
 	}
 
 	//Retorna a quantidade de avaliações com possibilidade de sobrelotacao de salas e duas listas:
