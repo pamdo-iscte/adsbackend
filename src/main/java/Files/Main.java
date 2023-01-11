@@ -811,9 +811,25 @@ public class Main {
 
 		                	
 		                linha = ((Aula)e).curso + delimeter +((Aula)e).unidade_de_execucao + delimeter +((Aula)e).turno + delimeter +((Aula)e).turma + delimeter +((Aula)e).inscritos + delimeter +
-		                		((Aula)e).turnoCapacidadeSuperior + delimeter +((Aula)e).turnoInscricoesSuperior + delimeter +((Aula)e).dia_semana + delimeter +((Aula)e).hora_inicial + delimeter +((Aula)e).hora_final + delimeter +
+		                		((Aula)e).turnoCapacidadeSuperior + delimeter +((Aula)e).turnoInscricoesSuperior + delimeter +((Aula)e).dia_semana + delimeter +((Aula)e).getHora_inicial() + delimeter +((Aula)e).getHora_final() + delimeter +
 		                		((Aula)e).dia + delimeter +((Aula)e).caracteristica + delimeter +sala + delimeter + capacidade + delimeter +caracteristica;
-
+		               
+		                
+//		                try {
+//		                    Scanner scanner = new Scanner(file);
+//
+//		                
+//		                    int lineNum = 0;
+//		                    while (scanner.hasNextLine()) {
+//		                        String line = scanner.nextLine();
+//		                        lineNum++;
+//		                        if(line.equals(linha)) { 
+//		                        	myWriter.close();
+//		                        	return "";
+//		                        }
+		                    
+		                
+		                
 		                
 		                        boolean existe = false;
 				                
@@ -865,15 +881,27 @@ public class Main {
 		                	capacidade_aux += s.getCapacidade_exame();
 		                	
 		                	}
-		                	lugares_aux = capacidade_aux - ((Avaliacao)e).getNumero_de_alunos();
+		                	lugares_aux = capacidade_aux - ((Avaliacao)e).getNumero_de_alunos();//n sei bem o q por aqui
 		                }
 		                String capacidade = String.valueOf(capacidade_aux);
 		                String lugares = String.valueOf(lugares_aux);
 		               
 		                linha = ((Avaliacao)e).codigo + delimeter +((Avaliacao)e).unidade + delimeter +((Avaliacao)e).curso + delimeter +((Avaliacao)e).tipo + delimeter +((Avaliacao)e).epoca + delimeter +
-		                		((Avaliacao)e).nome + delimeter +((Avaliacao)e).requer_inscricao_previa + delimeter +((Avaliacao)e).periodo_inscricao + delimeter +((Avaliacao)e).getData() + delimeter +salas + delimeter +
+		                		((Avaliacao)e).nome + delimeter +((Avaliacao)e).requer_inscricao_previa + delimeter +((Avaliacao)e).periodo_inscricao + delimeter +((Avaliacao)e).data_hora + delimeter +salas + delimeter +
 		                		estado + delimeter +capacidade + delimeter +String.valueOf(((Avaliacao)e).getNumero_de_alunos()) + delimeter + lugares;
-		    
+		                
+//		                try {
+//		                    Scanner scanner = new Scanner(file);
+//
+//		                    //now read the file line by line...
+//		                    int lineNum = 0;
+//		                    while (scanner.hasNextLine()) {
+//		                        String line = scanner.nextLine();
+//		                        lineNum++;
+//		                        if(line.equals(linha)) { 
+//		                        	myWriter.close();
+//		                        	return "";
+//		                        }
 		                  
 		                boolean existe = false;
 		                
