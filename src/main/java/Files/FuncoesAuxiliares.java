@@ -1,5 +1,6 @@
 package Files;
 
+import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -517,6 +518,20 @@ public class FuncoesAuxiliares {
 //            throw new RuntimeException(e);
         }
         return "";
+    }
+
+    public String getFileofDirectory(String dir_file, MultipartFile file) {
+        File dir = new File(dir_file);
+        if (dir.isDirectory()) {
+            File[] files = Objects.requireNonNull(dir.listFiles());
+            if (files.length != 0) dir = files[0];
+        }
+        String result = upload_file(file,dir_file);
+        if (result.equals("") || dir.isDirectory()) return "";
+        if (dir.delete())
+            return result;
+        else
+            return "";
     }
 }
 
