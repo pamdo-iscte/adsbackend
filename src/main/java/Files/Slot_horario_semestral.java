@@ -19,6 +19,8 @@ public class Slot_horario_semestral implements Serializable {
 
     private String dia_da_sem;
 
+    private String cursos;
+
 
     public Slot_horario_semestral(String id, String text, String start, String end, String backColor, String informacao_detalhada, String turno, String dia_da_sem) {
         this.id = id;
@@ -80,5 +82,13 @@ public class Slot_horario_semestral implements Serializable {
 
     public String getDia_da_sem() {
         return dia_da_sem;
+    }
+
+    public String getCursos() {
+        return cursos;
+    }
+
+    public void setCursos(String cursos) {
+        this.cursos = cursos;
     }
 }
