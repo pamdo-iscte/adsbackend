@@ -19,7 +19,7 @@ public class MetodosParaAulas {
     	
 		for (Sala s: salas_livres) {
 			int temp_dif = s.getCapacidade_normal() - aula.inscritos;// aula.turno.inscritos
-			if ((s.getCaracteristicas().size()!=1) && (temp_dif >= 0) && (temp_dif < ((difference/100)*aula.inscritos))))//((difference/100)*aula.inscritos))) 
+			if ((s.getCaracteristicas().size()!=1) && (temp_dif >= 0) && (temp_dif < ((difference/100)*aula.inscritos)))//((difference/100)*aula.inscritos)))
 			{
 				salas_to_return.add(s);		
 			}
