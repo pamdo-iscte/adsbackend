@@ -23,8 +23,8 @@ public class Main {
 
 	private List<Slot> slots = new ArrayList<>();
 	private String[] columns = null;
+	private int difference = 25;
 	
-	private boolean menorDist = true; //isto seria uma checkbox no front-end
 
 	public String ano = "22";
 
@@ -63,6 +63,8 @@ public class Main {
 
 	public void start(List<String> metodos_aulas, List<String> metodos_avaliacoes, boolean checkbox, int num) {
 
+		difference = num;
+		
 		initialSlots();
 		readFile_slotsAula();
 		readFile_slotsAvaliacao();
@@ -93,9 +95,7 @@ public class Main {
 				if (e instanceof Aula) {
 					System.out.println("aula");
 					if (((Aula) e).getSala() != null) {
-
 						System.out.println(((Aula) e).getSala());
-
 						continue;
 					}
 				}
@@ -103,24 +103,21 @@ public class Main {
 				// System.out.println(e);
 				String aux = s.hora_final;
 				if (e instanceof Avaliacao) {
-					doMethodsAvals(null, (Avaliacao) e, s, metodos_avaliacoes);
+					doMethodsAvals(null, (Avaliacao) e, s, metodosAvals);
 				}
 				if (e instanceof Aula) {
-					doMethodsAulas(null, (Aula) e, s,  metodos_aulas);
+					doMethodsAulas(null, (Aula) e, s, metodosAulas);
 				}
 
 				if (!e.getHora_fim().equals(s.hora_final)) {
 					for (Slot sl : slots) {
 						for (Evento ev : sl.eventos) {
 							
-							if(e instanceof Aula && checkbox) {
+							if(e instanceof Aula && menorDist == true) {
 							if(ev.getData().equals(e.getData()) && ev.getHora_inicio().equals(e.getHora_fim()) 
 									&& ((Aula)e).getTurno().equals( ((Aula)ev).getTurno()) && ((Aula)ev).getSala()==null) {
-								 ((Aula)ev).setSala(((Aula)e).getSala());
-//								 System.out.println(" menorDist");
-//								 System.out.println(e);
-//								 System.out.println(ev);
-//								 System.out.println(((Aula)e).getSala() + " " + ((Aula)ev).getSala());
+								 
+								((Aula)ev).setSala(((Aula)e).getSala());							 
 								 sala = ((Aula) e).getSala();
 									if (sala != null) {
 										for (Sala asd : sl.salas_livres) {
@@ -171,6 +168,7 @@ public class Main {
 				if (e instanceof Avaliacao) 
 					System.out.println(((Avaliacao)e).getSalas());
 				if (e instanceof Aula)  System.out.println(((Aula)e).getSala());
+				
 			}
 
 			i++;
@@ -195,18 +193,8 @@ public class Main {
 				
 			}
 		}
-		int count = 0;
-		for(Slot s: slots) {
-			for(Evento e: s.eventos) {
-				count++;
-			}
+		
 		}
-		System.out.println("numero de eventos"+count);
-		Metricas metricas= new Metricas(slots);
-
-		
-		
-		
 	}
 
 	private List<Sala> readFile_caracterizacaoDasSalas() {
@@ -388,69 +376,69 @@ public class Main {
 	}
 
 	private List<Sala> doMethodsAvals(List<List<Sala>> sala_apos_metodo, Avaliacao a, Slot help, List<String> list_methods) {
-
-		System.out.println("salas livres " + help.salas_livres.size());
-		if(help.salas_livres.size()==0) {
-			System.out.println("n há mais salas");
-		}
-
+		
+    	//System.out.println("salas livres " + help.salas_livres.size());
+    	if(help.salas_livres.size()==0) {
+    		System.out.println("n há mais salas");
+    	}
+		
 		//perguntar ao stor se existe algumas avaliações q n precisam de sala e cm vê-las
 		if(a.getNumero_de_alunos() == 0){
 			System.out.println("0 alunos inscritos");
 			return null;
 		}
-
-
+		
+		
 		Random rand = new Random();
 		List<List<Sala>> salas_possiveis = new ArrayList<>();
-		MetodosdeAvaliacao m = new MetodosdeAvaliacao();
-
-		if (list_methods.get(0).equals("menorNumSalas")) {
-			if(sala_apos_metodo != null) {
+		
+		
+		if (list_methods.get(0).equals("menorNumSalas")) { 
+			if(sala_apos_metodo != null) { 
 				salas_possiveis.add(sala_apos_metodo.get(0));
 			}
 			else {
 				sala_apos_metodo = new ArrayList<>();
 				sala_apos_metodo.add(help.salas_livres);
-				for(List<Sala> ls: sala_apos_metodo) {
-					salas_possiveis =  m.menor_numero_de_salas(ls, a, help,this);
-				}
+			for(List<Sala> ls: sala_apos_metodo) {
+				salas_possiveis = menorNumSalas(ls, a, help);
 			}
-
+			}
+			
 		}
-		if (list_methods.get(0).equals("igualForma")) {
-			if(sala_apos_metodo != null) {
+		if (list_methods.get(0).equals("igualForma")) { 
+			if(sala_apos_metodo != null) { 
 				salas_possiveis = sala_apos_metodo;
-				//	System.out.println("Não é possível realizar o método igualForma pq vem a seguir ao menorNumSalas"); //nem sei se isto vale a pena dizer honestly
+			//	System.out.println("Não é possível realizar o método igualForma pq vem a seguir ao menorNumSalas"); //nem sei se isto vale a pena dizer honestly
 			}
 			else {
 				sala_apos_metodo = new ArrayList<>();
 				sala_apos_metodo.add(help.salas_livres);
-				for(List<Sala> ls: sala_apos_metodo) {
-
-					salas_possiveis = m.igual_numero_de_alunos_por_sala(ls, a, help,this);
-				}
+			for(List<Sala> ls: sala_apos_metodo) {
+				salas_possiveis = igualForma(ls, a, help);
+			}
 			}
 		}
 		if(salas_possiveis==null) {
+			System.out.println("não há salas possíveis");
 			return null;
 		}
 		if (salas_possiveis.size()== 0) {
 			salas_possiveis = sala_apos_metodo;
 			if (sala_apos_metodo==null) {
 				//se houver salas disponiveis para colocar tds os alunos, o menorNumSalas dá
-				salas_possiveis = m.menor_numero_de_salas(help.salas_livres, a, help,this);
+				salas_possiveis = menorNumSalas(help.salas_livres, a, help);
 				if(salas_possiveis==null) {
 					System.out.println("não há salas possíveis 1");
 					return null;
 				}
 				if (salas_possiveis.size()== 0) {
-					// se não, é impossivel, diz-se q houve um erro?
-					System.out.println("Não existem salas disponiveis para alocar");
-					return null;
-				}}
+				// se não, é impossivel, diz-se q houve um erro?
+				System.out.println("Não existem salas disponiveis para alocar");
+				return null;
+			}}
 		}
-
+		
 		if (list_methods.size()>1) {
 			doMethodsAvals(salas_possiveis, a, help, list_methods.subList(1, list_methods.size()));
 			return null;
@@ -459,28 +447,30 @@ public class Main {
 			if(salas_possiveis.size() > 1) {
 				index = rand.nextInt(salas_possiveis.size() - 1);
 			}
-
-			List<Sala> salas_escolhida = salas_possiveis.get(index);
-
-			//for(Sala s: salas_escolhida) {
-			//	System.out.println("salas escolhidas " + s);
-			//}
 			
-			a.setSalas(salas_escolhida);
+			List<Sala> salas_escolhida = salas_possiveis.get(index);
+			
+//			for(Sala s: salas_escolhida) {
+//				System.out.println("salas escolhidas " + s);
+//			}
+			a.setSalas(salas_escolhida) ;
 			
 			if(salas_escolhida.size() == help.salas_livres.size()) help.salas_livres.clear();
+			
 			else {
 				for(Sala s: salas_escolhida) {
-					help.salas_livres.remove(s);
-				}}
-
+				help.salas_livres.remove(s);
+			}}
+			
+			
+			
 			return salas_escolhida;
 		}
 	}
 
-	//antes estave só doMethods
+	
 	private Sala doMethodsAulas(List<Sala> sala_apos_metodo, Aula a, Slot help, List<String> list_methods) {
-		System.out.println(a.caracteristica + a.inscritos + a.unidade_de_execucao);
+		//System.out.println(a.caracteristica + a.inscritos + a.unidade_de_execucao);
 		if (sala_apos_metodo == null) {
 			sala_apos_metodo = help.salas_livres;
 		}
@@ -490,59 +480,66 @@ public class Main {
 		}
 		Random rand = new Random();
 		List<Sala> salas_possiveis = new ArrayList<>();
-
-		Class<MetodosParaAulas> class_metodos_aulas = MetodosParaAulas.class;
-		try {
-			Object t = class_metodos_aulas.getDeclaredConstructor().newInstance();
-			Method[] metodos = class_metodos_aulas.getDeclaredMethods();
-			for (Method m: metodos) {
-				if (m.getName().equals(list_methods.get(0))) {
-					Parameter[] parameters = m.getParameters();
-					if (parameters.length == 4)
-						m.invoke(t,sala_apos_metodo,a,help,this);
-					else {
-						m.invoke(t,a,help,this);
-					}
-				}
-			}
-
-		}catch (Exception e){
-			e.printStackTrace();
+		
+		// ver se há alguma maneira mais eficiente de ir buscar o nome dos metodos
+		if (list_methods.get(0).equals("caracteristica")) { // aqui o nome dps logo se vê
+			
+			salas_possiveis = keepCaracteristic(sala_apos_metodo, a, help);
 		}
 
+		if (list_methods.get(0).equals("evitar sobrelotaçao")) { // aqui o nome dps logo se vê
+			System.out.println("evitar");
+			salas_possiveis = evitarSobrelotacao(sala_apos_metodo, a, help);
+		}
+		if (list_methods.get(0).equals("menor distancia")) { // aqui o nome dps logo se vê
+			salas_possiveis = sala_menor_distancia(a, help);
+		}
+
+		if(salas_possiveis == null) {
+			return null;
+		}
+		
 		if (salas_possiveis.size()== 0) {
-			salas_possiveis = sala_apos_metodo;
-			if (sala_apos_metodo.size()==0) {
-				salas_possiveis = resolver_conflito(a,help);
-			}
+			salas_possiveis = resolver_conflito(sala_apos_metodo,a,help);		
 		}
-
+		
+		for(Sala s: salas_possiveis) {
+			System.out.println(s.getCapacidade_normal());
+		}
+		
 		if (list_methods.size()>1) {
-			/*System.out.println("salas possiveis:");
-
-			for (Sala s : salas_possiveis) {
-				System.out.println(s);
-			}*/
+			
+			if (salas_possiveis.size()==0) {
+				salas_possiveis = sala_apos_metodo;
+				//System.out.println("aqui");
+			}
+			
 			doMethodsAulas(salas_possiveis, a, help, list_methods.subList(1, list_methods.size()));
 			return null;
 		} else {
-
+			if(salas_possiveis.size()==0) {
+				System.out.println("não há salas possiveis");
+				return null;
+			}
 			int index = 0;
 			if(salas_possiveis.size() > 1) {
 				index = rand.nextInt(salas_possiveis.size() - 1);
-				}
-
+			}
+			
 			//System.out.println("salas possiveis:");
 
-			//for (Sala s: salas_possiveis) {
-			//System.out.println(s);
-			//}
-
+//			for (Sala s: salas_possiveis) {
+//				System.out.println(s);
+//			}
+			
 			Sala sala_escolhida = salas_possiveis.get(index);
 			a.setSala(sala_escolhida);
+			
 			help.salas_livres.remove(sala_escolhida);
-
+			
 			//System.out.println("sala escolhida "+sala_escolhida);
+			
+			
 			return sala_escolhida;
 		}
 	}
@@ -550,23 +547,29 @@ public class Main {
 
 	//no caso de conseguir alocar através do método, mas der um erro qq assinalar tb isso, cores com avisos
 	//dar um aviso
-	private List<Sala> resolver_conflito(Aula aula, Slot slot) {
-		System.out.println("--- Resolver conflito ---");
-		List<Sala> salas_to_return = new ArrayList<>();
-		int diferenca = 20;
-		for (Sala s: slot.salas_livres) {
+	private List<Sala> resolver_conflito(List<Sala> salas_livres,Aula aula, Slot slot) {
+    	System.out.println("--- Resolver conflito ---");
+    	List<Sala> salas_to_return = new ArrayList<>();
+    //	int difference = 10; //para ser percentagem, buscar do frontend
+    	Sala worstcase = null;
+		for (Sala s: salas_livres) {
 			int temp_dif = Math.abs(s.getCapacidade_normal() - aula.inscritos);// aula.turno.inscritos
-			if (temp_dif < diferenca && s.getCaracteristicas().size()!=1) { // numero menor q o da sala anterior
-				diferenca = temp_dif;
-				salas_to_return.add(s);
+			if(s.getCapacidade_normal() < 100) {
+			if(worstcase == null) worstcase = s;
+			else {
+				if(worstcase.getCapacidade_normal() < s.getCapacidade_normal()) worstcase = s;
+			}}
+			if ((temp_dif <= ((difference/100)*aula.inscritos)) && (s.getCaracteristicas().size()!=1)) { // numero menor q o da sala anterior
+				difference = temp_dif;
+				salas_to_return.add(s);				
 			}
 		}
-		//System.out.println(aula.inscritos);
-		for(Sala sa: salas_to_return) {
-			System.out.println(sa.getNome() + " com " + sa.getCapacidade_normal());
+		if(salas_to_return.size()==0) {
+			System.out.println("Não existem salas com a capacidade pedida, em pior caso:");
+			salas_to_return.add(worstcase);
 		}
 		return salas_to_return;
-	}
+    }
 
 
 	public void aulas_seguidas(Aula aula_anterior, List<Slot> slots, Sala sala_escolhida){
