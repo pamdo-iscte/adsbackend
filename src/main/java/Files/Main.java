@@ -2,12 +2,6 @@ package Files;
 
 import com.google.gson.Gson;
 import com.opencsv.CSVReader;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -43,7 +37,7 @@ public class Main {
 
 
 
-	public String start(List<String> metodos_aulas, List<String> metodos_avaliacoes, boolean checkbox, int num) {
+	public String start(List<String> metodos_aulas, List<String> metodos_avaliacoes, boolean checkbox, int num, FuncoesAuxiliares funcoes_aux) {
 
 		difference = num;
 
@@ -212,6 +206,8 @@ public class Main {
 			}
 			Metricas metricas = new Metricas(slots);
 			Convert_metrica_JSON metrica_json1 = metricas.convert_metrica_JSON();
+			metrica_json1.setFile_aulas(funcoes_aux.to_csv(name_aulas));
+			metrica_json1.setFile_avaliacoes(funcoes_aux.to_csv(name_avaliacoes));
 			result.add(metrica_json1);
 
 			//escrever_ficheiro(lista_convert_metrica);
@@ -535,7 +531,7 @@ public class Main {
 					if (parameters.length == 4)
 						salas_possiveis = (List<Sala>) m.invoke(t,sala_apos_metodo,a,this,difference);
 					else {
-						salas_possiveis = (List<Sala>) m.invoke(t,a,help,this);
+						salas_possiveis = (List<Sala>) m.invoke(t,sala_apos_metodo,a,this);
 					}
 				}
 			}

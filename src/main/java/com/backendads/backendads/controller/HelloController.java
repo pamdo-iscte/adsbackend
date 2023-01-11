@@ -88,7 +88,7 @@ public class HelloController {
 
         System.out.println("Metodos Aulas: "+aulas);
         System.out.println("Metodos Aulas: "+avaliacoes);
-        return main.start(aulas,avaliacoes,json_metodos.isCheckbox(),json_metodos.getNum());
+        return main.start(aulas,avaliacoes,json_metodos.isCheckbox(),json_metodos.getNum(),aux);
     }
 
     @PostMapping("/obter_aulas_da_UC_escolhida")
@@ -358,29 +358,6 @@ public class HelloController {
     }
     @PostMapping("/csv")
     public String csv() {
-        String delimiter = ";";
-        List<List<String>> z= new ArrayList<>();
-        try {
-            File file = new File("Aulas.txt");
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
-            String line = "";
-            String[] tempArr;
-            while((line = br.readLine()) != null) {
-                List<String> linha=new ArrayList<>();
-                tempArr = line.split(delimiter);
-                for(String tempStr : tempArr) {
-                    linha.add(tempStr);
-                }
-                System.out.println(linha);
-                z.add(linha);
-                System.out.println();
-            }
-            System.out.println(z);
-            br.close();
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return new Gson().toJson(z);
+        return aux.to_csv("Aulas.txt");
     }
 }
