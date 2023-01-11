@@ -858,15 +858,17 @@ public class Main {
 		            String salas = "";
 		            String estado = "";
 		            int capacidade_aux =0;
-		            String lugares = "";
+		            int lugares_aux = 0;
 		                if(((Avaliacao)e).salas!=null) {
 		                	for(Sala s: ((Avaliacao)e).salas) {
 		                	salas+= s.getNome();
 		                	capacidade_aux += s.getCapacidade_exame();
-		                	lugares = "";//n sei bem o q por aqui
+		                	
 		                	}
+		                	lugares_aux = capacidade_aux - ((Avaliacao)e).getNumero_de_alunos();
 		                }
 		                String capacidade = String.valueOf(capacidade_aux);
+		                String lugares = String.valueOf(lugares_aux);
 		               
 		                linha = ((Avaliacao)e).codigo + delimeter +((Avaliacao)e).unidade + delimeter +((Avaliacao)e).curso + delimeter +((Avaliacao)e).tipo + delimeter +((Avaliacao)e).epoca + delimeter +
 		                		((Avaliacao)e).nome + delimeter +((Avaliacao)e).requer_inscricao_previa + delimeter +((Avaliacao)e).periodo_inscricao + delimeter +((Avaliacao)e).getData() + delimeter +salas + delimeter +
