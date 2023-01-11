@@ -47,9 +47,7 @@ public class Main {
 
 		difference = num;
 
-		initialSlots();
-		readFile_slotsAula();
-		readFile_slotsAvaliacao();
+		
 		List<Convert_metrica_JSON> result = new ArrayList<>();
 //		int count1 = 0;
 //		for (Slot s : slots) {
@@ -74,20 +72,27 @@ public class Main {
 		String name_aulas = "";
 		String name_avaliacoes = "";
 
-		for (int count = 0; count < metodosAulas.size() + 1; count++) {
-
+		for (int count = 0; count < metodos_aulas.size() + 1; count++) {
+			
+			
+			initialSlots();
+			readFile_slotsAula();
+			readFile_slotsAvaliacao();
+			
 			file_num++;
-			if (count < metodosAulas.size()) {
-				name_aulas = file_num + "Aulas" + metodosAulas.get(count) + ".txt";
-				name_avaliacoes = file_num + "Avaliacoes" + metodosAulas.get(count) + ".txt";
-				String q = metodosAulas.get(count);
-				metodos_aulas.clear();
-				metodos_aulas.add(q);
-			} else {
-				name_aulas = file_num + "Aulas" + metodosAulas.toString() + ".txt";
-				name_avaliacoes = file_num + "Avaliacoes" + metodosAulas.toString() + ".txt";
-				metodos_aulas = metodosAulas;
+			if( metodos_aulas.size()==1 || count >=  metodos_aulas.size()) {
+				name_aulas = file_num + "_Aulas_" + metodos_aulas.toString() + ".txt";
+				name_avaliacoes = file_num + "_Avaliacoes_" + metodos_aulas.toString() + ".txt";
+				metodosAulas = metodos_aulas;
+				count =metodos_aulas.size() + 1;
 			}
+			else {if (count < metodos_aulas.size()) {
+				name_aulas = file_num + "_Aulas_" + metodos_aulas.get(count) + ".txt";
+				name_avaliacoes = file_num + "_Avaliacoes_" + metodos_aulas.get(count) + ".txt";
+				String q = metodos_aulas.get(count);
+				metodosAulas.clear();
+				metodosAulas.add(q);
+			} }
 
 			for (Slot s : slots) {
 				System.out.println("\nslot " + i + " " + s.data + " " + s.hora_inicio + " " + s.hora_final);
@@ -366,22 +371,26 @@ public class Main {
 		}
 	}
 
-	public List<Sala> salas_match_caracteristica(String caracteristica, List<Sala> salas_livres) {
-		List<Sala> salas = new ArrayList<>();
-		//System.out.println("caracteristica pedida "+caracteristica );
-		for (Sala s : salas_livres) {
-			//System.out.println("da salas"+s.getCaracteristicas());
-			String[] aux = caracteristica.split(" ");
-			for(int i = 0; i<aux.length; i++) {
-				if (s.getCaracteristicas().contains(aux[i])) {
-					//System.out.println("contem caracteristica");
-					salas.add(s);
-					break;
-				}}
-		}
-
-		return salas;
-	}
+	private List<Sala> salas_match_caracteristica(String caracteristica, List<Sala> salas_livres) {
+        List<Sala> salas = new ArrayList<>();
+        
+        //System.out.println("caracteristica pedida "+caracteristica );
+        for (Sala s : salas_livres) {
+        	if(s==null) {
+        		return null;
+        	}
+        	//System.out.println("da salas"+s.getCaracteristicas());
+        	String[] aux = caracteristica.split(" ");
+        	for(int i = 0; i<aux.length; i++) {
+            if (s.getCaracteristicas().contains(aux[i])) {
+            	//System.out.println("contem caracteristica");
+            	salas.add(s);
+            	break;
+            }}
+        }
+        
+        return salas;
+    }
 
 	private Sala check_sala_para_aula(Aula aula, Slot slot) {
 		List<Sala> salas_livres = slot.salas_livres;
