@@ -356,9 +356,10 @@ public class HelloController {
         return new Gson().toJson("Upload concluído com sucesso");
     }
 
-    @GetMapping("/start_main")
-    public void start_main() {
-        main = new Main();
+    @PostMapping("/start_main")
+    public void start_main(@RequestBody JsonNode json) {
+        String data = json.get("startDate").asText();
+        main = new Main(data);
     }
     @PostMapping("/csv")
     public String csv() {

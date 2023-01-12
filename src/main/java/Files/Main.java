@@ -214,9 +214,9 @@ public class Main {
 			}
 			Metricas metricas = new Metricas(slots);
 			Convert_metrica_JSON metrica_json1 = metricas.convert_metrica_aulas_JSON();
-			metrica_json1.setFile_aulas(funcoes_aux.to_csv(dir_horarios_gerados+"/"+name_aulas));
+			metrica_json1.setFile_aulas(funcoes_aux.to_csv(name_aulas));
 			Convert_metrica_JSON metrica_avaliacao = metricas.convert_metrica_avaliacoes_JSON();
-			metrica_avaliacao.setFile_avaliacoes(funcoes_aux.to_csv(dir_horarios_gerados+"/"+name_avaliacoes));
+			metrica_avaliacao.setFile_avaliacoes(funcoes_aux.to_csv(name_avaliacoes));
 
 			String nome ="";
 			if( metodos_aulas.size()==1 || count >=  metodos_aulas.size()) {
@@ -579,11 +579,6 @@ public class Main {
 			if(salas_possiveis.size() > 1) {
 				index = rand.nextInt(salas_possiveis.size() - 1);
 			}
-			
-			int index = 0;
-			if(salas_possiveis.size() > 1) {
-				index = rand.nextInt(salas_possiveis.size() - 1);
-			}
 
 			//System.out.println("salas possiveis:");
 
@@ -869,7 +864,7 @@ public class Main {
 
 			try {
 				File file = new File(namefile);
-				BufferedWriter myWriter = new BufferedWriter(new FileWriter(dir_horarios_gerados+"/"+namefile, true));
+				BufferedWriter myWriter = new BufferedWriter(new FileWriter(namefile, true));
 				if(st) {
 					PrintWriter writer = new PrintWriter(namefile);
 					linha = "Curso"+delimeter+"Unidade de execução"+delimeter+"Turno"+delimeter+"Turma"+delimeter+"Inscritos no turno"+delimeter+""

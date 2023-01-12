@@ -1,0 +1,1 @@
+Curso;Unidade de execução;Turno;Turma;Inscritos no turno;Turnos com capacidade superior à capacidade das características das salas;Turno com inscrições superiores à capacidade das salas;Dia da Semana;Início;Fim;Dia;Características da sala pedida para a aula;Sala da aula;Lotação;Características reais da sala
