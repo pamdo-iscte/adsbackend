@@ -42,7 +42,8 @@ public class Main {
 		difference = num;
 
 
-		List<Convert_metrica_JSON> result = new ArrayList<>();
+		List<Convert_metrica_JSON> result_aulas = new ArrayList<>();
+		List<Convert_metrica_JSON> result_avaliacoes = new ArrayList<>();
 //		int count1 = 0;
 //		for (Slot s : slots) {
 //			for (Evento e : s.eventos) {
@@ -210,9 +211,11 @@ public class Main {
 				}
 			}
 			Metricas metricas = new Metricas(slots);
-			Convert_metrica_JSON metrica_json1 = metricas.convert_metrica_JSON();
+			Convert_metrica_JSON metrica_json1 = metricas.convert_metrica_aulas_JSON();
 			metrica_json1.setFile_aulas(funcoes_aux.to_csv(name_aulas));
-			metrica_json1.setFile_avaliacoes(funcoes_aux.to_csv(name_avaliacoes));
+			Convert_metrica_JSON metrica_avaliacao = metricas.convert_metrica_avaliacoes_JSON();
+			metrica_avaliacao.setFile_avaliacoes(funcoes_aux.to_csv(name_avaliacoes));
+
 			String nome ="";
 			if( metodos_aulas.size()==1 || count >=  metodos_aulas.size()) {
 				nome = metodos_aulas.toString();
@@ -224,34 +227,18 @@ public class Main {
 				nome = nome +"_"+s;
 			}
 			metrica_json1.setNome(nome);
-			result.add(metrica_json1);
+			metrica_avaliacao.setNome(nome);
+			result_aulas.add(metrica_json1);
+			result_avaliacoes.add(metrica_avaliacao);
 
 			//escrever_ficheiro(lista_convert_metrica);
 
 		}
-
+		List<List<Convert_metrica_JSON>> result = new ArrayList<>();
+		result.add(result_aulas);
+		result.add(result_avaliacoes);
 		return new Gson().toJson(result);
 	}
-
-	public void escrever_ficheiro(List<Convert_metrica_JSON> lista){
-
-		try (FileWriter writer = new FileWriter("metricas.txt")) {
-			for(Convert_metrica_JSON convert_metrica_JSON: lista) {
-				writer.write("Aulas_nao_alocadas: " + convert_metrica_JSON.aulas_nao_alocadas + ",");
-				writer.write("Aulas_sobrelotadas: " + convert_metrica_JSON.aulas_sobrelotadas + ",");
-				writer.write("Estudantes_em_sobrelotadas: " + convert_metrica_JSON.estudantes_em_sobrelotadas + ",");
-				writer.write("Sobrelotação_media: " + convert_metrica_JSON.sobrelotação_media + ",");
-				writer.write("Lugares_desperdiçado: " + convert_metrica_JSON.lugares_desperdicado + ",");
-				writer.write("Aulas_mal_atribuidas: " + convert_metrica_JSON.aulas_mal_atribuidas + ",");
-				writer.write("Mudanca_sala: " + convert_metrica_JSON.mudanca_sala + ",");
-				writer.write("Mudanca_edificio: " + convert_metrica_JSON.mudanca_edificio + "\n");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-
 
 	private List<Sala> readFile_caracterizacaoDasSalas() {
 		List<Sala> salas = new ArrayList<>();

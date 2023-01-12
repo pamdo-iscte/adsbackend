@@ -15,6 +15,10 @@ public class Convert_metrica_JSON {
     String file_avaliacoes;
     String nome;
 
+    int avaliacoes_sobrelotadas;
+    int quantidade_lugares_desperdicados_por_avaliacoes;
+    int quantidade_alunos_sobrelotados_por_avaliacoes;
+
     public Convert_metrica_JSON(int aulas_nao_alocadas, int aulas_sobrelotadas, int estudantes_em_sobrelotadas, int sobrelotação_media, int lugares_desperdicado, int aulas_mal_atribuidas, int mudanca_sala, int mudanca_edificio) {
         this.aulas_nao_alocadas = aulas_nao_alocadas;
         this.aulas_sobrelotadas = aulas_sobrelotadas;
@@ -26,6 +30,11 @@ public class Convert_metrica_JSON {
         this.mudanca_edificio = mudanca_edificio;
     }
 
+    public Convert_metrica_JSON(int avaliacoes_sobrelotadas, int quantidade_lugares_desperdicados_por_avaliacoes, int quantidade_alunos_sobrelotados_por_avaliacoes) {
+        this.avaliacoes_sobrelotadas = avaliacoes_sobrelotadas;
+        this.quantidade_lugares_desperdicados_por_avaliacoes = quantidade_lugares_desperdicados_por_avaliacoes;
+        this.quantidade_alunos_sobrelotados_por_avaliacoes = quantidade_alunos_sobrelotados_por_avaliacoes;
+    }
 
     @Override
     public String toString() {

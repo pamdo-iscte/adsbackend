@@ -2,9 +2,7 @@ package Files;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -45,8 +43,12 @@ public class Metricas {
         mostra();
     }
 
-    public Convert_metrica_JSON convert_metrica_JSON(){
+    public Convert_metrica_JSON convert_metrica_aulas_JSON(){
         return new Convert_metrica_JSON(nao_foi_possivel_alocacao_automatica, aulas_sobrelotadas, quantidade_alunos_sobrelotacao_aulas(), quantidade_percentagem_alunos_sobrelotacao_aulas(), quantidade_alunos_desperdicados_aulas(),aula_mal_atribuida ,mudanca_sala,mudanca_edificio);
+    }
+
+    public Convert_metrica_JSON convert_metrica_avaliacoes_JSON(){
+        return new Convert_metrica_JSON(avaliacoes_sobrelotadas,quantidade_alunos_desperdicados_avaliacoes(),quantidade_alunos_sobrelotacao_avaliacoes());
     }
 
 
