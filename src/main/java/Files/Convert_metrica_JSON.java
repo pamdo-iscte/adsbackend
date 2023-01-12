@@ -13,6 +13,7 @@ public class Convert_metrica_JSON {
 
     String file_aulas;
     String file_avaliacoes;
+    String nome;
 
     public Convert_metrica_JSON(int aulas_nao_alocadas, int aulas_sobrelotadas, int estudantes_em_sobrelotadas, int sobrelotação_media, int lugares_desperdicado, int aulas_mal_atribuidas, int mudanca_sala, int mudanca_edificio) {
         this.aulas_nao_alocadas = aulas_nao_alocadas;
@@ -39,11 +40,16 @@ public class Convert_metrica_JSON {
                 ", mudanca_edificio=" + mudanca_edificio +
                 ", file_aulas='" + file_aulas + '\'' +
                 ", file_avaliacoes='" + file_avaliacoes + '\'' +
+                ", nome='" + nome + '\'' +
                 '}';
     }
 
     public void setFile_avaliacoes(String file_avaliacoes) {
         this.file_avaliacoes = file_avaliacoes;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public void setFile_aulas(String file_aulas) {

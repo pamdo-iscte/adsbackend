@@ -41,7 +41,7 @@ public class Main {
 
 		difference = num;
 
-		
+
 		List<Convert_metrica_JSON> result = new ArrayList<>();
 //		int count1 = 0;
 //		for (Slot s : slots) {
@@ -67,12 +67,12 @@ public class Main {
 		String name_avaliacoes = "";
 
 		for (int count = 0; count < metodos_aulas.size() + 1; count++) {
-			
-			
+
+
 			initialSlots();
 			readFile_slotsAula();
 			readFile_slotsAvaliacao();
-			
+
 			file_num++;
 			if( metodos_aulas.size()==1 || count >=  metodos_aulas.size()) {
 				name_aulas = file_num + "_Aulas_" + metodos_aulas.toString() + ".txt";
@@ -213,6 +213,17 @@ public class Main {
 			Convert_metrica_JSON metrica_json1 = metricas.convert_metrica_JSON();
 			metrica_json1.setFile_aulas(funcoes_aux.to_csv(name_aulas));
 			metrica_json1.setFile_avaliacoes(funcoes_aux.to_csv(name_avaliacoes));
+			String nome ="";
+			if( metodos_aulas.size()==1 || count >=  metodos_aulas.size()) {
+				nome = metodos_aulas.toString();
+			} else if (count < metodos_aulas.size()) {
+				nome = metodos_aulas.get(count);
+			}
+			nome = nome+" ";
+			for (String s:metodos_avaliacoes) {
+				nome = nome +"_"+s;
+			}
+			metrica_json1.setNome(nome);
 			result.add(metrica_json1);
 
 			//escrever_ficheiro(lista_convert_metrica);
@@ -368,25 +379,25 @@ public class Main {
 	}
 
 	public List<Sala> salas_match_caracteristica(String caracteristica, List<Sala> salas_livres) {
-        List<Sala> salas = new ArrayList<>();
-        
-        //System.out.println("caracteristica pedida "+caracteristica );
-        for (Sala s : salas_livres) {
-        	if(s==null) {
-        		return null;
-        	}
-        	//System.out.println("da salas"+s.getCaracteristicas());
-        	String[] aux = caracteristica.split(" ");
-        	for(int i = 0; i<aux.length; i++) {
-            if (s.getCaracteristicas().contains(aux[i])) {
-            	//System.out.println("contem caracteristica");
-            	salas.add(s);
-            	break;
-            }}
-        }
-        
-        return salas;
-    }
+		List<Sala> salas = new ArrayList<>();
+
+		//System.out.println("caracteristica pedida "+caracteristica );
+		for (Sala s : salas_livres) {
+			if(s==null) {
+				return null;
+			}
+			//System.out.println("da salas"+s.getCaracteristicas());
+			String[] aux = caracteristica.split(" ");
+			for(int i = 0; i<aux.length; i++) {
+				if (s.getCaracteristicas().contains(aux[i])) {
+					//System.out.println("contem caracteristica");
+					salas.add(s);
+					break;
+				}}
+		}
+
+		return salas;
+	}
 
 	private Sala check_sala_para_aula(Aula aula, Slot slot) {
 		List<Sala> salas_livres = slot.salas_livres;
