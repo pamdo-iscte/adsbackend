@@ -356,10 +356,21 @@ public class HelloController {
         return new Gson().toJson("Upload concluído com sucesso");
     }
 
-    @PostMapping("/start_main")
-    public void start_main(@RequestBody JsonNode json) {
+    @GetMapping("/start_main")
+    public void start_main() {
+        main = new Main();
+    }
+
+    @PostMapping("/definir_primeiro_dia")
+    public void definir_primeiro_dia(@RequestBody JsonNode json) {
         String data = json.get("startDate").asText();
-        main = new Main(data);
+        System.out.println(data);
+        String ano_full = data.split("T")[0].split("-")[0];
+        String ano = ano_full.substring(2);
+        System.out.println(ano);
+        primeiro_dia_de_aulas = data.split("T")[0].replace("-","/");
+        primeiro_dia_de_aulas_cal = aux.setCalendar(Calendar.getInstance(),primeiro_dia_de_aulas.split("/"));
+        main.setAno_valor(ano);
     }
     @PostMapping("/csv")
     public String csv() {

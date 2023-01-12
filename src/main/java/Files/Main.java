@@ -6,6 +6,7 @@ import com.opencsv.CSVReader;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -23,7 +24,12 @@ public class Main {
 	private int difference = 25;
 
 
-	public Date ano_valor;
+	public String ano_valor;
+
+	public void setAno_valor(String ano_valor) {
+		this.ano_valor = ano_valor;
+		System.out.println(this.ano_valor);
+	}
 
 	public void setFile_caracterizacao_das_salas(String file_caracterizacao_das_salas) {
 		this.file_caracterizacao_das_salas = file_caracterizacao_das_salas;
@@ -39,10 +45,9 @@ public class Main {
 
 
 
-	public String start(List<String> metodos_aulas, List<String> metodos_avaliacoes, boolean checkbox, int num, FuncoesAuxiliares funcoes_aux, Date date) {
+	public String start(List<String> metodos_aulas, List<String> metodos_avaliacoes, boolean checkbox, int num, FuncoesAuxiliares funcoes_aux) {
 
 		difference = num;
-		ano_valor = date;
 
 		List<Convert_metrica_JSON> result_aulas = new ArrayList<>();
 		List<Convert_metrica_JSON> result_avaliacoes = new ArrayList<>();
@@ -686,15 +691,15 @@ public class Main {
     	String minuto = "30";
     	String segundo = "00";
     	
-    	DateFormat dateFormat = new SimpleDateFormat("dd-mm-yy");  
-    	String data_inicio = dateFormat.format(ano_valor);  
-    	String[] aux = data_inicio.split("-"); //o q é q recebo
+//    	DateFormat dateFormat = new SimpleDateFormat("dd-mm-yy");
+//    	String data_inicio = dateFormat.format(ano_valor);
+//    	String[] aux = data_inicio.split("-"); //o q é q recebo
 //    	String[] aux2 = ano_valor.split("");
 //    	String data_to_give = aux[1]+"-"+aux[0]+"-"+aux2[2]+aux2[3];
     	
-//    	String data_inicio = data_to_give;
+    	String data_inicio = "01-09-"+ano_valor;
     	
-    	String data_final = "31-08-"+Integer.toString(Integer.parseInt(aux[2])+1);
+    	String data_final = "31-08-"+Integer.toString(Integer.parseInt(ano_valor)+1);
     	boolean i = false;
 		List<Evento> eventos = new ArrayList<>();
 		List<Sala> salas = readFile_caracterizacaoDasSalas();
