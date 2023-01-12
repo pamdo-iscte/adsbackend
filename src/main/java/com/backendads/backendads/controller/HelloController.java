@@ -28,7 +28,7 @@ public class HelloController {
     private final String dir_upload_avaliacoes="Upload_de_Avaliacoes";
     private final String dir_caracterizacao_das_salas="Caracterizacao_das_Salas";
     private String file_avaliacoes="Upload_de_Avaliacoes/ADS - Avaliações 1º semestre 2022-23.csv";
-    private String file_das_aulas = "Upload_de_Horarios/ADS - Horários 1º sem 2022-23.xlsx";
+    private String file_das_aulas = "Upload_de_Horarios/2- ADS - Horários 1º sem 2022-23.csv";
     private Main main;
 
     @GetMapping("/get_metodos")
@@ -180,6 +180,7 @@ public class HelloController {
 
 //        System.out.println(data + " "+num);
         Calendar calendar = Calendar.getInstance();
+//        System.out.println(data);
         calendar = aux.setCalendar(calendar,data.split("-"));
 
         List<Slot_horario_semestral> slots = aux.read_file(dir_horariosCompletos,num);
@@ -209,6 +210,8 @@ public class HelloController {
             }
         }
 
+        System.out.println("Horario da semana: "+horario_da_semana.size());
+
         for (Slot_horario_semestral aula: horario_da_semana) {
             String color ="";
             if (aula.getTurno() != null) {
@@ -235,10 +238,11 @@ public class HelloController {
             }
             aula.setBackColor(color);
         }
-        System.out.println("Avaliacoes_Grandes: "+avaliacoes_grandes);
-        List<List<Slot_horario_semestral>> result = new ArrayList<>();
-        result.add(horario_da_semana);
-        result.add(avaliacoes_grandes);
+//        System.out.println("Avaliacoes_Grandes: "+avaliacoes_grandes);
+//        List<List<Slot_horario_semestral>> result = new ArrayList<>();
+//        result.add(horario_da_semana);
+//        result.add(avaliacoes_grandes);
+//        System.out.println(result.get(0).toString());
         return new Gson().toJson(horario_da_semana);
     }
 

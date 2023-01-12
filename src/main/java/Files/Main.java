@@ -16,6 +16,8 @@ public class Main {
 	private String file_horario_1sem = "Upload_de_Horarios/2- ADS - Horários 1º sem 2022-23.csv";
 	private String file_avaliacoes_1sem = "Upload_de_Avaliacoes/ADS - Avaliações 1º semestre 2022-23.csv";
 
+	private String dir_horarios_gerados = "HorariosGerados";
+
 	private List<Slot> slots = new ArrayList<>();
 	private String[] columns = null;
 	private int difference = 25;
@@ -212,9 +214,9 @@ public class Main {
 			}
 			Metricas metricas = new Metricas(slots);
 			Convert_metrica_JSON metrica_json1 = metricas.convert_metrica_aulas_JSON();
-			metrica_json1.setFile_aulas(funcoes_aux.to_csv(name_aulas));
+			metrica_json1.setFile_aulas(funcoes_aux.to_csv(dir_horarios_gerados+"/"+name_aulas));
 			Convert_metrica_JSON metrica_avaliacao = metricas.convert_metrica_avaliacoes_JSON();
-			metrica_avaliacao.setFile_avaliacoes(funcoes_aux.to_csv(name_avaliacoes));
+			metrica_avaliacao.setFile_avaliacoes(funcoes_aux.to_csv(dir_horarios_gerados+"/"+name_avaliacoes));
 
 			String nome ="";
 			if( metodos_aulas.size()==1 || count >=  metodos_aulas.size()) {
@@ -862,7 +864,7 @@ public class Main {
 
 			try {
 				File file = new File(namefile);
-				BufferedWriter myWriter = new BufferedWriter(new FileWriter(namefile, true));
+				BufferedWriter myWriter = new BufferedWriter(new FileWriter(dir_horarios_gerados+"/"+namefile, true));
 				if(st) {
 					PrintWriter writer = new PrintWriter(namefile);
 					linha = "Curso"+delimeter+"Unidade de execução"+delimeter+"Turno"+delimeter+"Turma"+delimeter+"Inscritos no turno"+delimeter+""
