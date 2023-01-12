@@ -23,7 +23,7 @@ public class Main {
 	private int difference = 25;
 
 
-	public String ano = "22";
+	public Date ano_valor;
 
 	public void setFile_caracterizacao_das_salas(String file_caracterizacao_das_salas) {
 		this.file_caracterizacao_das_salas = file_caracterizacao_das_salas;
@@ -39,10 +39,10 @@ public class Main {
 
 
 
-	public String start(List<String> metodos_aulas, List<String> metodos_avaliacoes, boolean checkbox, int num, FuncoesAuxiliares funcoes_aux) {
+	public String start(List<String> metodos_aulas, List<String> metodos_avaliacoes, boolean checkbox, int num, FuncoesAuxiliares funcoes_aux, Date date) {
 
 		difference = num;
-
+		ano_valor = date;
 
 		List<Convert_metrica_JSON> result_aulas = new ArrayList<>();
 		List<Convert_metrica_JSON> result_avaliacoes = new ArrayList<>();
@@ -681,13 +681,21 @@ public class Main {
 
 
 	private void initialSlots() {
-		int hora_inicio = 7;
-		int hora_final = 0;
-		String minuto = "30";
-		String segundo = "00";
-		String data_inicio = "01-09-"+ano;
-		String data_final = "30-09-"+Integer.toString(Integer.parseInt(ano));
-		boolean i = false;
+    	int hora_inicio = 7;
+    	int hora_final = 0;
+    	String minuto = "30";
+    	String segundo = "00";
+    	
+    	DateFormat dateFormat = new SimpleDateFormat("dd-mm-yy");  
+    	String data_inicio = dateFormat.format(ano_valor);  
+    	String[] aux = data_inicio.split("-"); //o q é q recebo
+//    	String[] aux2 = ano_valor.split("");
+//    	String data_to_give = aux[1]+"-"+aux[0]+"-"+aux2[2]+aux2[3];
+    	
+//    	String data_inicio = data_to_give;
+    	
+    	String data_final = "31-08-"+Integer.toString(Integer.parseInt(aux[2])+1);
+    	boolean i = false;
 		List<Evento> eventos = new ArrayList<>();
 		List<Sala> salas = readFile_caracterizacaoDasSalas();
 
