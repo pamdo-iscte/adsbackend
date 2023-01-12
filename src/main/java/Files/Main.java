@@ -555,10 +555,6 @@ public class Main {
 			salas_possiveis = resolver_conflito(sala_apos_metodo,a,help);
 		}
 
-		for(Sala s: salas_possiveis) {
-			System.out.println(s.getCapacidade_normal());
-		}
-
 		if (list_methods.size()>1) {
 
 			if (salas_possiveis.size()==0) {
