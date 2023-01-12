@@ -617,7 +617,7 @@ public class Main {
 //				if(worstcase.getCapacidade_normal() < s.getCapacidade_normal()) worstcase = s;
 //			}}
 			if ((temp_dif <= ((difference/100)*aula.inscritos)) && (s.getCaracteristicas().size()!=1)) { // numero menor q o da sala anterior
-				difference = temp_dif;
+				//difference = temp_dif;
 				salas_to_return.add(s);				
 			}
 		}
