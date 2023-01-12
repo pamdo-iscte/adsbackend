@@ -548,20 +548,24 @@ public class Main {
 		}
 
 		if(salas_possiveis == null) {
-			return null;
+			salas_possiveis = resolver_conflito(sala_apos_metodo,a,help);		
 		}
-
-		if (salas_possiveis.size()== 0) {
-			salas_possiveis = resolver_conflito(sala_apos_metodo,a,help);
-		}
-
+		
+//		if (salas_possiveis.size()== 0) {
+//			salas_possiveis = resolver_conflito(sala_apos_metodo,a,help);		
+//		}
+		
+//		for(Sala s: salas_possiveis) {
+//			System.out.println(s.getCapacidade_normal());
+//		}
+		
 		if (list_methods.size()>1) {
-
+			
 			if (salas_possiveis.size()==0) {
 				salas_possiveis = sala_apos_metodo;
 				//System.out.println("aqui");
 			}
-
+			
 			doMethodsAulas(salas_possiveis, a, help, list_methods.subList(1, list_methods.size()));
 			return null;
 		} else {
@@ -569,6 +573,11 @@ public class Main {
 				System.out.println("não há salas possiveis");
 				return null;
 			}
+			int index = 0;
+			if(salas_possiveis.size() > 1) {
+				index = rand.nextInt(salas_possiveis.size() - 1);
+			}
+			
 			int index = 0;
 			if(salas_possiveis.size() > 1) {
 				index = rand.nextInt(salas_possiveis.size() - 1);
@@ -595,29 +604,29 @@ public class Main {
 
 	//no caso de conseguir alocar através do método, mas der um erro qq assinalar tb isso, cores com avisos
 	//dar um aviso
-	private List<Sala> resolver_conflito(List<Sala> salas_livres,Aula aula, Slot slot) {
-		System.out.println("--- Resolver conflito ---");
-		List<Sala> salas_to_return = new ArrayList<>();
-		//	int difference = 10; //para ser percentagem, buscar do frontend
-		Sala worstcase = null;
+	 private List<Sala> resolver_conflito(List<Sala> salas_livres,Aula aula, Slot slot) {
+    	System.out.println("--- Resolver conflito ---");
+    	List<Sala> salas_to_return = new ArrayList<>();
+    //	int difference = 10; //para ser percentagem, buscar do frontend
+    	//Sala worstcase = null;
 		for (Sala s: salas_livres) {
 			int temp_dif = Math.abs(s.getCapacidade_normal() - aula.inscritos);// aula.turno.inscritos
-			if(s.getCapacidade_normal() < 100) {
-				if(worstcase == null) worstcase = s;
-				else {
-					if(worstcase.getCapacidade_normal() < s.getCapacidade_normal()) worstcase = s;
-				}}
+//			if(s.getCapacidade_normal() < 100) {
+//			//if(worstcase == null) worstcase = s;
+//			else {
+//				if(worstcase.getCapacidade_normal() < s.getCapacidade_normal()) worstcase = s;
+//			}}
 			if ((temp_dif <= ((difference/100)*aula.inscritos)) && (s.getCaracteristicas().size()!=1)) { // numero menor q o da sala anterior
 				difference = temp_dif;
-				salas_to_return.add(s);
+				salas_to_return.add(s);				
 			}
 		}
-		if(salas_to_return.size()==0) {
-			System.out.println("Não existem salas com a capacidade pedida, em pior caso:");
-			salas_to_return.add(worstcase);
-		}
+//		if(salas_to_return.size()==0) {
+//			System.out.println("Não existem salas com a capacidade pedida, em pior caso:");
+//			salas_to_return.add(worstcase);
+//		}
 		return salas_to_return;
-	}
+    }
 
 
 	public void aulas_seguidas(Aula aula_anterior, List<Slot> slots, Sala sala_escolhida){
