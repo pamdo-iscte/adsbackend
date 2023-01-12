@@ -367,7 +367,7 @@ public class Main {
 		}
 	}
 
-	private List<Sala> salas_match_caracteristica(String caracteristica, List<Sala> salas_livres) {
+	public List<Sala> salas_match_caracteristica(String caracteristica, List<Sala> salas_livres) {
         List<Sala> salas = new ArrayList<>();
         
         //System.out.println("caracteristica pedida "+caracteristica );

@@ -9,4 +9,4 @@ L5239;Psicometria;9219 - LP;Avaliação Contínua;Época Normal;Trabalho de grup
 M9211;Estratégia e Controlo de Gestão;BPG001 - PGCGP;Projecto;Época Normal;Trabalho de Grupo;Não;-;2022/09/27 18:30 - 2022/10/18 19:00;;;0;12;0
 01290;Controlo de Gestão e Qualidade;BPG001 - PGCGP;Projecto;Época Normal;Trabalho de grupo;Não;-;2022/09/27 18:30 - 2022/12/06 19:00;;;0;12;0
 03983;Contabilidade para Executivos;0339 - MGA;Projecto;Época Normal;Group Work (SIT);Não;-;2022/09/28 12:00 - 2022/10/24 19:00;;;0;19;0
-00440;Laboratório de Ética e Profissão em Serviço Social;8014 - LSS-PL;Avaliação Contínua;Época Normal;Ficha de Trabalho 3;Sim;29/09/2022 19:37 - 29/09/2022 23:59;2022/09/29 19:34 - 23:59;AA2.29;;24;15;9
+00440;Laboratório de Ética e Profissão em Serviço Social;8014 - LSS-PL;Avaliação Contínua;Época Normal;Ficha de Trabalho 3;Sim;29/09/2022 19:37 - 29/09/2022 23:59;2022/09/29 19:34 - 23:59;AA2.23;;23;15;8
