@@ -68,7 +68,7 @@ public class Main {
 
 		for (int count = 0; count < metodos_aulas.size() + 1; count++) {
 
-
+			slots.clear();
 			initialSlots();
 			readFile_slotsAula();
 			readFile_slotsAvaliacao();
